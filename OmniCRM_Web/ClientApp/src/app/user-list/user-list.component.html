@@ -1,1 +1,57 @@
-<p>user-list works!</p>
+<div class="card">
+  <div class="card-header"><h5>User Details</h5> </div>
+  <div class="card-body">
+
+    <form>
+
+      <div class="row form-group form-inline">
+        <div class="col-12">
+          Search: <input class="form-control ml-2" type="text" [formControl]="filter" placeholder="Search by any value" />
+          <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
+          <span class="spinner-border spinner-border text-primary ml-3" style="margin-bottom:-8px" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
+          <button class="btn btn-primary float-right" style="width:120px;"> <i class="fas fa-plus mr-2"></i> Add</button>
+          <button class="btn btn-success float-right mr-4" style="width:120px;"> <i class="fas fa-file-excel mr-2"></i> Export</button>
+        </div>
+      </div>
+
+
+      <table class='table table-striped' aria-labelledby="tableLabel">
+        <!--datatable [dtOptions]="dtOptions"-->
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col" sortable="firstName" (sort)="onSort($event)">Fist Name</th>
+            <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
+            <th scope="col" sortable="email" (sort)="onSort($event)">Email</th>
+            <th scope="col" sortable="role.roleName" (sort)="onSort($event)">Role Name</th>
+            <th scope="col" sortable="status" (sort)="onSort($event)">Status</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of userList | async; index as i">
+            <th scope="row">{{ i + 1  }}</th>
+            <td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.lastName" [term]="filter.value"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.role.roleName" [term]="filter.value"></ngb-highlight></td>
+            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="filter.value"></ngb-highlight></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>
+
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+          <option [ngValue]="5">5 items per page</option>
+          <option [ngValue]="10">10 items per page</option>
+          <option [ngValue]="20">20 items per page</option>
+        </select>
+      </div>
+
+    </form>
+
+  </div>
+</div>

@@ -43,7 +43,7 @@ namespace OmniCRM_Web.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserMaster>>> GetUserMaster()
         {
-            return await _context.UserMaster.ToListAsync();
+            return await _context.UserMaster.Include(p => p.Role).ToListAsync();
         }
 
         // GET: api/UserMasters/5

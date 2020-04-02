@@ -17,6 +17,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { JwtInterceptor } from './services/jwt-interceptor';
 import { UserListComponent } from './user-list/user-list.component';
+import { NgbdSortableHeader } from './services/sortable.directive';
+import { DecimalPipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import { UserListComponent } from './user-list/user-list.component';
     NewPwdComponent,
     LoginComponent,
     DashboardComponent,
-    UserListComponent
+    UserListComponent,
+    NgbdSortableHeader
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -44,6 +47,7 @@ import { UserListComponent } from './user-list/user-list.component';
       { path: 'new-pwd/:userId', component: NewPwdComponent },
 
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },
+      { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
@@ -52,7 +56,7 @@ import { UserListComponent } from './user-list/user-list.component';
     FontAwesomeModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },],
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
