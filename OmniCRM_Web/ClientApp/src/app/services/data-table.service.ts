@@ -62,13 +62,15 @@ export class DataTableService {
 
   constructor(private pipe: DecimalPipe) {
 
+
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      debounceTime(200),
+      debounceTime(500),
       switchMap(() => this._search()),
-      delay(200),
+      delay(500),
       tap(() => this._loading$.next(false))
     ).subscribe(result => {
+      
       this._dataList$.next(result.dataList);
       this._total$.next(result.total);
     });

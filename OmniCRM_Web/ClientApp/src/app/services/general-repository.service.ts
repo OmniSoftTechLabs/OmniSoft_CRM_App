@@ -36,7 +36,15 @@ export class GeneralRepositoryService {
     return this.http.post<UserMaster>(this.baseUrl + 'api/UserMasters', userModel).pipe();
   }
 
+  editUser(userModel: UserMaster) {
+    return this.http.put<UserMaster>(this.baseUrl + 'api/UserMasters/' + userModel.userId, userModel).pipe();
+  }
+
   getUserToResetPwd(id) {
+    return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/' + id).pipe();
+  }
+
+  getUser(id) {
     return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/' + id).pipe();
   }
 

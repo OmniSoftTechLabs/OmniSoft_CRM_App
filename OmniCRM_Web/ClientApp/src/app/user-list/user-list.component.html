@@ -4,12 +4,14 @@
 
     <form>
 
-      <div class="row form-group form-inline">
+      <div class="form-row form-group form-inline">
         <div class="col-12">
-          Search: <input class="form-control ml-2" type="text" [formControl]="filter" placeholder="Search by any value" />
+          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" placeholder="Search by any value" />
+          <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
           <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
           <span class="spinner-border spinner-border text-primary ml-3" style="margin-bottom:-8px" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
-          <button class="btn btn-primary float-right" style="width:120px;"> <i class="fas fa-plus mr-2"></i> Add</button>
+          <!--<button class="btn btn-primary float-right" style="width:120px;" data-toggle="modal" data-target="#modelAddUser"> <i class="fas fa-plus mr-2"></i> Add</button>-->
+          <button class="btn btn-primary float-right" style="width:120px;" [routerLink]="['/user-detail']"> <i class="fas fa-plus mr-2"></i> Add</button>
           <button class="btn btn-success float-right mr-4" style="width:120px;"> <i class="fas fa-file-excel mr-2"></i> Export</button>
         </div>
       </div>
@@ -20,22 +22,25 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col" sortable="firstName" (sort)="onSort($event)">Fist Name</th>
+            <th scope="col" sortable="firstName" (sort)="onSort($event)">First Name</th>
             <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
             <th scope="col" sortable="email" (sort)="onSort($event)">Email</th>
             <th scope="col" sortable="role.roleName" (sort)="onSort($event)">Role Name</th>
             <th scope="col" sortable="status" (sort)="onSort($event)">Status</th>
+            <th scope="col"></th>
 
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let user of userList | async; index as i">
             <th scope="row">{{ i + 1  }}</th>
-            <td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.lastName" [term]="filter.value"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.role.roleName" [term]="filter.value"></ngb-highlight></td>
-            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="filter.value"></ngb-highlight></td>
+            <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
+            <td> <ngb-highlight [result]="user.firstName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.lastName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.email" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.role.roleName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <a title="Edit User" class="btn btn-sm" (click)="edituser(user.userId)"><i class="fas fa-edit"></i></a></td>
           </tr>
         </tbody>
       </table>
@@ -55,3 +60,26 @@
 
   </div>
 </div>
+
+
+
+<!-- Modal -->
+<!--<div class="modal fade" id="modelAddUser" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">{{modalTitle}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-user-master></app-user-master>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>-->

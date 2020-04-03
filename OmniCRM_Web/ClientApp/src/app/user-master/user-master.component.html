@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header"><h5>User Details</h5> </div>
+  <div class="card-header"><h5>{{formTitle}}</h5> </div>
   <div class="card-body">
     <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
       <strong>Error!</strong> {{errorMsg}}
@@ -81,7 +81,7 @@
         <div class="form-group col-md-3">
 
           <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="chkIsActive" style="height: 30px; width: 30px;" #status="ngModel" [(ngModel)]="userModel.status" name="status" required [class.is-invalid]="status.invalid && status.touched">
+            <input type="checkbox" class="custom-control-input" id="chkIsActive" style="height: 30px; width: 30px;" #status="ngModel" [(ngModel)]="userModel.status" name="status" [class.is-invalid]="status.invalid && status.touched">
             <label class="custom-control-label" for="chkIsActive">Is Active?</label>
           </div>
 
@@ -98,14 +98,14 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group col-md-4">
+      <div class="form-group form-row form-inline">
+        <div class=" col-md-12 ">
           <button class="btn btn-primary" [disabled]="userAdd.form.invalid || is_progress" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>
           &nbsp; &nbsp;
-          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/dashboard']">Cancel</button>
+          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/user-list']">Cancel</button>
         </div>
       </div>
     </form>

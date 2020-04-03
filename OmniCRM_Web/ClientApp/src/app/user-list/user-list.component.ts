@@ -1,14 +1,21 @@
 import { Component, OnInit, QueryList, ViewChildren, PipeTransform } from '@angular/core';
 import { GeneralRepositoryService } from '../services/general-repository.service';
 import { UserMaster } from '../models/user-master';
-import { Observable } from 'rxjs';
+import { Observable, timer } from 'rxjs';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
 import { DataTableService } from '../services/data-table.service';
 import { FormControl } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { startWith, map } from 'rxjs/operators';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserMasterComponent } from '../user-master/user-master.component';
+import { Router } from '@angular/router';
 
 function search(userlist: UserMaster[], text: string, pipe: PipeTransform): UserMaster[] {
+
+  //let userArray: UserMaster[];
+  //userlist.subscribe(data => userArray = data);
+
   return userlist.filter(user => {
     const term = text.toLowerCase();
     return user.firstName.toLowerCase().includes(term)
@@ -30,32 +37,32 @@ export class UserListComponent implements OnInit {
   userList: Observable<UserMaster[]>;
   total$: Observable<number>;
   filter = new FormControl('');
-
+  modalTitle: string = "Add User";
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
 
   //userList: UserMaster[] = [];
 
-  constructor(private generalRepository: GeneralRepositoryService, public service: DataTableService, private pipe: DecimalPipe) {
-
+  constructor(private generalRepository: GeneralRepositoryService, public service: DataTableService, private pipe: DecimalPipe, private modalService: NgbModal, private router: Router) {
+    
   }
 
   ngOnInit(): void {
     this.fillUserList()
-
   }
 
   fillUserList() {
     this.generalRepository.loadUserList().subscribe(
-      users => (this.service.TABLE = users,
-        this.userList = this.service.dataList$, //this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe))),
+      (users) => {
+        //setTimeout(() => { this.service.TABLE = users }, 100);
+        //timer(100).subscribe(x => { this.service.TABLE = users })
 
-        //this.userList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe))),
-        this.total$ = this.service.total$),
+        this.service.TABLE = users;
+        this.userList = this.service.dataList$;
+        //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
+        this.total$ = this.service.total$;
+      },
       error => console.error(error)
     );
-
-    //this.userList = this.service.dataList$;
-    //this.total$ = this.service.total$;
   }
 
 
@@ -70,6 +77,14 @@ export class UserListComponent implements OnInit {
 
     this.service.sortColumn = column;
     this.service.sortDirection = direction;
+  }
+
+  edituser(userId: string) {
+    //this.modalService.open(UserMasterComponent, { size: 'lg' });
+    //this.modalTitle = "Edit User";
+    localStorage.removeItem("userId");
+    localStorage.setItem("userId", userId.toString());
+    this.router.navigate(['/user-detail']);
   }
 
 }
