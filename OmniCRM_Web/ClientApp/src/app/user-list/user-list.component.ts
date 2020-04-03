@@ -43,11 +43,11 @@ export class UserListComponent implements OnInit {
   //userList: UserMaster[] = [];
 
   constructor(private generalRepository: GeneralRepositoryService, public service: DataTableService, private pipe: DecimalPipe, private modalService: NgbModal, private router: Router) {
-    
   }
 
   ngOnInit(): void {
     this.fillUserList()
+    this.service.searchTerm = '';
   }
 
   fillUserList() {

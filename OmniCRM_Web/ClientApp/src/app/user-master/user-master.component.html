@@ -48,9 +48,10 @@
 
         <div class="form-group col-md-3">
           Role<strong class="text-danger"> *</strong>
-          <select class="form-control" #roleId="ngModel" [(ngModel)]="userModel.roleId" name="roleId" required [class.is-invalid]="roleId.invalid && roleId.touched">
-            <option *ngFor="let objRole of roleList" value="{{objRole.roleId}}"> {{objRole.roleName}}</option>
-          </select>
+              <select class="form-control custom-select" #roleId="ngModel" [(ngModel)]="userModel.roleId" name="roleId" required [class.is-invalid]="roleId.invalid && roleId.touched">
+                <!--<option selected disabled value="0">Choose...</option>-->
+                <option *ngFor="let objRole of roleList" value="{{objRole.roleId}}"> {{objRole.roleName}}</option>
+              </select>
           <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">* Role is required</small>
         </div>
       </div>
@@ -105,7 +106,7 @@
             {{saveBtnTxt}}
           </button>
           &nbsp; &nbsp;
-          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/user-list']">Cancel</button>
+          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/user-list']">Close</button>
         </div>
       </div>
     </form>

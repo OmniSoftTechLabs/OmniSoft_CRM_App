@@ -3,6 +3,7 @@ import { SortColumn, SortDirection } from './sortable.directive';
 import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { debounceTime, delay, switchMap, tap } from 'rxjs/operators';
+import { UserMaster } from '../models/user-master';
 
 
 interface SearchResult {
@@ -32,10 +33,17 @@ function sort(dataList: any[], column: SortColumn, direction: string): any[] {
 }
 
 function matches(objData: any, term: string, pipe: PipeTransform) {
-
-  return objData.firstName.toLowerCase().includes(term.toLowerCase())
-    //|| pipe.transform(objData.lastName).includes(term)
-    //|| pipe.transform(objData.email).includes(term);
+  term = term.toLowerCase()
+  if (objData as UserMaster) {
+    var objUser = objData as UserMaster;
+    return objUser.firstName.toLowerCase().includes(term)
+      || objUser.lastName.toLowerCase().includes(term)
+      //|| objUser.email.toLowerCase().includes(term)
+      || objUser.role.roleName.toLowerCase().includes(term)
+    //|| objUser.status.toLowerCase().includes(term)
+  }
+  //|| pipe.transform(objData.lastName).includes(term)
+  //|| pipe.transform(objData.email).includes(term);
 }
 
 
@@ -62,15 +70,16 @@ export class DataTableService {
 
   constructor(private pipe: DecimalPipe) {
 
+    //this._dataList$ = new BehaviorSubject<any[]>([]);
 
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      debounceTime(500),
+      debounceTime(300),
       switchMap(() => this._search()),
-      delay(500),
+      delay(300),
       tap(() => this._loading$.next(false))
     ).subscribe(result => {
-      
+
       this._dataList$.next(result.dataList);
       this._total$.next(result.total);
     });
@@ -98,6 +107,7 @@ export class DataTableService {
 
   private _search(): Observable<SearchResult> {
     const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
+
 
     // 1. sort
     let dataList = sort(this.TABLE, sortColumn, sortDirection);
