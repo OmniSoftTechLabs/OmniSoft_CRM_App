@@ -51,3 +51,8 @@ th[sortable] {
 table span.ngb-highlight {
   background-color: yellow;
 }
+
+.nopadding {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}

@@ -1,4 +1,4 @@
-<div class="card mr-auto ml-auto" style="width:60%">
+<div class="card mr-auto ml-auto col-md-4 nopadding">
   <div class="card-header"><h5>{{formTitle}}</h5> </div>
   <div class="card-body">
     <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
@@ -11,91 +11,71 @@
 
     <form #userAdd="ngForm" (ngSubmit)="onSaveUser()" novalidate>
       <!--userAdd.reset()-->
-      <div class="form-row">
-        <div class="form-group col-md-3">
-          First Name<strong class="text-danger"> *</strong>
-          <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
-                 class="form-control" [(ngModel)]="userModel.firstName" placeholder="First Name" maxlength="50" />
-          <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
-          <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
-        </div>
 
-        <div class="form-group col-md-3">
-          Last Name<strong class="text-danger"> *</strong>
-          <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
-                 class="form-control" [(ngModel)]="userModel.lastName" placeholder="Last Name" maxlength="50" />
-          <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
-          <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
-        </div>
-
-        <!-- <div class="form-group col-md-3">
-          Phone Number<strong class="text-danger"> *</strong>
-          <input type="text" #phoneNumber="ngModel" name="phoneNumber" pattern="^0[12378]{1}[0-9]{9}" [class.is-invalid]="phoneNumber.invalid && phoneNumber.touched || phoneNumber.errors?.pattern"
-                 class="form-control" [(ngModel)]="userModel.phoneNumber" placeholder="Phone Number" maxlength="11" />
-          <small class="text-danger" *ngIf="phoneNumber.errors?.pattern">* Phone number is invalid</small>
-          <small class="text-danger" [class.d-none]="phoneNumber.valid || phoneNumber.untouched">* Phone Number is required</small>
-        </div> -->
-
-        <div class="form-group col-md-3">
-          Email<strong class="text-danger"> *</strong>
-          <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
-                 [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="100"
-                 class="form-control" [(ngModel)]="userModel.email" placeholder="Email" [disabled]=is_edit />
-          <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
-          <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>
-        </div>
-
-
-        <div class="form-group col-md-3">
-          Role<strong class="text-danger"> *</strong>
-              <select class="form-control custom-select" #roleId="ngModel" [(ngModel)]="userModel.roleId" name="roleId" required [class.is-invalid]="roleId.invalid && roleId.touched">
-                <!--<option selected disabled value="0">Choose...</option>-->
-                <option *ngFor="let objRole of roleList" value="{{objRole.roleId}}"> {{objRole.roleName}}</option>
-              </select>
-          <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">* Role is required</small>
-        </div>
-      </div>
-      <div class="form-row">
-
-
-        <!--<div class="form-group col-md-3">
-          Roles<strong class="text-danger"> *</strong>
-
-          <ng-multiselect-dropdown #roleModels="ngModel" name="roleModels"
-                                   [ngModelOptions]="{standalone: true}"
-                                   [placeholder]="'Select Role(s)'"
-                                   [(ngModel)]="userModel.roleModels"
-                                   [data]="roleList"
-                                   [settings]="dropdownSettings"
-                                   (onSelect)="onItemSelect($event)"
-                                   (onSelectAll)="onSelectAll($event)">
-          </ng-multiselect-dropdown>
-          <input type="text" required #txtRole="ngModel" name="txtRole" [class.is-invalid]="txtRole.invalid && txtRole.touched"
-                 class="form-control" [(ngModel)]="userModel.roleModels" style="display:none" />
-          <small class="text-danger" *ngIf="roleModels.touched && !userModel.roleModels.length">* Roles are required</small>
-        </div>-->
-
+      <div class="form-group">
+        First Name<strong class="text-danger"> *</strong>
+        <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
+               class="form-control" [(ngModel)]="userModel.firstName" placeholder="i.e. John" maxlength="50" />
+        <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
+        <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
       </div>
 
-      <div class="form-row">
+      <div class="form-group">
+        Last Name<strong class="text-danger"> *</strong>
+        <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
+               class="form-control" [(ngModel)]="userModel.lastName" placeholder="i.e Smith" maxlength="50" />
+        <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
+        <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
+      </div>
 
-        <div class="form-group col-md-3">
+      <!-- <div class="form-group col-md-3">
+        Phone Number<strong class="text-danger"> *</strong>
+        <input type="text" #phoneNumber="ngModel" name="phoneNumber" pattern="^0[12378]{1}[0-9]{9}" [class.is-invalid]="phoneNumber.invalid && phoneNumber.touched || phoneNumber.errors?.pattern"
+               class="form-control" [(ngModel)]="userModel.phoneNumber" placeholder="Phone Number" maxlength="11" />
+        <small class="text-danger" *ngIf="phoneNumber.errors?.pattern">* Phone number is invalid</small>
+        <small class="text-danger" [class.d-none]="phoneNumber.valid || phoneNumber.untouched">* Phone Number is required</small>
+      </div> -->
 
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="chkIsActive" style="height: 30px; width: 30px;" #status="ngModel" [(ngModel)]="userModel.status" name="status" [class.is-invalid]="status.invalid && status.touched">
-            <label class="custom-control-label" for="chkIsActive">Is Active?</label>
-          </div>
+      <div class="form-group">
+        Email<strong class="text-danger"> *</strong>
+        <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
+               [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="100"
+               class="form-control" [(ngModel)]="userModel.email" placeholder="i.e. email@example.com" [disabled]=is_edit />
+        <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
+        <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>
+      </div>
 
-          <!--<div class="form-check">
-            <input class="form-check-input" type="checkbox" id="chkIsActive" style="height: 30px; width: 30px;" #status="ngModel" [(ngModel)]="userModel.status" name="status" required [class.is-invalid]="status.invalid && status.touched">
-            <label class="form-check-label" for="chkIsActive" style="margin-top: 5px;margin-left: 20px;">
-              Is active?
-            </label>
-          </div>-->
-          <!--<select class="form-control" #status="ngModel" [(ngModel)]="userModel.status" name="status" [disabled]="userModel.status == 'Pending'" [class.is-invalid]="status.invalid && status.touched">
-            <option *ngFor="let objStatus of statusList" value="{{objStatus.value}}" [disabled]="objStatus.value == 'Pending'"> {{objStatus.value}}</option>
-          </select>
-          <small class="text-danger" [class.d-none]="status.valid || status.untouched">* Status is required</small>-->
+
+      <div class="form-group">
+        Role<strong class="text-danger"> *</strong>
+        <select class="form-control custom-select" #roleId="ngModel" [(ngModel)]="userModel.roleId" name="roleId" required [class.is-invalid]="roleId.invalid && roleId.touched">
+          <option selected disabled value="0">Choose...</option>
+          <option *ngFor="let objRole of roleList" value="{{objRole.roleId}}"> {{objRole.roleName}}</option>
+        </select>
+        <small class="text-danger" [class.d-none]="roleId.valid || roleId.untouched">* Role is required</small>
+      </div>
+
+      <!--<div class="form-group col-md-3">
+        Roles<strong class="text-danger"> *</strong>
+
+        <ng-multiselect-dropdown #roleModels="ngModel" name="roleModels"
+                                 [ngModelOptions]="{standalone: true}"
+                                 [placeholder]="'Select Role(s)'"
+                                 [(ngModel)]="userModel.roleModels"
+                                 [data]="roleList"
+                                 [settings]="dropdownSettings"
+                                 (onSelect)="onItemSelect($event)"
+                                 (onSelectAll)="onSelectAll($event)">
+        </ng-multiselect-dropdown>
+        <input type="text" required #txtRole="ngModel" name="txtRole" [class.is-invalid]="txtRole.invalid && txtRole.touched"
+               class="form-control" [(ngModel)]="userModel.roleModels" style="display:none" />
+        <small class="text-danger" *ngIf="roleModels.touched && !userModel.roleModels.length">* Roles are required</small>
+      </div>-->
+
+      <div class="form-group">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="chkIsActive" style="height: 30px; width: 30px;" #status="ngModel" [(ngModel)]="userModel.status" name="status" [class.is-invalid]="status.invalid && status.touched">
+          <label class="custom-control-label" for="chkIsActive">Is Active?</label>
         </div>
       </div>
 

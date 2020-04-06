@@ -7,7 +7,7 @@ export class UserMaster {
   lastName: string = "";
   email: string = "";
   status: string = "";
-  roleId: number;
+  roleId: number = 0;
   //roleModels: RoleMaster[] = [];
   role: RoleMaster;
 }
