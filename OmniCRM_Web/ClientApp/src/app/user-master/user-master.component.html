@@ -39,7 +39,7 @@
         <div class="form-group col-md-3">
           Email<strong class="text-danger"> *</strong>
           <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
-                 [class.is-invalid]="email.invalid && email.touched" maxlength="100"
+                 [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="100"
                  class="form-control" [(ngModel)]="userModel.email" placeholder="Email" [disabled]=is_edit />
           <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
           <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>

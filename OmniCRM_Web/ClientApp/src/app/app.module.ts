@@ -19,6 +19,7 @@ import { JwtInterceptor } from './services/jwt-interceptor';
 import { UserListComponent } from './user-list/user-list.component';
 import { NgbdSortableHeader } from './services/sortable.directive';
 import { DecimalPipe } from '@angular/common';
+import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DecimalPipe } from '@angular/common';
     LoginComponent,
     DashboardComponent,
     UserListComponent,
-    NgbdSortableHeader
+    NgbdSortableHeader,
+    ForgetPasswordComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -45,6 +47,7 @@ import { DecimalPipe } from '@angular/common';
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
       { path: 'new-pwd/:userId', component: NewPwdComponent },
+      { path: 'forget-password', component: ForgetPasswordComponent },
 
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },

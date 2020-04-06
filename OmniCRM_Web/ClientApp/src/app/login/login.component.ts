@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
 
   loginError: string = "";
   returnUrl: string;
+  isProgress: boolean = false;
 
   public credentials = {
     username: "p.pansuriya@gmail.com",
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
+    this.isProgress = true;
     this.loginError = "";
     //this.auth.login(this.credentials)
     //  .subscribe(success => {
@@ -38,8 +40,8 @@ export class LoginComponent implements OnInit {
     //  }, err => { this.loginError = "Login failed!" });
 
     this.auth.login(this.credentials).subscribe({
-      next: success => (this.router.navigate([this.returnUrl])),
-      error: error => (this.loginError = error.error)
+      next: success => (this.router.navigate([this.returnUrl]), this.isProgress = false),
+      error: error => (this.loginError = error.error, this.isProgress = false)
     })
 
   }

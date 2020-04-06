@@ -3,6 +3,7 @@ import { UserMaster } from '../models/user-master';
 import { RoleMaster } from '../models/role-master';
 import { GeneralRepositoryService } from '../services/general-repository.service';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-user-master',
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class UserMasterComponent implements OnInit {
 
-  @ViewChild('userAdd') form: any;
+  @ViewChild('userAdd') form: NgForm;
   IsSucess: boolean = false;
   IsError: boolean = false;
   is_edit: boolean;

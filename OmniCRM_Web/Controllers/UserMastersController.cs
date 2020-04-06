@@ -43,11 +43,21 @@ namespace OmniCRM_Web.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserMaster>>> GetUserMaster()
         {
-            return await _context.UserMaster.Include(p => p.Role).ToListAsync();
+            try
+            {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: " + "-get all user master");
+
+                return await _context.UserMaster.Include(p => p.Role).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetUserMaster: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // GET: api/UserMasters/5
-        [HttpGet("{id}")]
+        [HttpGet("GetUserMaster/{id}")]
         public async Task<ActionResult<UserMaster>> GetUserMaster(Guid id)
         {
             try
@@ -57,13 +67,42 @@ namespace OmniCRM_Web.Controllers
 
                 if (userMaster == null)
                 {
-                    return NotFound();
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: -get user failed");
+                    return NotFound("User not found.");
                 }
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: " + userMaster.Email + "-get single user");
                 return userMaster;
             }
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "PostUserMaster: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
+
+        // GET: api/UserMasters/GetUserToResetPwd/5
+        [HttpGet("GetUserToResetPwd/{id}")]
+        //[Route("GetUserToResetPwd")]
+        [AllowAnonymous]
+        public async Task<ActionResult<UserMaster>> GetUserToResetPwd(Guid id)
+        {
+            try
+            {
+                var userMaster = await _context.UserMaster.FindAsync(id);
+                //bool isVerify = GenericMethods.VerifyPassword("Piyush@123", userMaster.PasswordHash, userMaster.PasswordSalt);
+
+                if (userMaster == null)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserToResetPwd: -get user failed");
+                    return NotFound("User not found.");
+                }
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserToResetPwd: " + userMaster.Email + "-get single user");
+                return userMaster;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetUserToResetPwd: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
@@ -77,23 +116,27 @@ namespace OmniCRM_Web.Controllers
         {
             if (id != userMaster.UserId)
             {
-                return BadRequest();
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutUserMaster: -user not matched");
+                return BadRequest("User not matched.");
             }
 
             _context.Entry(userMaster).State = EntityState.Modified;
 
             try
             {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutUserMaster: " + userMaster.Email + "-user updated successfully");
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!UserMasterExists(id))
                 {
-                    return NotFound();
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutUserMaster: -get user failed");
+                    return NotFound("User not found");
                 }
                 else
                 {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutUserMaster: -get user failed");
                     throw;
                 }
             }
@@ -178,6 +221,7 @@ namespace OmniCRM_Web.Controllers
         //POST: api/UserMasters/ResetPassword
         [HttpPost]
         [Route("ResetPassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] CreatePassword pwdModel)
         {
             try
@@ -213,7 +257,6 @@ namespace OmniCRM_Web.Controllers
 
             return NoContent();
         }
-
 
         [HttpPost]
         [Route("CheckLogin")]
@@ -280,6 +323,52 @@ namespace OmniCRM_Web.Controllers
             }
 
             return this.BadRequest();
+        }
+
+        [HttpGet("ForgotPassword/{id}")]
+        //[Route("ForgotPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(string id)
+        {
+            try
+            {
+                if (!UserMasterExists(id))
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "ForgotPassword: " + id + "-not found");
+                    return this.NotFound("Email address does not exist.");
+                }
+
+                var objUser = await _context.UserMaster.FirstOrDefaultAsync(p => p.Email == id);
+                if (objUser != null && objUser.Status == true)
+                {
+                    #region Email Body for activation
+
+                    string FilePath = _hostingEnvironment.ContentRootPath + "//HTMLTemplate//CreateNewPwd.html";
+                    StreamReader str = new StreamReader(FilePath);
+                    string MailText = str.ReadToEnd();
+
+                    string domain = _configuration.GetSection("Domains").GetSection("CurrentDomain").Value;
+                    //string domain = _configuration.GetValue<string>("Domains:CurrentDomain");
+                    MailText = MailText.Replace("#CREATE_PWD_LINK", domain + "/new-pwd/" + objUser.UserId);
+                    #endregion
+
+
+                    GenericMethods.SendEmailNotification(objUser.Email, "OmniCRM Create New Password Link", MailText);
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "ForgotPassword: " + id + "-create password link sent");
+
+                    return this.Ok("Reset password link sent on your mail. Please check your email account.");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "ForgotPassword: " + id + "-user is not active");
+                    return this.NotFound("User is not active.");
+                }
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "ForgotPassword: " + ex.ToString());
+                return this.BadRequest(ex.Message);
+            }
         }
     }
 }

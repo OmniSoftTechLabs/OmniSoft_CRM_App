@@ -41,11 +41,11 @@ export class GeneralRepositoryService {
   }
 
   getUserToResetPwd(id) {
-    return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/' + id).pipe();
+    return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/GetUserToResetPwd/' + id).pipe();
   }
 
   getUser(id) {
-    return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/' + id).pipe();
+    return this.http.get<UserMaster>(this.baseUrl + 'api/UserMasters/GetUserMaster/' + id).pipe();
   }
 
   resetPwd(pwd: CreatePwd) {
@@ -53,5 +53,9 @@ export class GeneralRepositoryService {
       //headers: new HttpHeaders({ "Authorization": "Bearer " + this.auth.authorisationToken })
       responseType: 'json'
     }).pipe();
+  }
+
+  forgotPassword(id) {
+    return this.http.get(this.baseUrl + 'api/UserMasters/ForgotPassword/' + id, { responseType: 'text' });
   }
 }

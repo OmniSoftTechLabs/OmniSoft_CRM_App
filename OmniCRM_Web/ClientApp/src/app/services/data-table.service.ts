@@ -74,9 +74,9 @@ export class DataTableService {
 
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      debounceTime(300),
+      debounceTime(400),
       switchMap(() => this._search()),
-      delay(300),
+      delay(400),
       tap(() => this._loading$.next(false))
     ).subscribe(result => {
 
