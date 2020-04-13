@@ -35,6 +35,15 @@ export class NavMenuComponent {
     return false;
   }
 
+  get isSuperUser(): boolean {
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser != null) {
+      if (this.currentUser.roleId == roles["Super User"])
+        return true;
+    }
+    return false;
+  }
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
@@ -54,6 +63,6 @@ export class NavMenuComponent {
 enum roles {
   'Admin' = 1,
   'Tele Caller' = 2,
-  'Relationship Manager' = 3
-
+  'Relationship Manager' = 3,
+  'Super User' = 101
 }

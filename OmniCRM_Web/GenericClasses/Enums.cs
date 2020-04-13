@@ -18,12 +18,14 @@ namespace OmniCRM_Web.GenericClasses
         {
             Admin = 1,
             TeleCaller = 2,
-            RelationshipManager = 3
+            RelationshipManager = 3,
+            SuperUser = 101,
         }
     }
 
     public class StringConstant
     {
+        public const string SuperUser = "Super User";
         public const string Admin = "Admin";
         public const string TeleCaller = "Tele Caller";
         public const string RelationshipManager = "Relationship Manager";

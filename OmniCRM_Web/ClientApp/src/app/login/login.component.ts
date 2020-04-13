@@ -17,8 +17,8 @@ export class LoginComponent implements OnInit {
   isProgress: boolean = false;
 
   public credentials = {
-    username: "p.pansuriya@gmail.com",
-    password: "Piyush@123"
+    username: "admin@ostechlabs.com",
+    password: "ostech#852"
   };
 
   constructor(private auth: AuthenticationService, private router: Router, private route: ActivatedRoute, ) {

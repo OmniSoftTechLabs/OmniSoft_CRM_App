@@ -50,10 +50,10 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
       { path: 'login', component: LoginComponent },
       { path: 'new-pwd/:userId', component: NewPwdComponent },
       { path: 'forget-password', component: ForgetPasswordComponent },
-      { path: 'chng-pwd', component: ChangePasswordComponent },
+      { path: 'chng-pwd', component: ChangePasswordComponent, canActivate: [AuthGuard] },
 
-      { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },
-      { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Admin'] } },
+      { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
