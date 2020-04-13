@@ -15,12 +15,13 @@ namespace OmniCRM_Web.Models
         public int CallId { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid CreatedBy { get; set; }
-        public string ContactNo { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string FirmName { get; set; }
         public string Address { get; set; }
+        public DateTime LastChangedDate { get; set; }
+        public string Remark { get; set; }
 
         public virtual UserMaster CreatedByNavigation { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetail { get; set; }

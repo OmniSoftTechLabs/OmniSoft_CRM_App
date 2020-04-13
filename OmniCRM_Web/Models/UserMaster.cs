@@ -22,6 +22,7 @@ namespace OmniCRM_Web.Models
         public string PasswordSalt { get; set; }
         public string PasswordHash { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? LinkExpiryDate { get; set; }
 
         public virtual RoleMaster Role { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetail { get; set; }

@@ -61,10 +61,6 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.RelationshipManagerId).HasColumnName("RelationshipManagerID");
 
-                entity.Property(e => e.Remarks)
-                    .IsRequired()
-                    .HasMaxLength(512);
-
                 entity.HasOne(d => d.AppoinStatus)
                     .WithMany(p => p.AppointmentDetail)
                     .HasForeignKey(d => d.AppoinStatusId)
@@ -94,10 +90,6 @@ namespace OmniCRM_Web.Models
                     .IsRequired()
                     .HasMaxLength(512);
 
-                entity.Property(e => e.ContactNo)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -107,6 +99,8 @@ namespace OmniCRM_Web.Models
                 entity.Property(e => e.FirstName)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.LastChangedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
@@ -148,8 +142,6 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.OutComeId).HasColumnName("OutComeID");
 
-                entity.Property(e => e.Remarks).HasMaxLength(512);
-
                 entity.HasOne(d => d.Call)
                     .WithMany(p => p.CallTransactionDetail)
                     .HasForeignKey(d => d.CallId)
@@ -188,8 +180,6 @@ namespace OmniCRM_Web.Models
                 entity.Property(e => e.FollowupType)
                     .IsRequired()
                     .HasMaxLength(50);
-
-                entity.Property(e => e.Remarks).HasMaxLength(50);
 
                 entity.HasOne(d => d.AppoinStatus)
                     .WithMany(p => p.FollowupHistory)
@@ -249,9 +239,7 @@ namespace OmniCRM_Web.Models
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.PasswordHash);
-
-                entity.Property(e => e.PasswordSalt);
+                entity.Property(e => e.LinkExpiryDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserMaster)

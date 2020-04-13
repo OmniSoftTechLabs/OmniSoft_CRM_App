@@ -95,7 +95,12 @@ namespace OmniCRM_Web.Controllers
                 if (userMaster == null)
                 {
                     GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserToResetPwd: -get user failed");
-                    return NotFound("User not found.");
+                    return NotFound("User not found!");
+                }
+                else if (userMaster.LinkExpiryDate < DateTime.Now)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserToResetPwd: -link expired");
+                    return NotFound("Create password link is expired!");
                 }
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserToResetPwd: " + userMaster.Email + "-get single user");
                 return userMaster;
@@ -156,6 +161,7 @@ namespace OmniCRM_Web.Controllers
                 {
                     if (!UserMasterExists(userMaster.Email))
                     {
+                        userMaster.LinkExpiryDate = DateTime.Now.AddDays(1);
                         _context.UserMaster.Add(userMaster);
                         await _context.SaveChangesAsync();
                         GenericMethods.Log(LogType.ActivityLog.ToString(), "PostUserMaster: " + userMaster.Email + "-User created successfully");
@@ -231,7 +237,7 @@ namespace OmniCRM_Web.Controllers
                 GenericMethods.HashSalt hashSalt = GenericMethods.GenerateHashSalt(pwdModel.Password);
                 userMaster.PasswordSalt = hashSalt.saltPassword;
                 userMaster.PasswordHash = hashSalt.hashPassword;
-
+                userMaster.LinkExpiryDate = DateTime.Now;
                 _context.Entry(userMaster).State = EntityState.Modified;
 
                 await _context.SaveChangesAsync();
@@ -383,6 +389,10 @@ namespace OmniCRM_Web.Controllers
                 var objUser = await _context.UserMaster.FirstOrDefaultAsync(p => p.Email == id);
                 if (objUser != null && objUser.Status == true)
                 {
+                    objUser.LinkExpiryDate = DateTime.Now.AddDays(1);
+                    _context.Entry(objUser).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+
                     #region Email Body for activation
 
                     string FilePath = _hostingEnvironment.ContentRootPath + "//HTMLTemplate//CreateNewPwd.html";
