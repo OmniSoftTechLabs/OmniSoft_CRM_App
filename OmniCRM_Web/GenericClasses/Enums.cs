@@ -21,4 +21,11 @@ namespace OmniCRM_Web.GenericClasses
             RelationshipManager = 3
         }
     }
+
+    public class StringConstant
+    {
+        public const string Admin = "Admin";
+        public const string TeleCaller = "Tele Caller";
+        public const string RelationshipManager = "Relationship Manager";
+    }
 }

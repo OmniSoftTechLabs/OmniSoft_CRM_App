@@ -4,6 +4,7 @@ import { RoleMaster } from '../models/role-master';
 import { UserMaster } from '../models/user-master';
 import { CreatePwd } from '../models/create-pwd'
 import { AuthenticationService } from './authentication.service';
+import { ChangePwd } from '../models/change-pwd';
 
 @Injectable({
   providedIn: 'root'
@@ -57,5 +58,9 @@ export class GeneralRepositoryService {
 
   forgotPassword(id) {
     return this.http.get(this.baseUrl + 'api/UserMasters/ForgotPassword/' + id, { responseType: 'text' });
+  }
+
+  changePassword(chngPwd: ChangePwd) {
+    return this.http.put(this.baseUrl + 'api/UserMasters/ChangePassword', chngPwd, { responseType: 'text' }).pipe();
   }
 }

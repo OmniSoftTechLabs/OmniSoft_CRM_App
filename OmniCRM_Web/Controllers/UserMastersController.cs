@@ -24,7 +24,7 @@ namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = StringConstant.Admin)]
     public class UserMastersController : ControllerBase
     {
         private readonly OmniCRMContext _context;
@@ -75,7 +75,7 @@ namespace OmniCRM_Web.Controllers
             }
             catch (Exception ex)
             {
-                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostUserMaster: " + ex.ToString());
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetUserMaster: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
@@ -116,7 +116,7 @@ namespace OmniCRM_Web.Controllers
         {
             if (id != userMaster.UserId)
             {
-                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutUserMaster: -user not matched");
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutUserMaster: -user not matched");
                 return BadRequest("User not matched.");
             }
 
@@ -257,6 +257,48 @@ namespace OmniCRM_Web.Controllers
 
             return NoContent();
         }
+
+
+        [HttpPut]
+        [Route("ChangePassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassword pwdModel)
+        {
+            try
+            {
+                if (this.ModelState.IsValid)
+                {
+                    var userMaster = await _context.UserMaster.FindAsync(pwdModel.UserId);
+                    if (userMaster != null && GenericMethods.VerifyPassword(pwdModel.OldPassword, userMaster.PasswordHash, userMaster.PasswordSalt))
+                    {
+
+                        GenericMethods.HashSalt hashSalt = GenericMethods.GenerateHashSalt(pwdModel.NewPassword);
+                        userMaster.PasswordSalt = hashSalt.saltPassword;
+                        userMaster.PasswordHash = hashSalt.hashPassword;
+
+                        _context.Entry(userMaster).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "ChangePassword: " + userMaster.Email + "-Password changed successfully");
+                        return Ok("Password changed successfully!");
+                    }
+                    else
+                    {
+                        return BadRequest("Old password is not matched with current password!");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Failed to change password!");
+                }
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "ChangePassword: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
 
         [HttpPost]
         [Route("CheckLogin")]
