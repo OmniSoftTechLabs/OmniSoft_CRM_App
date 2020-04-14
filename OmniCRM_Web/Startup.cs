@@ -30,34 +30,17 @@ namespace OmniCRM_Web
         {
             //IdentityModelEventSource.ShowPII = true;
 
-            //Database connection
+            #region Database connection
             services.AddDbContext<OmniCRMContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            #endregion
+
 
             //services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
         Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            //Add jwt authentication
-            //var key = Encoding.ASCII.GetBytes("OmniSoftCRMkeyThisIsTheSecretKeyOfApplication");
-            //services.AddAuthentication(x =>
-            //{
-            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //.AddJwtBearer(x =>
-            //{
-            //    x.RequireHttpsMetadata = false;
-            //    x.SaveToken = true;
-            //    x.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(key),
-            //        ValidateIssuer = false,
-            //        ValidateAudience = false
-            //    };
-            //});
-
+            #region Add jwt authentication
             var key = Encoding.ASCII.GetBytes(Configuration["TokenSettings:JWT_Secret"].ToString());
             services.AddAuthentication(x =>
             {
@@ -82,11 +65,9 @@ namespace OmniCRM_Web
                 };
             });
 
-            services.AddAuthorization(options =>
-            {
-                this.Authorize(options);
-            });
+            #endregion
 
+            services.AddAuthorization();
 
             //Add Auto Mapper for model and View model
             services.AddAutoMapper(typeof(Startup));
@@ -143,12 +124,6 @@ namespace OmniCRM_Web
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-        }
-
-        private void Authorize(Microsoft.AspNetCore.Authorization.AuthorizationOptions options)
-        {
-            //options.AddPolicy("SettingsAdministratorOnly", policy => policy.RequireClaim("Settings Admin", "settings_admin"));
-            //options.AddPolicy("AccountSystemConfig", policy => policy.RequireClaim("Account System Config", "ac_system_config"));
         }
     }
 }

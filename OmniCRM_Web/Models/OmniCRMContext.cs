@@ -110,11 +110,19 @@ namespace OmniCRM_Web.Models
                     .IsRequired()
                     .HasMaxLength(12);
 
+                entity.Property(e => e.OutComeId).HasColumnName("OutComeID");
+
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CreatedBy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_UserMaster");
+
+                entity.HasOne(d => d.OutCome)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.OutComeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CallDetail_CallOutcomeMaster");
             });
 
             modelBuilder.Entity<CallOutcomeMaster>(entity =>
@@ -218,6 +226,10 @@ namespace OmniCRM_Web.Models
             modelBuilder.Entity<UserMaster>(entity =>
             {
                 entity.HasKey(e => e.UserId);
+
+                entity.HasIndex(e => e.Email)
+                    .HasName("UK_UserMaster")
+                    .IsUnique();
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")

@@ -1,0 +1,83 @@
+<div class="card mr-auto ml-auto col-md-6 nopadding">
+  <div class="card-header"><h5>{{formTitle}}</h5> </div>
+  <div class="card-body">
+    <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
+      <strong>Error!</strong> {{errorMsg}}
+    </div>
+    <div class="alert alert-success" id="success-alert" role="alert" *ngIf="IsSucess">
+      <button type="button" class="close" aria-label="Close" (click)="closeAlert()"><span aria-hidden="true">&times;</span></button>
+      <strong>Success!</strong> {{successMsg}}
+    </div>
+
+    <form #leadAdd="ngForm" (ngSubmit)="onSavelead()" novalidate>
+      <!--leadAdd.reset()-->
+      <div class="row">
+        <div class="form-group col-sm-6">
+          First Name<strong class="text-danger"> *</strong>
+          <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
+                 class="form-control" [(ngModel)]="leadModel.firstName" placeholder="i.e. John" maxlength="50" />
+          <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
+          <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Last Name<strong class="text-danger"> *</strong>
+          <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
+                 class="form-control" [(ngModel)]="leadModel.lastName" placeholder="i.e Smith" maxlength="50" />
+          <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
+          <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          Mobile Number<strong class="text-danger"> *</strong>
+          <input type="text" required #mobileNumber="ngModel" name="mobileNumber" pattern="^[6-9]\d{9}$" [class.is-invalid]="mobileNumber.invalid && mobileNumber.touched || mobileNumber.errors?.pattern"
+                 class="form-control" [(ngModel)]="leadModel.mobileNumber" placeholder="i.e 9876543210" maxlength="10" />
+          <small class="text-danger" *ngIf="mobileNumber.errors?.pattern">* Mobile Number is invalid</small>
+          <small class="text-danger" *ngIf="mobileNumber.errors?.required && mobileNumber.touched">* Mobile Number is required</small>
+
+          <!--<small class="text-danger" [class.d-none]="mobileNumber.valid || mobileNumber.untouched">* Mobile Number is required</small>-->
+        </div>
+
+        <div class="form-group col-sm-6">
+          Status<strong class="text-danger"> *</strong>
+          <select class="form-control custom-select" required #outComeId="ngModel" [(ngModel)]="leadModel.outComeId" name="outComeId" [class.is-invalid]="outComeId.invalid && outComeId.touched">
+            <option selected disabled value="0">Choose...</option>
+            <option *ngFor="let objOutCome of outcomeList" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
+          </select>
+          <small class="text-danger" [class.d-none]="outComeId.valid || outComeId.untouched">* Status is required</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          Address<strong class="text-danger"> *</strong>
+          <textarea type="text" required #address="ngModel" name="address" rows="2" [class.is-invalid]="address.invalid && address.touched"
+                    class="form-control" [(ngModel)]="leadModel.address" placeholder="i.e Door number, Street name, Area, City" maxlength="512"></textarea>
+          <small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Remark
+          <textarea type="text" #remark="ngModel" name="remark"
+                    class="form-control" [(ngModel)]="leadModel.remark" placeholder="i.e notes regarding lead" rows="2" maxlength="1024"></textarea>
+          <!--<small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>-->
+        </div>
+      </div>
+
+      <div class="form-group form-row form-inline">
+        <div class=" col-md-12 ">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress" type="submit" style="width:120px;">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+            {{saveBtnTxt}}
+          </button>
+          &nbsp; &nbsp;
+          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/lead-list']">Close</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+

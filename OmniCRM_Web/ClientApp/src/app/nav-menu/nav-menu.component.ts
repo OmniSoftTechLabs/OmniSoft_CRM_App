@@ -35,6 +35,15 @@ export class NavMenuComponent {
     return false;
   }
 
+  get isTeleCaller(): boolean {
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser != null) {
+      if (this.currentUser.roleId == roles["Tele Caller"])
+        return true;
+    }
+    return false;
+  }
+
   get isSuperUser(): boolean {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {

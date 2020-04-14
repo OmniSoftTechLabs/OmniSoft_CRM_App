@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RoleMaster } from '../models/role-master';
 import { UserMaster } from '../models/user-master';
 import { CreatePwd } from '../models/create-pwd'
-import { AuthenticationService } from './authentication.service';
 import { ChangePwd } from '../models/change-pwd';
 
 @Injectable({
@@ -12,10 +11,9 @@ import { ChangePwd } from '../models/change-pwd';
 export class GeneralRepositoryService {
 
   http: HttpClient;
-  baseUrl: any;
-  token: string;
+  baseUrl: string;
 
-  constructor(_http: HttpClient, @Inject('BASE_URL') _baseUrl: string, private auth: AuthenticationService) {
+  constructor(_http: HttpClient, @Inject('BASE_URL') _baseUrl: string) {
     this.http = _http;
     this.baseUrl = _baseUrl;
     //this.auth.currentUser.subscribe(x => this.token = x.token);

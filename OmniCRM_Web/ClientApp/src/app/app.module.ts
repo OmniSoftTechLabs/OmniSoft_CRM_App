@@ -21,6 +21,7 @@ import { NgbdSortableHeader } from './services/sortable.directive';
 import { DecimalPipe } from '@angular/common';
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { LeadCreateComponent } from './lead-create/lead-create.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     UserListComponent,
     NgbdSortableHeader,
     ForgetPasswordComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    LeadCreateComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -54,6 +56,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller'] }},
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
