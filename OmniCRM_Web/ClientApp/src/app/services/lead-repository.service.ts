@@ -20,6 +20,6 @@ export class LeadRepositoryService {
   }
 
   createLead(leadModel: LeadMaster) {
-    return this.http.post(this.baseUrl + 'api/CallDetails', leadModel).pipe();
+    return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
   }
 }

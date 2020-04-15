@@ -89,21 +89,19 @@ namespace OmniCRM_Web.Controllers
                 if (ModelState.IsValid)
                 {
                     callDetail.LastChangedDate = DateTime.Now;
-                    _context.CallDetail.Add(callDetail);
-                    await _context.SaveChangesAsync();
-                    GenericMethods.Log(LogType.ActivityLog.ToString(), "PostCallDetail: " + callDetail.CallId + "-lead created successfully");
-
                     callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
                     {
-                        CallId = callDetail.CallId,
+                        //CallId = callDetail.CallId,
                         CreatedBy = callDetail.CreatedBy,
                         OutComeId = callDetail.OutComeId,
                         Remarks = callDetail.Remark,
                     });
-                    await _context.SaveChangesAsync();
 
-                    GenericMethods.Log(LogType.ActivityLog.ToString(), "PostCallDetail: " + callDetail.CallId + "-lead transaction created successfully");
-                    return Ok("Lead created sucessfully!");
+                    _context.CallDetail.Add(callDetail);
+                    await _context.SaveChangesAsync();
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "PostCallDetail: " + callDetail.CallId + "-lead created successfully");
+
+                    return Ok("Lead created successfully!");
                 }
                 else
                 {
