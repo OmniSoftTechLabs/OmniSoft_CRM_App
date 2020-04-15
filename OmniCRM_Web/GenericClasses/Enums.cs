@@ -21,6 +21,17 @@ namespace OmniCRM_Web.GenericClasses
             RelationshipManager = 3,
             SuperUser = 101,
         }
+
+        public enum AppoinmentStatus
+        {
+            FirstMeeting = 1,
+            SecondMeeting = 2,
+            Sold = 3,
+            Dropped = 4,
+            Hold = 5,
+            NotInterested = 6,
+            Pending = 7,
+        }
     }
 
     public class StringConstant

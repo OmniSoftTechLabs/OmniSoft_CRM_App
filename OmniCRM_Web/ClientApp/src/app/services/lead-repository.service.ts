@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { OutcomeMaster, LeadMaster } from '../models/lead-master';
+import { RmanagerMaster } from '../models/rmanager-master';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,10 @@ export class LeadRepositoryService {
 
   createLead(leadModel: LeadMaster) {
     return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
+  }
+
+  loadRManagerList() {
+    return this.http.get<RmanagerMaster[]>(this.baseUrl + 'api/CallDetails/GetRelationshipManagerList').pipe();
+    
   }
 }

@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { LeadMaster, OutcomeMaster } from '../models/lead-master';
+import { LeadMaster, OutcomeMaster, AppointmentDetail } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
+import { RmanagerMaster } from '../models/rmanager-master';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { AppoinmentStatus } from '../services/generic-enums';
 
 @Component({
   selector: 'app-lead-create',
@@ -19,12 +22,14 @@ export class LeadCreateComponent implements OnInit {
   saveBtnTxt: string = "Save";
   is_progress: boolean = false;
   leadModel: LeadMaster = new LeadMaster();
+  appointmentDetailObj: AppointmentDetail = new AppointmentDetail();
   outcomeList: OutcomeMaster[] = [];
+  rManagerList: RmanagerMaster[] = [];
   is_edit: boolean;
   errorMsg: string;
   successMsg: string;
   currentUser: UserMaster;
-
+  appointmentDate: NgbDateStruct;
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
@@ -32,12 +37,21 @@ export class LeadCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.fillOutCome();
+    this.fillRManagerList();
   }
 
   fillOutCome() {
     this.leadRepo.loadOutcomeList().subscribe(
       outCome => {
         this.outcomeList = outCome;
+      }, error => console.error(error)
+    );
+  }
+
+  fillRManagerList() {
+    this.leadRepo.loadRManagerList().subscribe(
+      rManager => {
+        this.rManagerList = rManager;
       }, error => console.error(error)
     );
   }
@@ -54,7 +68,13 @@ export class LeadCreateComponent implements OnInit {
 
     }
     else {
-      this.leadModel.createdBy = this.currentUser.userId
+      this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year, this.appointmentDate.month, this.appointmentDate.day);
+      this.appointmentDetailObj.createdBy = this.currentUser.userId;
+      this.appointmentDetailObj.remarks = this.leadModel.remark;
+      this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
+
+      this.leadModel.createdBy = this.currentUser.userId;
+      this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
       this.leadRepo.createLead(this.leadModel).subscribe({
         next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
         error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
@@ -75,3 +95,4 @@ export class LeadCreateComponent implements OnInit {
     this.saveBtnTxt = "Save";
   }
 }
+

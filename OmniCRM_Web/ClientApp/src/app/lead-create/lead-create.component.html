@@ -50,6 +50,29 @@
         </div>
       </div>
 
+      <div class="row" *ngIf="leadModel.outComeId == 3">
+        <div class="form-group col-sm-6">
+          Appoinment Date<strong class="text-danger"> *</strong>
+          <div class="input-group">
+            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="yyyy-mm-dd" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
+                   class="form-control" [(ngModel)]="appointmentDate" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+            </div>
+          </div>
+          <small class="text-danger" *ngIf="appoinDate.errors?.required && appoinDate.touched">* Appoinment date is required</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Relationship Manager<strong class="text-danger"> *</strong>
+          <select class="form-control custom-select" required #relationshipManagerId="ngModel" [(ngModel)]="appointmentDetailObj.relationshipManagerId" name="relationshipManagerId" [class.is-invalid]="relationshipManagerId.invalid && relationshipManagerId.touched">
+            <option selected disabled value="0">Choose...</option>
+            <option *ngFor="let manager of rManagerList" value="{{manager.userId}}"> {{manager.firstName}} {{manager.lastName}}</option>
+          </select>
+          <small class="text-danger" [class.d-none]="relationshipManagerId.valid || relationshipManagerId.untouched">* Manager is required</small>
+        </div>
+      </div>
+
       <div class="row">
         <div class="form-group col-sm-6">
           Address<strong class="text-danger"> *</strong>

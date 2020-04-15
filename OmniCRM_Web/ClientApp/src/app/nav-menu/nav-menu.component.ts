@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
+import { roles } from '../services/generic-enums';
 
 @Component({
   selector: 'app-nav-menu',
@@ -69,9 +70,4 @@ export class NavMenuComponent {
 
 }
 
-enum roles {
-  'Admin' = 1,
-  'Tele Caller' = 2,
-  'Relationship Manager' = 3,
-  'Super User' = 101
-}
+

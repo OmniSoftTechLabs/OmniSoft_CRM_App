@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
+using OmniCRM_Web.ViewModels;
 using static OmniCRM_Web.GenericClasses.Enums;
 
 namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller)]
 
     public class CallDetailsController : ControllerBase
     {
@@ -137,6 +138,36 @@ namespace OmniCRM_Web.Controllers
         private bool CallDetailExists(int id)
         {
             return _context.CallDetail.Any(e => e.CallId == id);
+        }
+
+        [HttpGet]
+        [Route("GetRelationshipManagerList")]
+        public async Task<ActionResult<IEnumerable<RMangerViewModel>>> GetRelationshipManagerList()
+        {
+            try
+            {
+
+                List<RMangerViewModel> listManager = new List<RMangerViewModel>();
+
+                //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
+                //foreach (var item in listUser)
+                //{
+                //    listManager.Add(new RMangerViewModel() { UserId = item.UserId, FirstName = item.FirstName, LastName = item.LastName });
+                //}
+
+
+                listManager = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync()
+                               select user).Select(p => new RMangerViewModel() { UserId = p.UserId, FirstName = p.FirstName, LastName = p.LastName }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRelationshipManagerList: " + "-get all relationship manager user");
+
+                return listManager;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetRelationshipManagerList: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
     }
 }

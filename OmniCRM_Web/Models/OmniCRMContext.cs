@@ -57,7 +57,10 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.CallId).HasColumnName("CallID");
 
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+                entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.RelationshipManagerId).HasColumnName("RelationshipManagerID");
 
