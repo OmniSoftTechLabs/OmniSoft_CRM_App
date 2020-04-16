@@ -55,7 +55,7 @@ export class UserListComponent implements OnInit {
       (users) => {
         //setTimeout(() => { this.service.TABLE = users }, 100);
         //timer(100).subscribe(x => { this.service.TABLE = users })
-
+        this.service.xType = new UserMaster();
         this.service.TABLE = users;
         this.userList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));

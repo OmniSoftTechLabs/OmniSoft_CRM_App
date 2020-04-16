@@ -6,7 +6,7 @@ import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { AppoinmentStatus } from '../services/generic-enums';
+import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 
 @Component({
   selector: 'app-lead-create',
@@ -16,6 +16,7 @@ import { AppoinmentStatus } from '../services/generic-enums';
 export class LeadCreateComponent implements OnInit {
 
   @ViewChild('leadAdd') form: NgForm;
+  callId: number;
   IsSucess: boolean = false;
   IsError: boolean = false;
   formTitle: string = "Create Lead";
@@ -38,6 +39,25 @@ export class LeadCreateComponent implements OnInit {
   ngOnInit(): void {
     this.fillOutCome();
     this.fillRManagerList();
+    this.callId = Number(localStorage.getItem("callId"));
+
+    if (this.callId > 0) {
+      this.is_edit = true;
+      this.formTitle = "Edit Lead";
+      this.leadRepo.getLeadById(this.callId).subscribe(
+        data => (this.leadModel = data,
+          this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
+          this.appointmentDate = {
+            day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
+            month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
+            year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
+          }
+          //this.appointmentDate.day = new Date( data.appointmentDetail[0].appointmentDateTime).getDate(),
+          //this.appointmentDate.month = new Date( data.appointmentDetail[0].appointmentDateTime).getMonth(),
+          //this.appointmentDate.year = new Date( data.appointmentDetail[0].appointmentDateTime).getFullYear()
+        ), error => console.error('Error!', error));
+      localStorage.removeItem("callId");
+    }
   }
 
   fillOutCome() {
@@ -60,21 +80,26 @@ export class LeadCreateComponent implements OnInit {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
 
-    if (this.is_edit == true) {
-      //this.leadRepo.editlead(this.userModel).subscribe({
-      //  next: data => (this.successMsg = "User Updated Successfully.", this.IsSucess = true, this.onSaveCompleted()),
-      //  error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
-      //});
-
-    }
-    else {
+    if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken) {
+      this.appointmentDetailObj.callId = this.leadModel.callId;
+      this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
       this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year, this.appointmentDate.month, this.appointmentDate.day);
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
-      this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
+      this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
+    }
+
+    if (this.is_edit == true) {
+
+      this.leadRepo.editlead(this.leadModel).subscribe({
+        next: data => (this.successMsg = "Lead Updated Successfully.", this.IsSucess = true, this.onSaveCompleted()),
+        error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
+      });
+
+    }
+    else {
 
       this.leadModel.createdBy = this.currentUser.userId;
-      this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
       this.leadRepo.createLead(this.leadModel).subscribe({
         next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
         error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())

@@ -22,6 +22,7 @@ import { DecimalPipe } from '@angular/common';
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { LeadCreateComponent } from './lead-create/lead-create.component';
+import { LeadListComponent } from './lead-list/lead-list.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { LeadCreateComponent } from './lead-create/lead-create.component';
     NgbdSortableHeader,
     ForgetPasswordComponent,
     ChangePasswordComponent,
-    LeadCreateComponent
+    LeadCreateComponent,
+    LeadListComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -56,7 +58,8 @@ import { LeadCreateComponent } from './lead-create/lead-create.component';
 
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
-      { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller'] }},
+      { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller'] } },
+      { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },

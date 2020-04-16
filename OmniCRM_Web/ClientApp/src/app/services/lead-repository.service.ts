@@ -7,6 +7,7 @@ import { RmanagerMaster } from '../models/rmanager-master';
   providedIn: 'root'
 })
 export class LeadRepositoryService {
+  
 
   http: HttpClient;
   baseUrl: string;
@@ -24,8 +25,20 @@ export class LeadRepositoryService {
     return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
   }
 
+  editlead(leadModel: LeadMaster) {
+    return this.http.put<LeadMaster>(this.baseUrl + 'api/CallDetails/' + leadModel.callId, leadModel).pipe();
+  }
+
+  getLeadById(id) {
+    return this.http.get<LeadMaster>(this.baseUrl + 'api/CallDetails/' + id).pipe();
+  }
+
   loadRManagerList() {
     return this.http.get<RmanagerMaster[]>(this.baseUrl + 'api/CallDetails/GetRelationshipManagerList').pipe();
-    
+
+  }
+
+  loadLeadListByCreatedBy(id) {
+    return this.http.get<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id).pipe();
   }
 }

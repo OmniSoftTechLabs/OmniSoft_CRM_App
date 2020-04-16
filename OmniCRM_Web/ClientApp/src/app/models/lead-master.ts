@@ -1,5 +1,4 @@
 export class LeadMaster {
-
   callId: number = 0;
   createdDate: Date;
   createdBy: string;
@@ -11,8 +10,10 @@ export class LeadMaster {
   lastChangedDate: Date;
   outComeId: number = 0;
   remark: string;
-  objOutCome: OutcomeMaster;
-
+  outCome: OutcomeMaster;
+  outComeText: string;
+  createdByName: string;
+  allocatedToName: string;
   appointmentDetail: AppointmentDetail[] = [];
 }
 

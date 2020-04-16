@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { debounceTime, delay, switchMap, tap } from 'rxjs/operators';
 import { UserMaster } from '../models/user-master';
+import { LeadMaster } from '../models/lead-master';
 
 
 interface SearchResult {
@@ -26,15 +27,15 @@ function sort(dataList: any[], column: SortColumn, direction: string): any[] {
     return dataList;
   } else {
     return [...dataList].sort((a, b) => {
-      const res = compare(`${a[column]}`, `${b[column]}`);
+      const res = compare(`${a[column].toString().toLocaleLowerCase()}`, `${b[column].toString().toLocaleLowerCase()}`);
       return direction === 'asc' ? res : -res;
     });
   }
 }
 
-function matches(objData: any, term: string, pipe: PipeTransform) {
+function matches(objData: any, xType: UserMaster | LeadMaster, term: string, pipe: PipeTransform) {
   term = term.toLowerCase()
-  if (objData as UserMaster) {
+  if (xType instanceof UserMaster) {
     var objUser = objData as UserMaster;
     return objUser.firstName.toLowerCase().includes(term)
       || objUser.lastName.toLowerCase().includes(term)
@@ -42,6 +43,14 @@ function matches(objData: any, term: string, pipe: PipeTransform) {
       || objUser.role.roleName.toLowerCase().includes(term)
     //|| objUser.status.toLowerCase().includes(term)
   }
+
+  if (xType instanceof LeadMaster) {
+    var objlead = objData as LeadMaster;
+    return objlead.firstName.toLowerCase().includes(term)
+      || objlead.lastName.toLowerCase().includes(term)
+      || objlead.mobileNumber.toLowerCase().includes(term)
+  }
+
   //|| pipe.transform(objData.lastName).includes(term)
   //|| pipe.transform(objData.email).includes(term);
 }
@@ -58,7 +67,7 @@ export class DataTableService {
   private _total$ = new BehaviorSubject<number>(0);
 
   public TABLE: any[];
-
+  public xType: UserMaster | LeadMaster;
   private _state: State = {
     page: 1,
     pageSize: 10,
@@ -74,9 +83,10 @@ export class DataTableService {
 
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      debounceTime(400),
+      delay(500),
+      //debounceTime(500),
       switchMap(() => this._search()),
-      delay(400),
+      delay(200),
       tap(() => this._loading$.next(false))
     ).subscribe(result => {
 
@@ -113,7 +123,7 @@ export class DataTableService {
     let dataList = sort(this.TABLE, sortColumn, sortDirection);
 
     // 2. filter
-    dataList = dataList.filter(objData => matches(objData, searchTerm, this.pipe));
+    dataList = dataList.filter(objData => matches(objData, this.xType, searchTerm, this.pipe));
     const total = dataList.length;
 
     // 3. paginate

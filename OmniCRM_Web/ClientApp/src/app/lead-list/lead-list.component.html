@@ -1,0 +1,70 @@
+<div class="card">
+  <div class="card-header"><h5>Lead Details</h5> </div>
+  <div class="card-body">
+
+    <form>
+
+      <div class="form-row form-group form-inline">
+        <div class="col-12">
+          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:50%" placeholder="Search by First Name, Last Name or Mobile Number" />
+          <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
+          <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
+          <span class="spinner-border spinner-border text-primary ml-3" style="margin-bottom:-8px" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
+          <button type="button" class="btn btn-primary float-right" style="width:120px;" [routerLink]="['/lead-create']"> <i class="fas fa-plus mr-2"></i> Add</button>
+          <button type="button" class="btn btn-success float-right mr-4" style="width:120px;"> <i class="fas fa-file-excel mr-2"></i> Export</button>
+        </div>
+      </div>
+
+
+      <table class='table table-striped' aria-labelledby="tableLabel">
+        <!--datatable [dtOptions]="dtOptions"-->
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col" sortable="firstName" (sort)="onSort($event)">First Name</th>
+            <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
+            <th scope="col" sortable="mobileNumber" (sort)="onSort($event)">Mobile No.</th>
+            <th scope="col" sortable="address" (sort)="onSort($event)">Address</th>
+            <th scope="col" sortable="createdDate" (sort)="onSort($event)">Created Date</th>
+            <th scope="col" sortable="outComeText" (sort)="onSort($event)">Status</th>
+            <th scope="col" sortable="createdByName" (sort)="onSort($event)">Created By</th>
+            <th scope="col" sortable="allocatedToName" (sort)="onSort($event)">Allocated To</th>
+            <th scope="col" sortable="remark" (sort)="onSort($event)">Remarks</th>
+            <th scope="col"></th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lead of leadList | async; index as i">
+            <th scope="row">{{ i + 1  }}</th>
+            <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
+            <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.mobileNumber" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.address" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.createdDate | date" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.outComeText" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.createdByName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.allocatedToName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.remark" [term]="service.searchTerm"></ngb-highlight></td>
+            <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
+            <td> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>
+        Total Leads : {{total$ | async}}
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+          <option [ngValue]="5">5 items per page</option>
+          <option [ngValue]="10">10 items per page</option>
+          <option [ngValue]="20">20 items per page</option>
+        </select>
+      </div>
+
+    </form>
+
+  </div>
+</div>

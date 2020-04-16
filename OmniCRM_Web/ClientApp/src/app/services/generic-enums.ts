@@ -17,3 +17,9 @@ export enum AppoinmentStatus {
   NotInterested = 6,
   Pending = 7,
 }
+
+export enum LeadOutCome {
+  NoResponse = 1,
+  NotInterested = 2,
+  AppoinmentTaken = 3
+}

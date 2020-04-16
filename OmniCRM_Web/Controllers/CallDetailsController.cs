@@ -27,24 +27,68 @@ namespace OmniCRM_Web.Controllers
         }
 
         // GET: api/CallDetails
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CallDetail>>> GetCallDetail()
+        [HttpGet("GetCallDetailByCreatedBy/{id}")]
+        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByCreatedBy(Guid id)
         {
-            return await _context.CallDetail.ToListAsync();
+            try
+            {
+                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ToListAsync();
+
+                List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
+
+                listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync()
+                                  select lead).Select(p => new CallDetailViewModel()
+                                  {
+                                      CallId = p.CallId,
+                                      CreatedDate = p.CreatedDate,
+                                      FirstName = p.FirstName,
+                                      LastName = p.LastName,
+                                      MobileNumber = p.MobileNumber,
+                                      FirmName = p.FirmName,
+                                      Address = p.Address,
+                                      LastChangedDate = p.LastChangedDate,
+                                      OutComeId = p.OutComeId,
+                                      Remark = p.Remark,
+                                      CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                                      OutComeText = p.OutCome.OutCome,
+                                      AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+
+                                  }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get all Lead by created user");
+
+                return listCallDetail;
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetCallDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // GET: api/CallDetails/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CallDetail>> GetCallDetail(int id)
         {
-            var callDetail = await _context.CallDetail.FindAsync(id);
-
-            if (callDetail == null)
+            try
             {
-                return NotFound();
+                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).FirstOrDefaultAsync(p => p.CallId == id);
+
+                if (callDetail == null)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-lead not found");
+                    return NotFound("Lead not found!");
+                }
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get single lead detail");
+                return callDetail;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetCallDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
-            return callDetail;
         }
 
         // PUT: api/CallDetails/5
@@ -55,23 +99,41 @@ namespace OmniCRM_Web.Controllers
         {
             if (id != callDetail.CallId)
             {
-                return BadRequest();
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead not matched");
+                return BadRequest("Lead not matched!");
             }
 
+            callDetail.LastChangedDate = DateTime.Now;
             _context.Entry(callDetail).State = EntityState.Modified;
+
+
+            var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
+            if (callDetail.OutComeId != lastTrans.OutComeId)
+                callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
+                {
+                    //CallId = callDetail.CallId,
+                    CreatedBy = callDetail.CreatedBy,
+                    OutComeId = callDetail.OutComeId,
+                    Remarks = callDetail.Remark,
+                });
+
+            _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
 
             try
             {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead updated successfully");
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!CallDetailExists(id))
                 {
-                    return NotFound();
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutCallDetail: -lead not exist");
+                    return NotFound("Lead not found!");
                 }
                 else
                 {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutCallDetail: -lead not exist");
                     throw;
                 }
             }
