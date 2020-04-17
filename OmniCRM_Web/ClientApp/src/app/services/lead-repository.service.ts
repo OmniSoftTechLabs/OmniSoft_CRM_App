@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { OutcomeMaster, LeadMaster } from '../models/lead-master';
+import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 
 @Injectable({
@@ -21,12 +21,21 @@ export class LeadRepositoryService {
     return this.http.get<OutcomeMaster[]>(this.baseUrl + 'api/CallOutcomeMasters').pipe();
   }
 
+  loadAppoinmentStatusList() {
+    return this.http.get<AppoinmentStatusMaster[]>(this.baseUrl + 'api/AppoinmentStatusMasters').pipe();
+  }
+
+
   createLead(leadModel: LeadMaster) {
     return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
   }
 
   editlead(leadModel: LeadMaster) {
     return this.http.put<LeadMaster>(this.baseUrl + 'api/CallDetails/' + leadModel.callId, leadModel).pipe();
+  }
+
+  createFollowup(leadModel: LeadMaster) {
+    return this.http.put<LeadMaster>(this.baseUrl + 'api/CallDetails/PutFollowupDetail/' + leadModel.callId, leadModel).pipe();
   }
 
   getLeadById(id) {
@@ -40,5 +49,9 @@ export class LeadRepositoryService {
 
   loadLeadListByCreatedBy(id) {
     return this.http.get<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id).pipe();
+  }
+
+  loadLeadListByRM(id) {
+    return this.http.get<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id).pipe();
   }
 }

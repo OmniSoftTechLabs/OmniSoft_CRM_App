@@ -8,6 +8,7 @@ import { LeadRepositoryService } from '../services/lead-repository.service';
 import { Router } from '@angular/router';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
+import { roles } from '../services/generic-enums';
 
 @Component({
   selector: 'app-lead-list',
@@ -20,18 +21,42 @@ export class LeadListComponent implements OnInit {
   leadList: Observable<LeadMaster[]>;
   total$: Observable<number>;
   filter = new FormControl('');
+  isTeleCaller: boolean;
+  isManager: boolean;
+
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
   }
 
   ngOnInit(): void {
-    this.fillLeadList()
+    if (this.currentUser.roleId == roles["Relationship Manager"]) {
+      this.fillLeadListByRM();
+      this.isManager = true;
+    }
+    else if (this.currentUser.roleId == roles["Tele Caller"]) {
+      this.fillLeadListCreatedBy();
+      this.isTeleCaller = true;
+    }
+
     this.service.searchTerm = '';
   }
 
-  fillLeadList() {
+  fillLeadListCreatedBy() {
     this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId).subscribe(
+      (leads) => {
+        this.service.xType = new LeadMaster();
+        this.service.TABLE = leads;
+        this.leadList = this.service.dataList$;
+        //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
+        this.total$ = this.service.total$;
+      },
+      error => console.error(error)
+    );
+  }
+
+  fillLeadListByRM() {
+    this.leadRepo.loadLeadListByRM(this.currentUser.userId).subscribe(
       (leads) => {
         this.service.xType = new LeadMaster();
         this.service.TABLE = leads;
@@ -56,8 +81,14 @@ export class LeadListComponent implements OnInit {
   }
 
   editLead(callId: string) {
-    localStorage.removeItem("callId");
-    localStorage.setItem("callId", callId.toString());
+    localStorage.removeItem("callIdEdit");
+    localStorage.setItem("callIdEdit", callId.toString());
     this.router.navigate(['/lead-create']);
+  }
+
+  followUp(callId: string) {
+    localStorage.removeItem("callIdFollowUp");
+    localStorage.setItem("callIdFollowUp", callId.toString());
+    this.router.navigate(['/lead-followup']);
   }
 }

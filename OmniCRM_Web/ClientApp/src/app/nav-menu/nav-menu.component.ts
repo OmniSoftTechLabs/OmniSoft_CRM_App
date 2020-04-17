@@ -45,6 +45,15 @@ export class NavMenuComponent {
     return false;
   }
 
+  get isRManager(): boolean {
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser != null) {
+      if (this.currentUser.roleId == roles["Relationship Manager"])
+        return true;
+    }
+    return false;
+  }
+
   get isSuperUser(): boolean {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {

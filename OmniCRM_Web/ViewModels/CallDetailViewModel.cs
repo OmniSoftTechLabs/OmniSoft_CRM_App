@@ -20,5 +20,6 @@ namespace OmniCRM_Web.ViewModels
         public string CreatedByName { get; set; }
         public string OutComeText { get; set; }
         public string AllocatedToName { get; set; }
+        public DateTime? AppointmentDateTime { get; set; }
     }
 }

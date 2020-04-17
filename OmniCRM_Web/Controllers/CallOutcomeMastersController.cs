@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 
 namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller)]
 
     public class CallOutcomeMastersController : ControllerBase
     {

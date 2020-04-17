@@ -1,4 +1,5 @@
 export class GenericEnums {
+
 }
 
 export enum roles {
@@ -23,3 +24,4 @@ export enum LeadOutCome {
   NotInterested = 2,
   AppoinmentTaken = 3
 }
+

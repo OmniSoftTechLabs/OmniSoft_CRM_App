@@ -39,7 +39,7 @@ export class LeadCreateComponent implements OnInit {
   ngOnInit(): void {
     this.fillOutCome();
     this.fillRManagerList();
-    this.callId = Number(localStorage.getItem("callId"));
+    this.callId = Number(localStorage.getItem("callIdEdit"));
 
     if (this.callId > 0) {
       this.is_edit = true;
@@ -52,11 +52,8 @@ export class LeadCreateComponent implements OnInit {
             month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
             year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
           }
-          //this.appointmentDate.day = new Date( data.appointmentDetail[0].appointmentDateTime).getDate(),
-          //this.appointmentDate.month = new Date( data.appointmentDetail[0].appointmentDateTime).getMonth(),
-          //this.appointmentDate.year = new Date( data.appointmentDetail[0].appointmentDateTime).getFullYear()
         ), error => console.error('Error!', error));
-      localStorage.removeItem("callId");
+      localStorage.removeItem("callIdEdit");
     }
   }
 

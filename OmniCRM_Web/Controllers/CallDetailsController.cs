@@ -15,7 +15,7 @@ namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller)]
+    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller + "," + StringConstant.RelationshipManager)]
 
     public class CallDetailsController : ControllerBase
     {
@@ -52,6 +52,7 @@ namespace OmniCRM_Web.Controllers
                                       CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
                                       OutComeText = p.OutCome.OutCome,
                                       AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+                                      AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
 
                                   }).ToList();
 
@@ -67,6 +68,48 @@ namespace OmniCRM_Web.Controllers
             }
         }
 
+        [HttpGet("GetCallDetailByRM/{id}")]
+        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByRM(Guid id)
+        {
+            try
+            {
+                List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
+
+                var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
+
+                //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
+
+                listCallDetail = (from lead in callDetail.Where(p => p.AppointmentDetail.Count > 0 && p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id)
+                                  select lead).Select(p => new CallDetailViewModel()
+                                  {
+                                      CallId = p.CallId,
+                                      CreatedDate = p.CreatedDate,
+                                      FirstName = p.FirstName,
+                                      LastName = p.LastName,
+                                      MobileNumber = p.MobileNumber,
+                                      FirmName = p.FirmName,
+                                      Address = p.Address,
+                                      LastChangedDate = p.LastChangedDate,
+                                      OutComeId = p.OutComeId,
+                                      Remark = p.Remark,
+                                      CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                                      OutComeText = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatus.Status : "",
+                                      AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+                                      AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
+                                  }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
+
+                return listCallDetail;
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetCallDetailByRM: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
         // GET: api/CallDetails/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CallDetail>> GetCallDetail(int id)
@@ -74,6 +117,7 @@ namespace OmniCRM_Web.Controllers
             try
             {
                 var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).FirstOrDefaultAsync(p => p.CallId == id);
+                callDetail.AppointmentDetail = callDetail.AppointmentDetail.TakeLast(1).ToList();
 
                 if (callDetail == null)
                 {
@@ -140,6 +184,56 @@ namespace OmniCRM_Web.Controllers
 
             return NoContent();
         }
+
+
+        [HttpPut("PutFollowupDetail/{id}")]
+        public async Task<IActionResult> PutFollowupDetail(int id, CallDetail callDetail)
+        {
+            if (id != callDetail.CallId)
+            {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-lead not matched");
+                return BadRequest("Lead not matched!");
+            }
+
+            callDetail.LastChangedDate = DateTime.Now;
+            _context.Entry(callDetail).State = EntityState.Modified;
+
+
+            //var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
+            //if (callDetail.OutComeId != lastTrans.OutComeId)
+            //    callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
+            //    {
+            //        //CallId = callDetail.CallId,
+            //        CreatedBy = callDetail.CreatedBy,
+            //        OutComeId = callDetail.OutComeId,
+            //        Remarks = callDetail.Remark,
+            //    });
+
+            _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
+            _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
+
+            try
+            {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-Followup created successfully");
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CallDetailExists(id))
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: -lead not exist");
+                    return NotFound("Lead not found!");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: -lead not exist");
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
 
         // POST: api/CallDetails
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
