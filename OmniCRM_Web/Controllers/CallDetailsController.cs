@@ -117,13 +117,14 @@ namespace OmniCRM_Web.Controllers
             try
             {
                 var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).FirstOrDefaultAsync(p => p.CallId == id);
-                callDetail.AppointmentDetail = callDetail.AppointmentDetail.TakeLast(1).ToList();
 
                 if (callDetail == null)
                 {
                     GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-lead not found");
                     return NotFound("Lead not found!");
                 }
+
+                callDetail.AppointmentDetail = callDetail.AppointmentDetail.TakeLast(1).ToList();
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get single lead detail");
                 return callDetail;
             }
@@ -141,97 +142,82 @@ namespace OmniCRM_Web.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCallDetail(int id, CallDetail callDetail)
         {
-            if (id != callDetail.CallId)
-            {
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead not matched");
-                return BadRequest("Lead not matched!");
-            }
-
-            callDetail.LastChangedDate = DateTime.Now;
-            _context.Entry(callDetail).State = EntityState.Modified;
-
-
-            var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
-            if (callDetail.OutComeId != lastTrans.OutComeId)
-                callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
-                {
-                    //CallId = callDetail.CallId,
-                    CreatedBy = callDetail.CreatedBy,
-                    OutComeId = callDetail.OutComeId,
-                    Remarks = callDetail.Remark,
-                });
-
-            _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
-
             try
             {
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead updated successfully");
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
+                if (id != callDetail.CallId)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead not matched");
+                    return BadRequest("Lead not matched!");
+                }
+
                 if (!CallDetailExists(id))
                 {
                     GenericMethods.Log(LogType.ErrorLog.ToString(), "PutCallDetail: -lead not exist");
                     return NotFound("Lead not found!");
                 }
-                else
-                {
-                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutCallDetail: -lead not exist");
-                    throw;
-                }
+
+                callDetail.LastChangedDate = DateTime.Now;
+                _context.Entry(callDetail).State = EntityState.Modified;
+
+
+                var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
+                if (callDetail.OutComeId != lastTrans.OutComeId)
+                    callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
+                    {
+                        //CallId = callDetail.CallId,
+                        CreatedBy = callDetail.CreatedBy,
+                        OutComeId = callDetail.OutComeId,
+                        Remarks = callDetail.Remark,
+                    });
+
+                _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
+
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead updated successfully");
+                await _context.SaveChangesAsync();
+                return Ok("Lead updated successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
-            return NoContent();
         }
 
 
         [HttpPut("PutFollowupDetail/{id}")]
         public async Task<IActionResult> PutFollowupDetail(int id, CallDetail callDetail)
         {
-            if (id != callDetail.CallId)
-            {
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-lead not matched");
-                return BadRequest("Lead not matched!");
-            }
-
-            callDetail.LastChangedDate = DateTime.Now;
-            _context.Entry(callDetail).State = EntityState.Modified;
-
-
-            //var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
-            //if (callDetail.OutComeId != lastTrans.OutComeId)
-            //    callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
-            //    {
-            //        //CallId = callDetail.CallId,
-            //        CreatedBy = callDetail.CreatedBy,
-            //        OutComeId = callDetail.OutComeId,
-            //        Remarks = callDetail.Remark,
-            //    });
-
-            _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
-            _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
-
             try
             {
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-Followup created successfully");
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
+                if (id != callDetail.CallId)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-lead not matched");
+                    return BadRequest("Lead not matched!");
+                }
                 if (!CallDetailExists(id))
                 {
                     GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: -lead not exist");
                     return NotFound("Lead not found!");
                 }
-                else
-                {
-                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: -lead not exist");
-                    throw;
-                }
-            }
+                callDetail.LastChangedDate = DateTime.Now;
+                _context.Entry(callDetail).State = EntityState.Modified;
+                _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
+                _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
 
-            return NoContent();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-Followup created successfully");
+                await _context.SaveChangesAsync();
+                return Ok("Followup created successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
 
