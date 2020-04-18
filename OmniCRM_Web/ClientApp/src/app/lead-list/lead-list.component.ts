@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { roles } from '../services/generic-enums';
+import { ExcelExportService } from '../services/excel-export.service';
 
 @Component({
   selector: 'app-lead-list',
@@ -25,7 +26,7 @@ export class LeadListComponent implements OnInit {
   isManager: boolean;
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
-  constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService) {
+  constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService, private excelService: ExcelExportService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
   }
 
@@ -90,5 +91,11 @@ export class LeadListComponent implements OnInit {
     localStorage.removeItem("callIdFollowUp");
     localStorage.setItem("callIdFollowUp", callId.toString());
     this.router.navigate(['/lead-followup']);
+  }
+
+  exportAsXLSX(): void {
+    let leadArray: LeadMaster[];
+    this.leadList.subscribe(data => leadArray = data);
+    this.excelService.exportAsExcelFile(leadArray, 'LeadDetail');
   }
 }
