@@ -4,15 +4,62 @@
 
     <form>
 
-      <div class="form-row form-group form-inline">
-        <div class="col-12">
-          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:50%" placeholder="Search by First Name, Last Name or Mobile Number" />
-          <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
-          <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
+      <div class="form-row">
+
+        <div class="col-sm-8 form-group form-inline">
+          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:80%" placeholder="Search by First Name, Last Name or Mobile Number" />
+        </div>
+        <div class="col-sm-4 form-group">
           <span class="spinner-border spinner-border text-primary ml-3" style="margin-bottom:-8px" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
+
           <button type="button" class="btn btn-primary float-right" style="width:120px;" [routerLink]="['/lead-create']" *ngIf="isTeleCaller"> <i class="fas fa-plus mr-2"></i> Add</button>
           <button type="button" class="btn btn-success float-right mr-4" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
         </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-2 form-group">
+          Status: <select class="form-control custom-select" [(ngModel)]="outComeId" name="outComeId">
+            <option value="0">All</option>
+            <option *ngFor="let objOutCome of outcomeList" [selected]="objOutCome.outComeId === 1" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
+          </select>
+        </div>
+        <div class="col-sm-2 form-group">
+          Allocated To: <select class="form-control custom-select" [(ngModel)]="relationshipManagerId" name="relationshipManagerId">
+            <option value="0">All</option>
+            <option *ngFor="let manager of rManagerList" value="{{manager.userId}}"> {{manager.firstName}} {{manager.lastName}}</option>
+          </select>
+        </div>
+        <div class="col-sm-7 form-inline form-group" style="margin-bottom:-5px;">
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary">{{filterDateOption}}</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="btn dropdown-item" (click)="onChangeFilterDateOption(1)">Created Date</a>
+              <a class="btn dropdown-item" (click)="onChangeFilterDateOption(2)">Appoinment Date</a>
+            </div>
+          </div>
+          <div class="input-group">
+            <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="fromDate" name="fDate" placeholder="From Date" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
+            </div>
+          </div>
+          <div class="input-group">
+            <input ngbDatepicker class="form-control" #tDate="ngbDatepicker" [(ngModel)]="toDate" name="tDate" placeholder="To Date" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="tDate.toggle()" type="button"></button>
+            </div>
+          </div>
+          <div class="col-sm-1">
+            <button type="button" class="btn btn-outline-primary" placement="right" ngbTooltip="Filter" (click)="onFilterSearch()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
+        <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
+
+
       </div>
 
 

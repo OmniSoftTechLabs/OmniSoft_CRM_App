@@ -2,12 +2,13 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
+import { FilterOptions } from '../models/filter-options';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeadRepositoryService {
-  
+
 
   http: HttpClient;
   baseUrl: string;
@@ -47,8 +48,8 @@ export class LeadRepositoryService {
 
   }
 
-  loadLeadListByCreatedBy(id) {
-    return this.http.get<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id).pipe();
+  loadLeadListByCreatedBy(id, filterOption: FilterOptions) {
+    return this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id, filterOption).pipe();
   }
 
   loadLeadListByRM(id) {

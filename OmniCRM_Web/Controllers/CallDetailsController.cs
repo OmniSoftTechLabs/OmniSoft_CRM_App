@@ -27,16 +27,24 @@ namespace OmniCRM_Web.Controllers
         }
 
         // GET: api/CallDetails
-        [HttpGet("GetCallDetailByCreatedBy/{id}")]
-        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByCreatedBy(Guid id)
+        [HttpPost("GetCallDetailByCreatedBy/{id}")]
+        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByCreatedBy(Guid id, [FromBody] FilterOptions filterOption)
         {
             try
             {
+                filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
+                filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
+
                 var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ToListAsync();
 
                 List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
 
-                listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync()
+                listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id
+                                  && p.OutComeId == filterOption.Status
+                                  //&& p.AppointmentDetail.Any(r => r.RelationshipManagerId.ToString() == (filterOption.AllocatedTo != "0" ? filterOption.AllocatedTo : r.RelationshipManagerId.ToString()))
+                                  && filterOption.DateFilterBy == 1 ? (p.CreatedDate >= filterOption.FromDate && p.CreatedDate <= filterOption.Todate) :
+                                                            (p.AppointmentDetail.Any(r => r.AppointmentDateTime >= filterOption.FromDate && r.AppointmentDateTime <= filterOption.Todate))
+                                  ).ToListAsync()
                                   select lead).Select(p => new CallDetailViewModel()
                                   {
                                       CallId = p.CallId,
