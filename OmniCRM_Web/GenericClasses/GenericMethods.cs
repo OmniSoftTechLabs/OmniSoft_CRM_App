@@ -12,6 +12,7 @@ namespace OmniCRM_Web.GenericClasses
 {
     public class GenericMethods
     {
+        public static TimeZoneInfo Indian_Zone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         public static void Log(string logType, string logMessage)
         {
             try

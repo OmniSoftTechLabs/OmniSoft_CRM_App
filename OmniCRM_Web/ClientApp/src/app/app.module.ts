@@ -25,6 +25,7 @@ import { LeadCreateComponent } from './lead-create/lead-create.component';
 import { LeadListComponent } from './lead-list/lead-list.component';
 import { roles } from './services/generic-enums';
 import { LeadFollowUpComponent } from './lead-follow-up/lead-follow-up.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,7 @@ import { LeadFollowUpComponent } from './lead-follow-up/lead-follow-up.component
     FontAwesomeModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, DecimalPipe],
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, DecimalPipe, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

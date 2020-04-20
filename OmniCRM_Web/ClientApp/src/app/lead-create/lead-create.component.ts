@@ -45,14 +45,17 @@ export class LeadCreateComponent implements OnInit {
       this.is_edit = true;
       this.formTitle = "Edit Lead";
       this.leadRepo.getLeadById(this.callId).subscribe(
-        data => (this.leadModel = data,
-          this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
-          this.appointmentDate = {
-            day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
-            month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
-            year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
+        data => {
+          this.leadModel = data;
+          if (data.appointmentDetail.length > 0) {
+            this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
+              this.appointmentDate = {
+                day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
+                month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
+                year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
+              }
           }
-        ), error => console.error('Error!', error));
+        }, error => console.error('Error!', error));
       localStorage.removeItem("callIdEdit");
     }
   }
@@ -77,10 +80,10 @@ export class LeadCreateComponent implements OnInit {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
 
-    if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken) {
+    if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && this.leadModel.appointmentDetail.length == 0) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
       this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
-      this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year, this.appointmentDate.month, this.appointmentDate.day);
+      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day);
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
@@ -89,7 +92,7 @@ export class LeadCreateComponent implements OnInit {
     if (this.is_edit == true) {
 
       this.leadRepo.editlead(this.leadModel).subscribe({
-        next: data => (this.successMsg = "Lead Updated Successfully.", this.IsSucess = true, this.onSaveCompleted()),
+        next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
         error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
       });
 

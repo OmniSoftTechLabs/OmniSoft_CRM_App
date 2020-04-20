@@ -52,3 +52,24 @@ export class FollowupHistory {
   appoinStatusId: number;
   remarks: string;
 }
+
+//export class LeadMaster {
+//  //callId: number = 0;
+//  createdDate: Date;
+//  //createdBy: string;
+//  firstName: string;
+//  lastName: string;
+//  mobileNumber: string;
+//  //firmName: string;
+//  address: string;
+//  //lastChangedDate: Date;
+//  //outComeId: number = 0;
+//  remark: string;
+//  //outCome: OutcomeMaster;
+//  outComeText: string;
+//  createdByName: string;
+//  allocatedToName: string;
+//  appointmentDateTime: Date;
+//  //appointmentDetail: AppointmentDetail[] = [];
+//  //followupHistory: FollowupHistory[] = [];
+//}

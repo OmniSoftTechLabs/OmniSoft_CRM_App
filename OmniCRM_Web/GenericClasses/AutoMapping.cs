@@ -12,7 +12,8 @@ namespace OmniCRM_Web.GenericClasses
     {
         public AutoMapping()
         {
-            CreateMap<UserMaster, UserMasterViewModel>(); 
+            CreateMap<UserMaster, UserMasterViewModel>();
+            CreateMap<CallDetail, CallDetailViewModel>();
         }
     }
 }

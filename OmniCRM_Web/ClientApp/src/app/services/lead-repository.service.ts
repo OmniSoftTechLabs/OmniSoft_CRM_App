@@ -31,11 +31,11 @@ export class LeadRepositoryService {
   }
 
   editlead(leadModel: LeadMaster) {
-    return this.http.put<LeadMaster>(this.baseUrl + 'api/CallDetails/' + leadModel.callId, leadModel).pipe();
+    return this.http.put(this.baseUrl + 'api/CallDetails/' + leadModel.callId, leadModel, { responseType: 'text' }).pipe();
   }
 
   createFollowup(leadModel: LeadMaster) {
-    return this.http.put<LeadMaster>(this.baseUrl + 'api/CallDetails/PutFollowupDetail/' + leadModel.callId, leadModel).pipe();
+    return this.http.put(this.baseUrl + 'api/CallDetails/PutFollowupDetail/' + leadModel.callId, leadModel, { responseType: 'text' }).pipe();
   }
 
   getLeadById(id) {

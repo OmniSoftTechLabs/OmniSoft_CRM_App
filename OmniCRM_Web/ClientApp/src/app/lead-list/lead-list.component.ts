@@ -10,6 +10,7 @@ import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { roles } from '../services/generic-enums';
 import { ExcelExportService } from '../services/excel-export.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-lead-list',
@@ -26,7 +27,8 @@ export class LeadListComponent implements OnInit {
   isManager: boolean;
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
-  constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService, private excelService: ExcelExportService) {
+  constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
+    private excelService: ExcelExportService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
   }
 
@@ -96,6 +98,24 @@ export class LeadListComponent implements OnInit {
   exportAsXLSX(): void {
     let leadArray: LeadMaster[];
     this.leadList.subscribe(data => leadArray = data);
-    this.excelService.exportAsExcelFile(leadArray, 'LeadDetail');
+    //leadArray = leadArray.filter(function (props) {
+    //  delete props.callId;
+    //  delete props.followupHistory;
+    //  return true;
+    //});
+    let ExportleadArray: any[];
+    if (this.isTeleCaller == true) {
+      ExportleadArray = leadArray.map(obj => ({
+        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
+        'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
+      }));
+    }
+    else if (this.isManager == true) {
+      ExportleadArray = leadArray.map(obj => ({
+        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
+        'Status': obj.outComeText, 'Created By': obj.createdByName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
+      }));
+    }
+    this.excelService.exportAsExcelFile(ExportleadArray, 'LeadDetail');
   }
 }

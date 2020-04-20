@@ -156,9 +156,11 @@ namespace OmniCRM_Web.Controllers
                     return NotFound("Lead not found!");
                 }
 
-                callDetail.LastChangedDate = DateTime.Now;
-                _context.Entry(callDetail).State = EntityState.Modified;
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
+                callDetail.LastChangedDate = indianTime;
+                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(p.AppointmentDateTime, GenericMethods.Indian_Zone));
+                _context.Entry(callDetail).State = EntityState.Modified;
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
                 if (callDetail.OutComeId != lastTrans.OutComeId)
@@ -171,7 +173,6 @@ namespace OmniCRM_Web.Controllers
                     });
 
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
-
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead updated successfully");
                 await _context.SaveChangesAsync();
@@ -202,11 +203,14 @@ namespace OmniCRM_Web.Controllers
                     GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: -lead not exist");
                     return NotFound("Lead not found!");
                 }
-                callDetail.LastChangedDate = DateTime.Now;
+
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+
+                callDetail.LastChangedDate = indianTime;
+                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(p.AppointmentDateTime, GenericMethods.Indian_Zone));
                 _context.Entry(callDetail).State = EntityState.Modified;
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
                 _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
-
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-Followup created successfully");
                 await _context.SaveChangesAsync();

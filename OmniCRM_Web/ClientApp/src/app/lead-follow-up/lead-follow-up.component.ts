@@ -5,6 +5,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
 import { GenericEnums } from '../services/generic-enums';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -23,13 +24,13 @@ export class LeadFollowUpComponent implements OnInit {
   callId: number;
   IsSucess: boolean = false;
   IsError: boolean = false;
-  formTitle: string = "Create Lead";
+  formTitle: string = "Follow up Lead";
   saveBtnTxt: string = "Save";
   is_progress: boolean = false;
   errorMsg: string;
   successMsg: string;
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
   }
 
@@ -67,8 +68,13 @@ export class LeadFollowUpComponent implements OnInit {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
 
-    if (this.appointmentDate != null)
-      this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year, this.appointmentDate.month, this.appointmentDate.day);
+    if (this.appointmentDate != null) {
+      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, 10, 0, 0, 0);
+      this.datePipe.transform(this.appointmentDetailObj.appointmentDateTime, "dd-MM-yyyy HH:mm a");
+      //this.appointmentDetailObj.appointmentDateTime.setDate(this.appointmentDate.day);
+      //this.appointmentDetailObj.appointmentDateTime.setMonth(this.appointmentDate.month);
+      //this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year);
+    }
     this.appointmentDetailObj.remarks = this.leadModel.remark;
 
     this.folloupHistoryObj.appoinStatusId = this.appointmentDetailObj.appoinStatusId;
@@ -80,7 +86,7 @@ export class LeadFollowUpComponent implements OnInit {
     this.leadModel.followupHistory.push(this.folloupHistoryObj);
 
     this.leadRepo.createFollowup(this.leadModel).subscribe({
-      next: data => (this.successMsg = "Follow up Created Successfully.", this.IsSucess = true, this.onSaveCompleted()),
+      next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
       error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
     });
   }
