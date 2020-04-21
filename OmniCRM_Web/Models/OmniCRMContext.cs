@@ -28,6 +28,7 @@ namespace OmniCRM_Web.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=OmniCRM;Trusted_Connection=True;");
             }
         }
@@ -58,9 +59,8 @@ namespace OmniCRM_Web.Models
                 entity.Property(e => e.CallId).HasColumnName("CallID");
 
                 entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
-
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.RelationshipManagerId).HasColumnName("RelationshipManagerID");
 

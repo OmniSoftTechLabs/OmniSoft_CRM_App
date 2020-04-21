@@ -9,7 +9,7 @@ namespace OmniCRM_Web.Models
         public int CallId { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid CreatedBy { get; set; }
-        public DateTime AppointmentDateTime { get; set; }
+        public DateTime? AppointmentDateTime { get; set; }
         public Guid RelationshipManagerId { get; set; }
         public int AppoinStatusId { get; set; }
         public string Remarks { get; set; }

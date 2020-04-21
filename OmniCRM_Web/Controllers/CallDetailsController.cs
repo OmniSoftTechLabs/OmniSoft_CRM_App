@@ -194,7 +194,7 @@ namespace OmniCRM_Web.Controllers
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
-                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(p.AppointmentDateTime, GenericMethods.Indian_Zone));
+                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
                 _context.Entry(callDetail).State = EntityState.Modified;
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
@@ -242,7 +242,7 @@ namespace OmniCRM_Web.Controllers
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
-                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(p.AppointmentDateTime, GenericMethods.Indian_Zone));
+                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
                 _context.Entry(callDetail).State = EntityState.Modified;
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
                 _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
