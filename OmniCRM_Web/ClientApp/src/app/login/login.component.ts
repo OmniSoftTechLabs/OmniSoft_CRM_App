@@ -17,10 +17,10 @@ export class LoginComponent implements OnInit {
   isProgress: boolean = false;
 
   public credentials = {
-    //username: "admin@ostechlabs.com",
-    //password: "ostech#852"
-    username: "r.crossworld@gmail.com",
-    password: "Rohan@123"
+    username: "admin@ostechlabs.com",
+    password: "ostech#852"
+    //username: "r.crossworld@gmail.com",
+    //password: "Rohan@123"
   };
 
   constructor(private auth: AuthenticationService, private router: Router, private route: ActivatedRoute, ) {

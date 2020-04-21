@@ -62,9 +62,9 @@ import { DatePipe } from '@angular/common';
 
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
-      { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller'] } },
-      { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Tele Caller', 'Relationship Manager'] } },
-      { path: 'lead-followup', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Relationship Manager'] } },
+      { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
+      { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller', 'Relationship Manager'] } },
+      { path: 'lead-followup', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
