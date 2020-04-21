@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeadMaster, OutcomeMaster } from '../models/lead-master';
+import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster } from '../models/lead-master';
 import { FormControl } from '@angular/forms';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
 import { DataTableService } from '../services/data-table.service';
@@ -24,20 +24,22 @@ export class LeadListComponent implements OnInit {
 
   currentUser: UserMaster;
   outcomeList: OutcomeMaster[] = [];
-  rManagerList: RmanagerMaster[] = [];
+  appoinStatusList: AppoinmentStatusMaster[] = [];
+  filterUserList: RmanagerMaster[] = [];
   leadList: Observable<LeadMaster[]>;
   total$: Observable<number>;
   filter = new FormControl('');
   isTeleCaller: boolean;
   isManager: boolean;
   outComeId: number = 1;
-  relationshipManagerId: string = "0";
+  appoinStatusId: number = 7
+  filteruserId: string = "0";
   filterDateOption: string = "Created Date";
-  filterDateById: number = 1;
+  filterDateById: number;
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
   filterOption: FilterOptions = new FilterOptions();
-
+  allocateCreateByTxt: string = "";
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
@@ -49,26 +51,30 @@ export class LeadListComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.currentUser.roleId == roles["Relationship Manager"]) {
+      this.allocateCreateByTxt = "Created By";
+      this.onChangeFilterDateOption(2);
       this.fillLeadListByRM();
+      this.fillAppoinStatus();
+      this.fillTeleCallerList();
       this.isManager = true;
     }
     else if (this.currentUser.roleId == roles["Tele Caller"]) {
+      this.allocateCreateByTxt = "Allocated To";
+      this.onChangeFilterDateOption(1);
       this.fillLeadListCreatedBy();
       this.fillOutCome();
       this.fillRManagerList();
       this.isTeleCaller = true;
     }
-
-    this.service.searchTerm = '';
   }
 
-  fillLeadListCreatedBy() {
+  async fillLeadListCreatedBy() {
     this.filterOption.status = this.outComeId;
-    this.filterOption.allocatedTo = this.relationshipManagerId;
+    this.filterOption.allocatedTo = this.filteruserId;
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
-    this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).subscribe(
+    await this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
         this.service.TABLE = leads;
@@ -79,11 +85,15 @@ export class LeadListComponent implements OnInit {
       error => console.error(error)
     );
     this.service.searchTerm = '';
-
   }
 
   fillLeadListByRM() {
-    this.leadRepo.loadLeadListByRM(this.currentUser.userId).subscribe(
+    this.filterOption.status = this.appoinStatusId;
+    this.filterOption.createdBy = this.filteruserId;
+    this.filterOption.dateFilterBy = this.filterDateById;
+    this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+    this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).subscribe(
       (leads) => {
         this.service.xType = new LeadMaster();
         this.service.TABLE = leads;
@@ -93,6 +103,7 @@ export class LeadListComponent implements OnInit {
       },
       error => console.error(error)
     );
+    this.service.searchTerm = '';
   }
 
   fillOutCome() {
@@ -103,10 +114,26 @@ export class LeadListComponent implements OnInit {
     );
   }
 
+  fillAppoinStatus() {
+    this.leadRepo.loadAppoinmentStatusList().subscribe(
+      aStatus => {
+        this.appoinStatusList = aStatus;
+      }, error => console.error(error)
+    );
+  }
+
   fillRManagerList() {
     this.leadRepo.loadRManagerList().subscribe(
       rManager => {
-        this.rManagerList = rManager;
+        this.filterUserList = rManager;
+      }, error => console.error(error)
+    );
+  }
+
+  fillTeleCallerList() {
+    this.leadRepo.loadTeleCallerList().subscribe(
+      rManager => {
+        this.filterUserList = rManager;
       }, error => console.error(error)
     );
   }
@@ -152,6 +179,7 @@ export class LeadListComponent implements OnInit {
     else if (this.isTeleCaller)
       this.fillLeadListCreatedBy();
   }
+
   exportAsXLSX(): void {
     let leadArray: LeadMaster[];
     this.leadList.subscribe(data => leadArray = data);

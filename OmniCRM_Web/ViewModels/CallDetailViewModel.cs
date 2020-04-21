@@ -21,5 +21,8 @@ namespace OmniCRM_Web.ViewModels
         public string OutComeText { get; set; }
         public string AllocatedToName { get; set; }
         public DateTime? AppointmentDateTime { get; set; }
+        public int? AppoinStatusId { get; set; }
+        public Guid CreatedById { get; set; }
+        public Guid AllocatedToId { get; set; }
     }
 }

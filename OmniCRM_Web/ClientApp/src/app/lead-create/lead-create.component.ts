@@ -83,7 +83,7 @@ export class LeadCreateComponent implements OnInit {
     if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && this.leadModel.appointmentDetail.length == 0) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
       this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
-      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day);
+      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, 10, 0, 0, 0);
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -48,11 +49,16 @@ export class LeadRepositoryService {
 
   }
 
-  loadLeadListByCreatedBy(id, filterOption: FilterOptions) {
-    return this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id, filterOption).pipe();
+  loadTeleCallerList() {
+    return this.http.get<RmanagerMaster[]>(this.baseUrl + 'api/CallDetails/GetTeleCallerList').pipe();
   }
 
-  loadLeadListByRM(id) {
-    return this.http.get<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id).pipe();
+  async loadLeadListByCreatedBy(id, filterOption: FilterOptions) {
+    let response = await this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByCreatedBy/' + id, filterOption).toPromise();
+    return response;
+  }
+
+  loadLeadListByRM(id, filterOption: FilterOptions) {
+    return this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id, filterOption).pipe();
   }
 }

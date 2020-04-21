@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,13 @@ namespace OmniCRM_Web.Controllers
     public class CallDetailsController : ControllerBase
     {
         private readonly OmniCRMContext _context;
+        private readonly IMapper _mapper;
 
-        public CallDetailsController(OmniCRMContext context)
+        public CallDetailsController(OmniCRMContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+
         }
 
         // GET: api/CallDetails
@@ -35,38 +39,45 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
 
-                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ToListAsync();
+                //var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync();
+                //var listLead = _mapper.Map<List<CallDetailViewModel>>(callDetail);
+                //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
 
-                List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
+                var listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync()
+                                      select lead).Select(p => new CallDetailViewModel()
+                                      {
+                                          CallId = p.CallId,
+                                          CreatedDate = p.CreatedDate,
+                                          FirstName = p.FirstName,
+                                          LastName = p.LastName,
+                                          MobileNumber = p.MobileNumber,
+                                          FirmName = p.FirmName,
+                                          Address = p.Address,
+                                          LastChangedDate = p.LastChangedDate,
+                                          OutComeId = p.OutComeId,
+                                          Remark = p.Remark,
+                                          CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                                          OutComeText = p.OutCome.OutCome,
+                                          AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
+                                          AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+                                          AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
 
-                listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id
-                                  && p.OutComeId == filterOption.Status
-                                  //&& p.AppointmentDetail.Any(r => r.RelationshipManagerId.ToString() == (filterOption.AllocatedTo != "0" ? filterOption.AllocatedTo : r.RelationshipManagerId.ToString()))
-                                  && filterOption.DateFilterBy == 1 ? (p.CreatedDate >= filterOption.FromDate && p.CreatedDate <= filterOption.Todate) :
-                                                            (p.AppointmentDetail.Any(r => r.AppointmentDateTime >= filterOption.FromDate && r.AppointmentDateTime <= filterOption.Todate))
-                                  ).ToListAsync()
-                                  select lead).Select(p => new CallDetailViewModel()
-                                  {
-                                      CallId = p.CallId,
-                                      CreatedDate = p.CreatedDate,
-                                      FirstName = p.FirstName,
-                                      LastName = p.LastName,
-                                      MobileNumber = p.MobileNumber,
-                                      FirmName = p.FirmName,
-                                      Address = p.Address,
-                                      LastChangedDate = p.LastChangedDate,
-                                      OutComeId = p.OutComeId,
-                                      Remark = p.Remark,
-                                      CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
-                                      OutComeText = p.OutCome.OutCome,
-                                      AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
-                                      AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
+                                      }).ToList();
 
-                                  }).ToList();
+
+                if (filterOption.DateFilterBy == 1)
+                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
+                else if (filterOption.DateFilterBy == 2)
+                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+
+                if (filterOption.AllocatedTo != "0")
+                    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+
+                if (filterOption.Status > 0)
+                    listCallDetail = listCallDetail.Where(p => p.OutComeId == filterOption.Status).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get all Lead by created user");
-
-                return listCallDetail;
+                return await Task.FromResult(listCallDetail);
 
             }
             catch (Exception ex)
@@ -76,11 +87,14 @@ namespace OmniCRM_Web.Controllers
             }
         }
 
-        [HttpGet("GetCallDetailByRM/{id}")]
-        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByRM(Guid id)
+        [HttpPost("GetCallDetailByRM/{id}")]
+        public async Task<ActionResult<IEnumerable<CallDetailViewModel>>> GetCallDetailByRM(Guid id, [FromBody] FilterOptions filterOption)
         {
             try
             {
+                filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
+                filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
+
                 List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
 
                 var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
@@ -101,14 +115,27 @@ namespace OmniCRM_Web.Controllers
                                       OutComeId = p.OutComeId,
                                       Remark = p.Remark,
                                       CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                                      CreatedById = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).UserId,
+                                      AppoinStatusId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatusId : (int?)null,
                                       OutComeText = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatus.Status : "",
                                       AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
                                       AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
                                   }).ToList();
 
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
 
-                return listCallDetail;
+                if (filterOption.DateFilterBy == 1)
+                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
+                else if (filterOption.DateFilterBy == 2)
+                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+
+                if (filterOption.CreatedBy != "0")
+                    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
+
+                if (filterOption.Status > 0)
+                    listCallDetail = listCallDetail.Where(p => p.AppoinStatusId == filterOption.Status).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
+                return await Task.FromResult(listCallDetail);
 
             }
             catch (Exception ex)
@@ -320,6 +347,36 @@ namespace OmniCRM_Web.Controllers
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "GetRelationshipManagerList: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetTeleCallerList")]
+        public async Task<ActionResult<IEnumerable<RMangerViewModel>>> GetTeleCallerList()
+        {
+            try
+            {
+
+                List<RMangerViewModel> listTeleCaller = new List<RMangerViewModel>();
+
+                //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
+                //foreach (var item in listUser)
+                //{
+                //    listManager.Add(new RMangerViewModel() { UserId = item.UserId, FirstName = item.FirstName, LastName = item.LastName });
+                //}
+
+
+                listTeleCaller = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.TeleCaller).ToListAsync()
+                                  select user).Select(p => new RMangerViewModel() { UserId = p.UserId, FirstName = p.FirstName, LastName = p.LastName }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerList: " + "-get all tele caller user");
+
+                return listTeleCaller;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTeleCallerList: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }

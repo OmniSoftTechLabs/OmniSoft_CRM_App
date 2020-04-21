@@ -6,30 +6,35 @@
 
       <div class="form-row">
 
-        <div class="col-sm-8 form-group form-inline">
+        <div class="col-sm form-group form-inline">
           Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:80%" placeholder="Search by First Name, Last Name or Mobile Number" />
+          <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
         </div>
-        <div class="col-sm-4 form-group">
-          <span class="spinner-border spinner-border text-primary ml-3" style="margin-bottom:-8px" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
-
+        <div class="col-sm form-group">
           <button type="button" class="btn btn-primary float-right" style="width:120px;" [routerLink]="['/lead-create']" *ngIf="isTeleCaller"> <i class="fas fa-plus mr-2"></i> Add</button>
           <button type="button" class="btn btn-success float-right mr-4" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
         </div>
       </div>
       <div class="form-row">
-        <div class="col-sm-2 form-group">
+        <div class="col-sm-2 form-group" *ngIf="isTeleCaller">
           Status: <select class="form-control custom-select" [(ngModel)]="outComeId" name="outComeId">
             <option value="0">All</option>
             <option *ngFor="let objOutCome of outcomeList" [selected]="objOutCome.outComeId === 1" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
           </select>
         </div>
-        <div class="col-sm-2 form-group">
-          Allocated To: <select class="form-control custom-select" [(ngModel)]="relationshipManagerId" name="relationshipManagerId">
+        <div class="col-sm-2 form-group" *ngIf="isManager">
+          Status: <select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">
             <option value="0">All</option>
-            <option *ngFor="let manager of rManagerList" value="{{manager.userId}}"> {{manager.firstName}} {{manager.lastName}}</option>
+            <option *ngFor="let aStatus of appoinStatusList" [selected]="aStatus.appoinStatusId === 7" value="{{aStatus.appoinStatusId}}"> {{aStatus.status}}</option>
           </select>
         </div>
-        <div class="col-sm-7 form-inline form-group" style="margin-bottom:-5px;">
+        <div class="col-sm-2 form-group">
+          {{allocateCreateByTxt}}: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
+            <option value="0">All</option>
+            <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
+          </select>
+        </div>
+        <div class="col-sm form-inline form-group" style="margin-bottom:-5px;">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary">{{filterDateOption}}</button>
             <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,10 +57,12 @@
               <button class="btn btn-outline-secondary calendar" (click)="tDate.toggle()" type="button"></button>
             </div>
           </div>
-          <div class="col-sm-1">
+          <div class="col-sm">
             <button type="button" class="btn btn-outline-primary" placement="right" ngbTooltip="Filter" (click)="onFilterSearch()"><i class="fas fa-search"></i></button>
           </div>
         </div>
+       
+        
         <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
         <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
 
