@@ -55,7 +55,7 @@
           Appoinment Date<strong class="text-danger"> *</strong>
           <div class="input-group">
             <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="yyyy-mm-dd" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
-                   class="form-control" [(ngModel)]="appointmentDate" />
+                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
             </div>

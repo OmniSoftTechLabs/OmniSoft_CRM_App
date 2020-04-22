@@ -29,9 +29,13 @@ export class LeadFollowUpComponent implements OnInit {
   is_progress: boolean = false;
   errorMsg: string;
   successMsg: string;
+  minDate: NgbDateStruct;
+
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
+    this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
+
   }
 
   ngOnInit(): void {

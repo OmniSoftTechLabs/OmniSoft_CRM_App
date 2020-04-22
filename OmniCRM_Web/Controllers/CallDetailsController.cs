@@ -380,5 +380,53 @@ namespace OmniCRM_Web.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
+
+        [HttpGet]
+        [Route("GetCallTransDetail/{id}")]
+        public async Task<ActionResult<IEnumerable<CallTransactionDetail>>> GetCallTransDetail(int id)
+        {
+            try
+            {
+                var callTransDetail = await _context.CallTransactionDetail.Include(p => p.OutCome).Include(p => p.CreatedByNavigation).Where(p => p.CallId == id).OrderBy(p => p.CallTransactionId).ToListAsync();
+
+                if (callTransDetail == null)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallTransDetail: " + id + "-call trans not found");
+                    return NotFound("Call transaction not found!");
+                }
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallTransDetail: " + id + "-get call trans detail");
+                return callTransDetail;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetCallTransDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFollowupHistory/{id}")]
+        public async Task<ActionResult<IEnumerable<FollowupHistory>>> GetFollowupHistory(int id)
+        {
+            try
+            {
+                var followupHistory = await _context.FollowupHistory.Include(p => p.AppoinStatus).Include(p => p.CreatedByRmanager).Where(p => p.CallId == id).OrderBy(p => p.FollowupId).ToListAsync();
+
+                if (followupHistory == null)
+                {
+                    GenericMethods.Log(LogType.ActivityLog.ToString(), "GetFollowupHistory: " + id + "-followup history not found");
+                    return NotFound("followup history not found!");
+                }
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetFollowupHistory: " + id + "-get followup history");
+                return followupHistory;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetFollowupHistory: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
     }
 }

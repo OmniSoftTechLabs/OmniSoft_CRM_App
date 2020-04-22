@@ -31,9 +31,11 @@ export class LeadCreateComponent implements OnInit {
   successMsg: string;
   currentUser: UserMaster;
   appointmentDate: NgbDateStruct;
+  minDate: NgbDateStruct;
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
+    this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
   }
 
   ngOnInit(): void {
@@ -51,7 +53,7 @@ export class LeadCreateComponent implements OnInit {
             this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
               this.appointmentDate = {
                 day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
-                month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
+                month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth() + 1,
                 year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
               }
           }
@@ -80,7 +82,8 @@ export class LeadCreateComponent implements OnInit {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
 
-    if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && this.leadModel.appointmentDetail.length == 0) {
+    if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && (this.leadModel.appointmentDetail.length == 0
+      || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId)) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
       this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
       this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, 10, 0, 0, 0);

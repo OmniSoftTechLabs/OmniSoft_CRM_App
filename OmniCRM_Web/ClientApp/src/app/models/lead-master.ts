@@ -1,4 +1,5 @@
 import { Data } from "@angular/router";
+import { RmanagerMaster } from "./rmanager-master";
 
 export class LeadMaster {
   callId: number = 0;
@@ -48,28 +49,20 @@ export class FollowupHistory {
   callId: number;
   createdDate: Date;
   createdByRmanagerId: string;
-  followupType: string="";
+  followupType: string = "";
   appoinStatusId: number;
   remarks: string;
+  appoinStatus: AppoinmentStatusMaster;
+  createdByRmanager: RmanagerMaster;
 }
 
-//export class LeadMaster {
-//  //callId: number = 0;
-//  createdDate: Date;
-//  //createdBy: string;
-//  firstName: string;
-//  lastName: string;
-//  mobileNumber: string;
-//  //firmName: string;
-//  address: string;
-//  //lastChangedDate: Date;
-//  //outComeId: number = 0;
-//  remark: string;
-//  //outCome: OutcomeMaster;
-//  outComeText: string;
-//  createdByName: string;
-//  allocatedToName: string;
-//  appointmentDateTime: Date;
-//  //appointmentDetail: AppointmentDetail[] = [];
-//  //followupHistory: FollowupHistory[] = [];
-//}
+export class CallTransactionDetail {
+  callTransactionId: number;
+  callId: number;
+  createdDate: Date;
+  createdBy: any;
+  outComeId: number;
+  remarks: string;
+  outCome: OutcomeMaster;
+  createdByNavigation: RmanagerMaster;
+}

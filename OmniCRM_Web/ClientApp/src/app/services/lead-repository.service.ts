@@ -1,15 +1,13 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster } from '../models/lead-master';
+import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
-import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeadRepositoryService {
-
 
   http: HttpClient;
   baseUrl: string;
@@ -26,7 +24,6 @@ export class LeadRepositoryService {
   loadAppoinmentStatusList() {
     return this.http.get<AppoinmentStatusMaster[]>(this.baseUrl + 'api/AppoinmentStatusMasters').pipe();
   }
-
 
   createLead(leadModel: LeadMaster) {
     return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
@@ -60,5 +57,15 @@ export class LeadRepositoryService {
 
   loadLeadListByRM(id, filterOption: FilterOptions) {
     return this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id, filterOption).pipe();
+  }
+
+  async loadCallTransById(id) {
+    let response = await this.http.get<CallTransactionDetail[]>(this.baseUrl + 'api/CallDetails/GetCallTransDetail/' + id).toPromise();
+    return response;
+  }
+
+  async loadFollowupHistoryById(id) {
+    let response = await this.http.get<FollowupHistory[]>(this.baseUrl + 'api/CallDetails/GetFollowupHistory/' + id).toPromise();
+    return response;
   }
 }

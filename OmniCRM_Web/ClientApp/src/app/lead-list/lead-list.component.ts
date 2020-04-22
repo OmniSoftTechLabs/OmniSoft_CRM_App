@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster } from '../models/lead-master';
+import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
 import { FormControl } from '@angular/forms';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
 import { DataTableService } from '../services/data-table.service';
@@ -27,6 +27,8 @@ export class LeadListComponent implements OnInit {
   appoinStatusList: AppoinmentStatusMaster[] = [];
   filterUserList: RmanagerMaster[] = [];
   leadList: Observable<LeadMaster[]>;
+  callHistory: CallTransactionDetail[] = [];
+  followupHistory: FollowupHistory[] = [];
   total$: Observable<number>;
   filter = new FormControl('');
   isTeleCaller: boolean;
@@ -40,6 +42,7 @@ export class LeadListComponent implements OnInit {
   toDate: NgbDateStruct;
   filterOption: FilterOptions = new FilterOptions();
   allocateCreateByTxt: string = "";
+  modalTitle: string = "";
 
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
@@ -178,6 +181,27 @@ export class LeadListComponent implements OnInit {
       this.fillLeadListByRM();
     else if (this.isTeleCaller)
       this.fillLeadListCreatedBy();
+  }
+
+  async viewHistory(id: number, firstName: string, lastName: string) {
+    if (this.isTeleCaller) {
+      this.modalTitle = "Call History: " + firstName + " " + lastName;
+      await this.leadRepo.loadCallTransById(id).then(
+        (history) => {
+          this.callHistory = history;
+        },
+        error => console.error(error)
+      );
+    }
+    else if (this.isManager) {
+      this.modalTitle = "Followup History: " + firstName + " " + lastName;
+      await this.leadRepo.loadFollowupHistoryById(id).then(
+        (history) => {
+          this.followupHistory = history;
+        },
+        error => console.error(error)
+      );
+    }
   }
 
   exportAsXLSX(): void {
