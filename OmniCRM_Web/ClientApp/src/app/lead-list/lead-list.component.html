@@ -12,7 +12,18 @@
         </div>
         <div class="col-sm form-group">
           <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" [routerLink]="['/lead-create']" *ngIf="isTeleCaller"> <i class="fas fa-plus mr-2"></i> Add</button>
-          <button type="button" class="btn btn-outline-success float-right mr-4" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
+
+          <div class="btn-group float-right mr-4">
+            <button type="button" class="btn btn-outline-success" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
+            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="btn dropdown-item" data-toggle="modal" data-target="#modelImportExcel">Import</a>
+            </div>
+          </div>
+
+
         </div>
       </div>
       <div class="form-row">
@@ -135,7 +146,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Modal History-->
 <div class="modal fade" id="modelViewHistory" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -179,6 +190,40 @@
         </table>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!--<button type="button" class="btn btn-primary">Understood</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal Import-->
+<div class="modal fade" id="modelImportExcel" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Choose Excel To Import</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form novalidate>
+          <div class="input-group">
+            <div class="custom-file">
+              <input type="file" accept=".xls,.xlsx" class="custom-file-input" #fileInput id="inputGroupFile" aria-describedby="inputGroupFileAddon" (change)="onFileChange($event.target.files)">
+              <label class="custom-file-label" for="inputGroupFile" #labelImport>Choose file</label>
+            </div>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon" (click)="onUploadFile()">Upload</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <p class="text-success" *ngIf="isUploadSucc"><i class="far fa-check-circle"></i> {{uploadMsg}}</p>
+        <p class="text-danger" *ngIf="isUploadSucc==false"><i class="far fa-times-circle"></i> {{uploadMsg}}</p>
+
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <!--<button type="button" class="btn btn-primary">Understood</button>-->
       </div>

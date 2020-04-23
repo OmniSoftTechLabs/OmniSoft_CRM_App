@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
@@ -67,5 +67,15 @@ export class LeadRepositoryService {
   async loadFollowupHistoryById(id) {
     let response = await this.http.get<FollowupHistory[]>(this.baseUrl + 'api/CallDetails/GetFollowupHistory/' + id).toPromise();
     return response;
+  }
+
+  uploadExcelData(id, formData: FormData) {
+    //let headers = new HttpHeaders();
+
+    //headers.append('Content-Type', 'multipart/form-data');
+    //headers.append('Accept', 'application/json');
+
+    //const httpOptions = { headers: headers };
+    return this.http.post(this.baseUrl + 'api/CallDetails/UploadExcelData/' + id, formData, { responseType: 'text' }).pipe();
   }
 }

@@ -32,6 +32,13 @@ namespace OmniCRM_Web.GenericClasses
             NotInterested = 6,
             Pending = 7,
         }
+
+        public enum CallOutcome
+        {
+            NoResponse = 1,
+            NotInterested = 2,
+            AppoinmentTaken = 3,
+        }
     }
 
     public class StringConstant

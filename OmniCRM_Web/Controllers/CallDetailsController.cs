@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 using OmniCRM_Web.ViewModels;
@@ -426,6 +428,76 @@ namespace OmniCRM_Web.Controllers
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "GetFollowupHistory: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("UploadExcelData/{id}")]
+        public async Task<ActionResult> UploadExcelData(Guid id)
+        {
+            try
+            {
+                if (HttpContext.Request.Form.Files.Count > 0)
+                {
+                    var file = HttpContext.Request.Form.Files[0];
+                    if (!file.FileName.EndsWith(".xls") && !file.FileName.EndsWith(".xlsx"))
+                        return BadRequest("Invalid file input!");
+
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    Stream stream = file.OpenReadStream();
+                    using (ExcelPackage package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
+
+                        int firstName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "First Name").Start.Column;
+                        int lastName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Last Name").Start.Column;
+                        int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
+                        int address = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Address").Start.Column;
+                        var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
+                        int remarks = 0;
+                        if (remarksCell != null)
+                            remarks = remarksCell.Start.Column;
+
+                        int totalRows = workSheet.Dimension.Rows;
+
+                        List<CallDetail> callDetail = new List<CallDetail>();
+
+                        for (int i = 2; i <= totalRows; i++)
+                        {
+                            callDetail.Add(new CallDetail()
+                            {
+                                CreatedBy = id,
+                                FirstName = workSheet.Cells[i, firstName].Value.ToString(),
+                                LastName = workSheet.Cells[i, lastName].Value.ToString(),
+                                MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
+                                Address = workSheet.Cells[i, address].Value.ToString(),
+                                LastChangedDate = DateTime.Now,
+                                OutComeId = (int)CallOutcome.NoResponse,
+                                Remark = remarks > 0 ? workSheet.Cells[i, remarks].Value.ToString() : "Uploaded from excel",
+                                CallTransactionDetail = new List<CallTransactionDetail>()
+                                {
+                                    new CallTransactionDetail()
+                                    {
+                                        CreatedBy=id,
+                                        OutComeId=(int)CallOutcome.NoResponse,
+                                        Remarks= remarks > 0 ? workSheet.Cells[i, remarks].Value.ToString() : "Uploaded from excel"
+                                    }
+                                }
+                            });
+                        }
+
+                        await _context.CallDetail.AddRangeAsync(callDetail);
+                        await _context.SaveChangesAsync();
+                    }
+                    return Ok("Data uploaded successfully!");
+                }
+                return NotFound("File not found!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "UploadExcelData: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

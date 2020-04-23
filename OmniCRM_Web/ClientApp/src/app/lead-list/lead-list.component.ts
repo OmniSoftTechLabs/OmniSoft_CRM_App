@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
 import { FormControl } from '@angular/forms';
@@ -33,6 +33,7 @@ export class LeadListComponent implements OnInit {
   filter = new FormControl('');
   isTeleCaller: boolean;
   isManager: boolean;
+  isUploadSucc: boolean = undefined;
   outComeId: number = 1;
   appoinStatusId: number = 7
   filteruserId: string = "0";
@@ -43,7 +44,9 @@ export class LeadListComponent implements OnInit {
   filterOption: FilterOptions = new FilterOptions();
   allocateCreateByTxt: string = "";
   modalTitle: string = "";
-
+  uploadMsg: string = "";
+  @ViewChild('labelImport') labelImport: ElementRef;
+  @ViewChild('fileInput') fileInput;
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe) {
@@ -226,5 +229,18 @@ export class LeadListComponent implements OnInit {
       }));
     }
     this.excelService.exportAsExcelFile(ExportleadArray, 'LeadDetail');
+  }
+
+  onFileChange(files: FileList) {
+    this.labelImport.nativeElement.innerText = files[0].name;
+  }
+
+  onUploadFile() {
+    let formData = new FormData();
+    formData.append('upload', this.fileInput.nativeElement.files[0]);
+    this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe({
+      next: data => (this.uploadMsg = data, this.isUploadSucc = true),
+      error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false)
+    });
   }
 }
