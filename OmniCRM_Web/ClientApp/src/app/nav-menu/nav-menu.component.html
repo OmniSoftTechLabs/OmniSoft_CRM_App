@@ -42,7 +42,7 @@
               <i class="fas fa-user"></i>
             </a>
             <div ngbDropdownMenu aria-labelledby="navbarDropdownUser" class="dropdown-menu">
-              <button ngbDropdownItem (click)="$event.preventDefault()">Profile</button>
+              <!--<button ngbDropdownItem (click)="$event.preventDefault()">Profile</button>-->
               <button ngbDropdownItem [routerLink]="['/chng-pwd']">Change Password</button>
               <div class="dropdown-divider"></div>
               <button ngbDropdownItem (click)="logout()"><i class="fas fa-sign-out-alt mr-3"></i>Log out</button>
