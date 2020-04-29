@@ -389,7 +389,7 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                var callTransDetail = await _context.CallTransactionDetail.Include(p => p.OutCome).Include(p => p.CreatedByNavigation).Where(p => p.CallId == id).OrderBy(p => p.CallTransactionId).ToListAsync();
+                var callTransDetail = await _context.CallTransactionDetail.Include(p => p.OutCome).Include(p => p.CreatedByNavigation).Where(p => p.CallId == id).OrderByDescending(p => p.CreatedDate).ToListAsync();
 
                 if (callTransDetail == null)
                 {
@@ -413,7 +413,7 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                var followupHistory = await _context.FollowupHistory.Include(p => p.AppoinStatus).Include(p => p.CreatedByRmanager).Where(p => p.CallId == id).OrderBy(p => p.FollowupId).ToListAsync();
+                var followupHistory = await _context.FollowupHistory.Include(p => p.AppoinStatus).Include(p => p.CreatedByRmanager).Where(p => p.CallId == id).OrderByDescending(p => p.CreatedDate).ToListAsync();
 
                 if (followupHistory == null)
                 {

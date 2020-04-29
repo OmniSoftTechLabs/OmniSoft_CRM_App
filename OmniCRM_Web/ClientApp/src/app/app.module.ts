@@ -14,7 +14,7 @@ import { LoginComponent } from './login/login.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthGuard } from './services/auth-guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { JwtInterceptor } from './services/jwt-interceptor';
 import { UserListComponent } from './user-list/user-list.component';
 import { NgbdSortableHeader } from './services/sortable.directive';
@@ -26,6 +26,7 @@ import { LeadListComponent } from './lead-list/lead-list.component';
 import { roles } from './services/generic-enums';
 import { LeadFollowUpComponent } from './lead-follow-up/lead-follow-up.component';
 import { DatePipe } from '@angular/common';
+import { CustomDateParserFormatterService } from './services/custom-date-parser-formatter.service';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,10 @@ import { DatePipe } from '@angular/common';
     FontAwesomeModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, DecimalPipe, DatePipe],
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatterService },
+    DecimalPipe, DatePipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

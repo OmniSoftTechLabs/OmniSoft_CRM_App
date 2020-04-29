@@ -118,7 +118,7 @@
             <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
             <!--<td *ngIf="isTeleCaller"> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
             <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
-            <td>
+            <td class="d-flex flex-row">
               <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="editLead(lead.callId)" *ngIf="isTeleCaller"><i class="fas fa-edit"></i></button>
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="followUp(lead.callId)" *ngIf="isManager"><i class="fas fa-phone-square-alt"></i></button>
               &nbsp;
