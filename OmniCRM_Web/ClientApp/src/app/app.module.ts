@@ -27,6 +27,7 @@ import { roles } from './services/generic-enums';
 import { LeadFollowUpComponent } from './lead-follow-up/lead-follow-up.component';
 import { DatePipe } from '@angular/common';
 import { CustomDateParserFormatterService } from './services/custom-date-parser-formatter.service';
+import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-telecaller.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { CustomDateParserFormatterService } from './services/custom-date-parser-
     ChangePasswordComponent,
     LeadCreateComponent,
     LeadListComponent,
-    LeadFollowUpComponent
+    LeadFollowUpComponent,
+    DashboardTelecallerComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -66,6 +68,7 @@ import { CustomDateParserFormatterService } from './services/custom-date-parser-
       { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller', 'Relationship Manager'] } },
       { path: 'lead-followup', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
+      { path: 'dash-tele', component: DashboardTelecallerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },

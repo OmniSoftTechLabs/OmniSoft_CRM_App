@@ -4,6 +4,8 @@ import { AuthenticationService } from '../services/authentication.service';
 import { ChangePwd } from '../models/change-pwd';
 import { NgForm } from '@angular/forms';
 import { GeneralRepositoryService } from '../services/general-repository.service';
+import { roles } from '../services/generic-enums';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-change-password',
@@ -26,7 +28,7 @@ export class ChangePasswordComponent implements OnInit {
   @ViewChild('changePwd') form: NgForm;
 
 
-  constructor(private auth: AuthenticationService, private generalRepository: GeneralRepositoryService) {
+  constructor(private auth: AuthenticationService, private generalRepository: GeneralRepositoryService, private router: Router) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
   }
 
@@ -58,5 +60,15 @@ export class ChangePasswordComponent implements OnInit {
     this.form.reset();
     this.is_progress = false;
     this.saveBtnTxt = "Save";
+  }
+
+  onCloseWindow() {
+    if (this.currentUser.roleId == roles["Tele Caller"])
+      this.router.navigate(['/dash-tele']);
+    else if (this.currentUser.roleId == roles["Relationship Manager"])
+      this.router.navigate(['/dash-manager']);
+    else
+      this.router.navigate(['/dashboard']);
+
   }
 }

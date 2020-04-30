@@ -4,6 +4,8 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { error } from '@angular/compiler/src/util';
+import { UserMaster } from '../models/user-master';
+import { roles } from '../services/generic-enums';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +17,7 @@ export class LoginComponent implements OnInit {
   loginError: string = "";
   returnUrl: string;
   isProgress: boolean = false;
+  userMaster: UserMaster;
 
   public credentials = {
     //username: "admin@ostechlabs.com",
@@ -29,6 +32,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+    
   }
 
   login(): void {
@@ -42,7 +46,16 @@ export class LoginComponent implements OnInit {
     //  }, err => { this.loginError = "Login failed!" });
 
     this.auth.login(this.credentials).subscribe({
-      next: success => (this.router.navigate([this.returnUrl]), this.isProgress = false),
+      next: success => {
+        this.auth.currentUser.subscribe(x => this.userMaster = x);
+        if (this.userMaster.roleId == roles["Tele Caller"])
+          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-tele';
+        else if (this.userMaster.roleId == roles["Relationship Manager"])
+          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-manager';
+
+        this.router.navigate([this.returnUrl]);
+        this.isProgress = false;
+      },
       error: error => (this.loginError = error.error, this.isProgress = false)
     })
 

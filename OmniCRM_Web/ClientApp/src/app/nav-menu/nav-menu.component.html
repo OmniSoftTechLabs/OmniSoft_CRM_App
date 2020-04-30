@@ -1,7 +1,9 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
-      <a class="navbar-brand" [routerLink]="['/dashboard']">OmniCRM</a>
+      <a *ngIf="isTeleCaller" class="navbar-brand" [routerLink]="['/dash-tele']">OmniCRM</a>
+      <a *ngIf="isRManager" class="navbar-brand" [routerLink]="['/dash-manager']">OmniCRM</a>
+      <a *ngIf="isSuperUser || isAdminRole" class="navbar-brand" [routerLink]="['/dashboard']">OmniCRM</a>
       <button class="navbar-toggler"
               type="button"
               data-toggle="collapse"
