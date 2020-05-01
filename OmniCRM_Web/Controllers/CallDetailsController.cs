@@ -500,5 +500,33 @@ namespace OmniCRM_Web.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("{id}")]
+        [Route("GetTeleCallerDashboard/{id}")]
+        public async Task<ActionResult<TeleCallerDashboard>> GetTeleCallerDashboard(Guid id)
+        {
+            try
+            {
+                var callDetail = await _context.CallDetail.Where(p => p.CreatedBy == id).ToListAsync();
+
+
+                TeleCallerDashboard objTeleDash = new TeleCallerDashboard()
+                {
+                    TotalLeads = callDetail.Count(),
+                    NoResponse = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse).Count(),
+                    AppoinmentTaken = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken).Count(),
+                    NotInterested = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested).Count(),
+                };
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerDashboard: " + id + "-get telecaller dashboard");
+                return objTeleDash;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTeleCallerDashboard: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
     }
 }

@@ -1,5 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Chart } from 'chart.js';
+import { TeleDash } from '../models/tele-dash';
+import { LeadRepositoryService } from '../services/lead-repository.service';
+import { UserMaster } from '../models/user-master';
+import { AuthenticationService } from '../services/authentication.service';
 
 
 @Component({
@@ -11,11 +15,22 @@ export class DashboardTelecallerComponent implements OnInit {
 
   @ViewChild('canvas') canvas: ElementRef;
   chart = [];
+  teleDashboard: TeleDash = new TeleDash();
+  currentUser: UserMaster;
 
-  constructor() { }
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+  }
 
   ngOnInit(): void {
+    this.loadData();
+  }
 
+  async loadData() {
+    await this.leadRepo.loadTeleDash(this.currentUser.userId).then(
+      data => { this.teleDashboard = data; },
+      error => console.error(error)
+    );
   }
 
   ngAfterViewInit() {

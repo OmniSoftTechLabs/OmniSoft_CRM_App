@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
+import { TeleDash } from '../models/tele-dash';
 
 @Injectable({
   providedIn: 'root'
@@ -77,5 +78,10 @@ export class LeadRepositoryService {
 
     //const httpOptions = { headers: headers };
     return this.http.post(this.baseUrl + 'api/CallDetails/UploadExcelData/' + id, formData, { responseType: 'text' }).pipe();
+  }
+
+  async loadTeleDash(id) {
+    let response = await this.http.get<TeleDash>(this.baseUrl + 'api/CallDetails/GetTeleCallerDashboard/' + id).toPromise();
+    return response;
   }
 }

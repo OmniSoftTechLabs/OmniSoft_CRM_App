@@ -1,20 +1,21 @@
-<h5>Telecaller Dashboard</h5>
 <section class="content">
   <div class="container-fluid">
+    <h5 class="d-flex justify-content-center">Telecaller Dashboard</h5>
+    <br />
     <div class="row">
       <div class="col-12 col-sm-6 col-md-3">
 
         <!--<div class="small-box bg-info">
-          <div class="inner">
-            <h3>150</h3>
+        <div class="inner">
+          <h3>150</h3>
 
-            <p>New Orders</p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-calculator"></i>
-          </div>
-          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>-->
+          <p>New Orders</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>-->
 
 
         <div class="info-box">
@@ -22,9 +23,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Total Leads</span>
-            <span class="info-box-number">
-              68
-            </span>
+            <span class="info-box-number">{{teleDashboard.totalLeads}}</span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -37,7 +36,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Not Interersted</span>
-            <span class="info-box-number">23</span>
+            <span class="info-box-number">{{teleDashboard.notInterested}}</span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -53,7 +52,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Appointment Taken</span>
-            <span class="info-box-number">15</span>
+            <span class="info-box-number">{{teleDashboard.appoinmentTaken}}</span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -66,7 +65,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">No Response</span>
-            <span class="info-box-number">30</span>
+            <span class="info-box-number">{{teleDashboard.noResponse}}</span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -88,20 +87,20 @@
                 <i class="fas fa-minus"></i>
               </button>
               <!--<div class="btn-group">
-                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                  <i class="fas fa-wrench"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" role="menu">
-                  <a href="#" class="dropdown-item">Action</a>
-                  <a href="#" class="dropdown-item">Another action</a>
-                  <a href="#" class="dropdown-item">Something else here</a>
-                  <a class="dropdown-divider"></a>
-                  <a href="#" class="dropdown-item">Separated link</a>
-                </div>
+              <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                <i class="fas fa-wrench"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right" role="menu">
+                <a href="#" class="dropdown-item">Action</a>
+                <a href="#" class="dropdown-item">Another action</a>
+                <a href="#" class="dropdown-item">Something else here</a>
+                <a class="dropdown-divider"></a>
+                <a href="#" class="dropdown-item">Separated link</a>
               </div>
-              <button type="button" class="btn btn-tool" data-card-widget="remove">
-                <i class="fas fa-times"></i>
-              </button>-->
+            </div>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>-->
             </div>
 
           </div>
@@ -110,7 +109,7 @@
             <div class="row">
               <div class="col-md-8">
                 <p class="text-center">
-                  <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                  <strong>Leads: 1 Jan, 2019 - 31 Dec, 2019</strong>
                 </p>
 
                 <div class="chart">
