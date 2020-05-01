@@ -109,7 +109,7 @@
             <div class="row">
               <div class="col-md-8">
                 <p class="text-center">
-                  <strong>Leads: 1 Jan, {{currentYear}} - 31 Dec, {{currentYear}}</strong>
+                  <strong>Leads: Jan 01, {{currentYear}} - Dec 31, {{currentYear}}</strong>
                 </p>
 
                 <div class="chart">
@@ -121,50 +121,41 @@
               <!-- /.col -->
               <div class="col-md-4">
                 <p class="text-center">
-                  <strong>Goal Completion</strong>
+                  <strong>Goal of Month : {{currentMonth}}</strong>
                 </p>
 
                 <div class="progress-group">
-                  Add Products to Cart
-                  <span class="float-right"><b>160</b>/200</span>
+                  Created Leads
+                  <span class="float-right"><b>{{teleDashboard.monthlyTotalLeads}}</b>/200</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-primary" style="width: 80%"></div>
+                    <div class="progress-bar bg-info" style="width: {{percentTotal}}%"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
 
                 <div class="progress-group">
-                  Complete Purchase
-                  <span class="float-right"><b>310</b>/400</span>
+                  Not Interested
+                  <span class="float-right"><b>{{teleDashboard.monthlyNotInterested}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                    <div class="progress-bar bg-danger" style="width: {{percentNotInter}}%"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
 
                 <div class="progress-group">
-                  <span class="progress-text">Visit Premium Page</span>
-                  <span class="float-right"><b>480</b>/800</span>
+                  <span class="progress-text">Appointment Taken</span>
+                  <span class="float-right"><b>{{teleDashboard.monthlyAppoinmentTaken}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-success" style="width: 60%"></div>
+                    <div class="progress-bar bg-success" style="width: {{percentAppoTaken}}%"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
 
                 <div class="progress-group">
-                  Send Inquiries
-                  <span class="float-right"><b>250</b>/500</span>
+                  No Response
+                  <span class="float-right"><b>{{teleDashboard.monthlyNoResponse}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-warning" style="width: 50%"></div>
-                  </div>
-                </div>
-                <!-- /.progress-group -->
-
-                <div class="progress-group">
-                  Appointment Taken
-                  <span class="float-right"><b>130</b>/600</span>
-                  <div class="progress progress-sm">
-                    <div class="progress-bar bg-purple" style="width: 70%"></div>
+                    <div class="progress-bar bg-warning" style="width: {{percentNoResponse}}%"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->

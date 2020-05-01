@@ -4,6 +4,11 @@ export class TeleDash {
   appoinmentTaken: number;
   noResponse: number;
   collChartData: ChartData[] = [];
+
+  monthlyTotalLeads: number;
+  monthlyNotInterested: number;
+  monthlyAppoinmentTaken: number;
+  monthlyNoResponse: number;
 }
 
 

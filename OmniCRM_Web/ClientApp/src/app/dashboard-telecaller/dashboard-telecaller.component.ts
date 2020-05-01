@@ -5,6 +5,7 @@ import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { delay } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -22,10 +23,16 @@ export class DashboardTelecallerComponent implements OnInit {
   appoinTaken: number[] = [];
   notInterest: number[] = [];
   currentYear: number;
+  currentMonth: string;
+  percentTotal: number;
+  percentNoResponse: number;
+  percentAppoTaken: number;
+  percentNotInter: number;
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.currentYear = new Date().getFullYear();
+    this.currentMonth = datePipe.transform(new Date(), "MMM yyyy");
   }
 
   ngOnInit(): void {
@@ -36,6 +43,11 @@ export class DashboardTelecallerComponent implements OnInit {
     await this.leadRepo.loadTeleDash(this.currentUser.userId).then(
       data => {
         this.teleDashboard = data;
+
+        this.percentTotal = (this.teleDashboard.monthlyTotalLeads / 200) * 100;
+        this.percentNoResponse = (this.teleDashboard.monthlyNoResponse / this.teleDashboard.monthlyTotalLeads) * 100;
+        this.percentAppoTaken = (this.teleDashboard.monthlyAppoinmentTaken / this.teleDashboard.monthlyTotalLeads) * 100;
+        this.percentNotInter = (this.teleDashboard.monthlyNotInterested / this.teleDashboard.monthlyTotalLeads) * 100;
 
         this.teleDashboard.collChartData.forEach((item) => {
           this.months.push(item.month);
@@ -52,31 +64,18 @@ export class DashboardTelecallerComponent implements OnInit {
     var salesChartCanvas = this.canvas.nativeElement.getContext('2d');
 
     var salesChartData = {
-      //labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels: this.months,
       datasets: [
         {
           label: 'Appoin. Taken',
           backgroundColor: 'rgba(88, 214, 141, 0.2)',
           borderColor: 'rgba(88, 214, 141, 1)',
-          //pointRadius: false,
-          //pointColor: '#3b8bba',
-          //pointStrokeColor: 'rgba(60,141,188,1)',
-          //pointHighlightFill: '#fff',
-          //pointHighlightStroke: 'rgba(60,141,188,1)',
-          //data: [55, 88, 66, 74, 75, 25, 12, 36, 0]
           data: this.appoinTaken
         },
         {
           label: 'Not Interest',
           backgroundColor: 'rgba(236, 112, 99, 0.2)',
           borderColor: 'rgba(236, 112, 99, 1)',
-          //pointRadius: false,
-          //pointColor: 'rgba(210, 214, 222, 1)',
-          //pointStrokeColor: '#c1c7d1',
-          //pointHighlightFill: '#fff',
-          //pointHighlightStroke: 'rgba(220,220,220,1)',
-          //data: [32, 41, 75, 68, 14, 85, 34, 26, 0]
           data: this.notInterest
         },
       ]
@@ -102,9 +101,6 @@ export class DashboardTelecallerComponent implements OnInit {
       }
     };
 
-
-    // This will get the first returned node in the jQuery collection.
-
     setTimeout(() => {
       this.chart = new Chart(salesChartCanvas, {
         type: 'line',
@@ -112,37 +108,5 @@ export class DashboardTelecallerComponent implements OnInit {
         options: salesChartOptions
       });
     }, 300);
-
-
-
-
-    //this.chart = new Chart(this.canvas.nativeElement.getContext('2d'), {
-    //  type: 'line',
-    //  data: {
-    //    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'], // your labels array
-    //    datasets: [
-    //      {
-    //        data: [65, 59, 80, 81, 56, 55, 40], // your data array
-    //        borderColor: '#00AEFF',
-    //        fill: false
-    //      }
-    //    ]
-    //  },
-    //  options: {
-    //    maintainAspectRatio: false,
-    //    legend: {
-    //      display: false
-    //    },
-    //    scales: {
-    //      xAxes: [{
-    //        display: true
-    //      }],
-    //      yAxes: [{
-    //        display: true
-    //      }],
-    //    }
-    //  }
-    //});
-
   }
 }

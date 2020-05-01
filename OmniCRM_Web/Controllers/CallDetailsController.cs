@@ -509,17 +509,23 @@ namespace OmniCRM_Web.Controllers
             try
             {
                 var callDetail = await _context.CallDetail.Where(p => p.CreatedBy == id).ToListAsync();
+                int currentYear = DateTime.Now.Year;
+                int currentMonth = DateTime.Now.Month;
 
 
                 TeleCallerDashboard objTeleDash = new TeleCallerDashboard()
                 {
                     TotalLeads = callDetail.Count(),
-                    NoResponse = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse).Count(),
-                    AppoinmentTaken = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken).Count(),
-                    NotInterested = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested).Count(),
+                    NoResponse = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    AppoinmentTaken = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    NotInterested = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested),
+
+                    MonthlyTotalLeads = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear),
+                    MonthlyNoResponse = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    MonthlyAppoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    MonthlyNotInterested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NotInterested),
                 };
 
-                int currentYear = DateTime.Now.Year;
 
                 objTeleDash.CollChartData = callDetail.Where(p => p.CreatedDate.Year == currentYear)
                     .GroupBy(p => new { Month = p.CreatedDate.Month }).Select(p => new ChartData()
@@ -529,7 +535,9 @@ namespace OmniCRM_Web.Controllers
                         NotInterest = p.Count(p => p.OutComeId == (int)Enums.CallOutcome.NotInterested),
 
                     }).ToList();
-              
+
+
+
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerDashboard: " + id + "-get telecaller dashboard");
                 return objTeleDash;
             }
