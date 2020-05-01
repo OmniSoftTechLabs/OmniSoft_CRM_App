@@ -20,7 +20,7 @@ export class NewPwdComponent implements OnInit {
   user: any;
   errorMsg: string;
   IsLoginBtn: boolean = false;
-  //        Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')
+  //        Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$#@$!%*?&])[A-Za-z\d$#@$!%*?&].{8,}')
 
   constructor(private generalRepository: GeneralRepositoryService, private route: ActivatedRoute) { }
 
@@ -33,7 +33,7 @@ export class NewPwdComponent implements OnInit {
 
 
     this.generalRepository.getUserToResetPwd(this.userId).subscribe(
-      data => (this.txtUserName = data.email), error => (this.errorMsg = error.error, this.IsError = true, this.IsLoginBtn = true));
+      data => (this.txtUserName = data.email), error => (this.errorMsg = error.statusText, this.IsError = true, this.IsLoginBtn = true));
   }
 
   onSavePwd() {

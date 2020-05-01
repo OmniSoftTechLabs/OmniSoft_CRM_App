@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -148,7 +149,7 @@ namespace OmniCRM_Web.Controllers
         }
 
         // GET: api/CallDetails/5
-        [HttpGet("{id}")]
+        [HttpGet("GetLeadById/{id}")]
         public async Task<ActionResult<CallDetail>> GetCallDetail(int id)
         {
             try
@@ -518,6 +519,17 @@ namespace OmniCRM_Web.Controllers
                     NotInterested = callDetail.Where(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested).Count(),
                 };
 
+                int currentYear = DateTime.Now.Year;
+
+                objTeleDash.CollChartData = callDetail.Where(p => p.CreatedDate.Year == currentYear)
+                    .GroupBy(p => new { Month = p.CreatedDate.Month }).Select(p => new ChartData()
+                    {
+                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(p.Key.Month).Substring(0, 3),
+                        AppoinTaken = p.Count(p => p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                        NotInterest = p.Count(p => p.OutComeId == (int)Enums.CallOutcome.NotInterested),
+
+                    }).ToList();
+              
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerDashboard: " + id + "-get telecaller dashboard");
                 return objTeleDash;
             }

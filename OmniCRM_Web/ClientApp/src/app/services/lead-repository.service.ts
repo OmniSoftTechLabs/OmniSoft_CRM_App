@@ -39,7 +39,7 @@ export class LeadRepositoryService {
   }
 
   getLeadById(id) {
-    return this.http.get<LeadMaster>(this.baseUrl + 'api/CallDetails/' + id).pipe();
+    return this.http.get<LeadMaster>(this.baseUrl + 'api/CallDetails/GetLeadById/' + id).pipe();
   }
 
   loadRManagerList() {

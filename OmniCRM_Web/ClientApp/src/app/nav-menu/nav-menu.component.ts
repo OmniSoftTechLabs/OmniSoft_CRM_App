@@ -76,7 +76,17 @@ export class NavMenuComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-
+  onBrandClick() {
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser != null) {
+      if (this.currentUser.roleId == roles["Tele Caller"])
+        this.router.navigate(['/dash-tele']);
+      else if (this.currentUser.roleId == roles["Relationship Manager"])
+        this.router.navigate(['/dash-manager']);
+      else
+        this.router.navigate(['/dashboard']);
+    }
+  }
 }
 
 

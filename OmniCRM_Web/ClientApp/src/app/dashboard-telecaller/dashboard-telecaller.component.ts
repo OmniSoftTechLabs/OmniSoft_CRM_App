@@ -4,6 +4,7 @@ import { TeleDash } from '../models/tele-dash';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
+import { delay } from 'rxjs/operators';
 
 
 @Component({
@@ -17,9 +18,14 @@ export class DashboardTelecallerComponent implements OnInit {
   chart = [];
   teleDashboard: TeleDash = new TeleDash();
   currentUser: UserMaster;
+  months: string[] = [];
+  appoinTaken: number[] = [];
+  notInterest: number[] = [];
+  currentYear: number;
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
+    this.currentYear = new Date().getFullYear();
   }
 
   ngOnInit(): void {
@@ -28,42 +34,53 @@ export class DashboardTelecallerComponent implements OnInit {
 
   async loadData() {
     await this.leadRepo.loadTeleDash(this.currentUser.userId).then(
-      data => { this.teleDashboard = data; },
+      data => {
+        this.teleDashboard = data;
+
+        this.teleDashboard.collChartData.forEach((item) => {
+          this.months.push(item.month);
+          this.appoinTaken.push(item.appoinTaken);
+          this.notInterest.push(item.notInterest);
+        });
+
+      },
       error => console.error(error)
     );
   }
 
   ngAfterViewInit() {
-
     var salesChartCanvas = this.canvas.nativeElement.getContext('2d');
 
     var salesChartData = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      //labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      labels: this.months,
       datasets: [
         {
-          label: 'Digital Goods',
-          backgroundColor: 'rgba(60,141,188,0.9)',
-          borderColor: 'rgba(60,141,188,0.8)',
+          label: 'Appoin. Taken',
+          backgroundColor: 'rgba(88, 214, 141, 0.2)',
+          borderColor: 'rgba(88, 214, 141, 1)',
           //pointRadius: false,
-          pointColor: '#3b8bba',
-          pointStrokeColor: 'rgba(60,141,188,1)',
-          pointHighlightFill: '#fff',
-          pointHighlightStroke: 'rgba(60,141,188,1)',
-          data: [28, 48, 40, 19, 86, 27, 90, 67, 74, 63, 89, 47]
+          //pointColor: '#3b8bba',
+          //pointStrokeColor: 'rgba(60,141,188,1)',
+          //pointHighlightFill: '#fff',
+          //pointHighlightStroke: 'rgba(60,141,188,1)',
+          //data: [55, 88, 66, 74, 75, 25, 12, 36, 0]
+          data: this.appoinTaken
         },
         {
-          label: 'Electronics',
-          backgroundColor: 'rgba(210, 214, 222, 2)',
-          borderColor: 'rgba(210, 214, 222, 1)',
+          label: 'Not Interest',
+          backgroundColor: 'rgba(236, 112, 99, 0.2)',
+          borderColor: 'rgba(236, 112, 99, 1)',
           //pointRadius: false,
-          pointColor: 'rgba(210, 214, 222, 1)',
-          pointStrokeColor: '#c1c7d1',
-          pointHighlightFill: '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data: [65, 59, 80, 81, 56, 55, 40, 53, 71, 123, 47, 56]
+          //pointColor: 'rgba(210, 214, 222, 1)',
+          //pointStrokeColor: '#c1c7d1',
+          //pointHighlightFill: '#fff',
+          //pointHighlightStroke: 'rgba(220,220,220,1)',
+          //data: [32, 41, 75, 68, 14, 85, 34, 26, 0]
+          data: this.notInterest
         },
       ]
-    }
+    };
 
     var salesChartOptions = {
       maintainAspectRatio: false,
@@ -83,16 +100,21 @@ export class DashboardTelecallerComponent implements OnInit {
           }
         }]
       }
-    }
+    };
 
 
     // This will get the first returned node in the jQuery collection.
-    this.chart = new Chart(salesChartCanvas, {
-      type: 'line',
-      data: salesChartData,
-      options: salesChartOptions
-    }
-    )
+
+    setTimeout(() => {
+      this.chart = new Chart(salesChartCanvas, {
+        type: 'line',
+        data: salesChartData,
+        options: salesChartOptions
+      });
+    }, 300);
+
+
+
 
     //this.chart = new Chart(this.canvas.nativeElement.getContext('2d'), {
     //  type: 'line',

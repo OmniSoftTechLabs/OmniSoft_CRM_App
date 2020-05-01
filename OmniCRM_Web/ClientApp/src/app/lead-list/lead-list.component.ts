@@ -51,7 +51,10 @@ export class LeadListComponent implements OnInit {
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
-    this.fromDate = { day: new Date().getDate() - 7, month: new Date().getMonth() + 1, year: new Date().getFullYear() };
+
+    let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
+
+    this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
   }
 
