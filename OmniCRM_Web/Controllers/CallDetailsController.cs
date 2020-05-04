@@ -511,6 +511,7 @@ namespace OmniCRM_Web.Controllers
                 var callDetail = await _context.CallDetail.Where(p => p.CreatedBy == id).ToListAsync();
                 int currentYear = DateTime.Now.Year;
                 int currentMonth = DateTime.Now.Month;
+                int lastMonth = DateTime.Now.AddMonths(-1).Month;
 
 
                 TeleCallerDashboard objTeleDash = new TeleCallerDashboard()
@@ -524,6 +525,11 @@ namespace OmniCRM_Web.Controllers
                     MonthlyNoResponse = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NoResponse),
                     MonthlyAppoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
                     MonthlyNotInterested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NotInterested),
+
+                    LastMonthTotalLeads = callDetail.Count(p => p.CreatedDate.Month == lastMonth && p.CreatedDate.Year == (currentYear == 1 ? 12 : currentYear)),
+                    LastMonthNoResponse = callDetail.Count(p => p.CreatedDate.Month == lastMonth && p.CreatedDate.Year == (currentYear == 1 ? 12 : currentYear) && p.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    LastMonthAppoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == lastMonth && p.CreatedDate.Year == (currentYear == 1 ? 12 : currentYear) && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    LastMonthNotInterested = callDetail.Count(p => p.CreatedDate.Month == lastMonth && p.CreatedDate.Year == (currentYear == 1 ? 12 : currentYear) && p.OutComeId == (int)Enums.CallOutcome.NotInterested),
                 };
 
 

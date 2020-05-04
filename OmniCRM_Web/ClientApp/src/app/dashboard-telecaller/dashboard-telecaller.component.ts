@@ -29,6 +29,11 @@ export class DashboardTelecallerComponent implements OnInit {
   percentAppoTaken: number;
   percentNotInter: number;
 
+  percentLastMonthTotal: number;
+  percentLastMonthNoResponse: number;
+  percentLastMonthAppoTaken: number;
+  percentLastMonthNotInter: number;
+
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.currentYear = new Date().getFullYear();
@@ -48,6 +53,11 @@ export class DashboardTelecallerComponent implements OnInit {
         this.percentNoResponse = (this.teleDashboard.monthlyNoResponse / this.teleDashboard.monthlyTotalLeads) * 100;
         this.percentAppoTaken = (this.teleDashboard.monthlyAppoinmentTaken / this.teleDashboard.monthlyTotalLeads) * 100;
         this.percentNotInter = (this.teleDashboard.monthlyNotInterested / this.teleDashboard.monthlyTotalLeads) * 100;
+
+        this.percentLastMonthTotal = (this.teleDashboard.monthlyTotalLeads - this.teleDashboard.lastMonthTotalLeads) * 100 / this.teleDashboard.lastMonthTotalLeads;
+        this.percentLastMonthNoResponse = (this.teleDashboard.monthlyNoResponse - this.teleDashboard.lastMonthNoResponse) * 100 / this.teleDashboard.lastMonthNoResponse;
+        this.percentLastMonthAppoTaken = (this.teleDashboard.monthlyAppoinmentTaken - this.teleDashboard.lastMonthAppoinmentTaken) * 100 / this.teleDashboard.lastMonthAppoinmentTaken;
+        this.percentLastMonthNotInter = (this.teleDashboard.monthlyNotInterested - this.teleDashboard.lastMonthNotInterested) * 100 / this.teleDashboard.lastMonthNotInterested;
 
         this.teleDashboard.collChartData.forEach((item) => {
           this.months.push(item.month);

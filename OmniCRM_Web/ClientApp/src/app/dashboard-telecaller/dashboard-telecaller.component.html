@@ -114,7 +114,7 @@
 
                 <div class="chart">
                   <!-- Sales Chart Canvas -->
-                  <canvas #canvas height="250" style="height: 250px;">{{chart}}</canvas>
+                  <canvas #canvas height="200" style="height: 200px;">{{chart}}</canvas>
                 </div>
                 <!-- /.chart-responsive -->
               </div>
@@ -166,39 +166,55 @@
           </div>
           <!-- ./card-body -->
           <div class="card-footer">
+            <p class="d-flex justify-content-center">Lead comparison with last month</p>
+
             <div class="row">
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                  <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                  <h5 class="description-header">$35,210.43</h5>
-                  <span class="description-text">TOTAL REVENUE</span>
+                  <!--<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> {{percentLastMonthTotal}}%</span>-->
+
+                  <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthTotal > 0, 'text-danger': percentLastMonthTotal < 0,
+                        'text-warning': teleDashboard.lastMonthTotalLeads == 0, 'text-info': percentLastMonthTotal == 0}">
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthTotal > 0, 'fa-caret-down': percentLastMonthTotal < 0}"></i> {{percentLastMonthTotal}}%
+                  </span>
+                  <h5 class="description-header">{{teleDashboard.lastMonthTotalLeads}}</h5>
+                  <span class="description-text">Total Leads</span>
                 </div>
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                  <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                  <h5 class="description-header">$10,390.90</h5>
-                  <span class="description-text">TOTAL COST</span>
+                  <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthNotInter > 0, 'text-danger': percentLastMonthNotInter < 0,
+                        'text-warning': teleDashboard.lastMonthNotInterested == 0, 'text-info': percentLastMonthNotInter == 0}">
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNotInter > 0, 'fa-caret-down': percentLastMonthNotInter < 0}"></i> {{percentLastMonthNotInter}}%
+                  </span>
+                  <h5 class="description-header">{{teleDashboard.lastMonthNotInterested}}</h5>
+                  <span class="description-text">Not Interested</span>
                 </div>
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                  <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                  <h5 class="description-header">$24,813.53</h5>
-                  <span class="description-text">TOTAL PROFIT</span>
+                  <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthAppoTaken > 0, 'text-danger': percentLastMonthAppoTaken < 0,
+                        'text-warning': teleDashboard.lastMonthAppoinmentTaken == 0, 'text-info': percentLastMonthAppoTaken == 0}">
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthAppoTaken > 0, 'fa-caret-down': percentLastMonthAppoTaken < 0}"></i> {{percentLastMonthAppoTaken}}%
+                  </span>
+                  <h5 class="description-header">{{teleDashboard.lastMonthAppoinmentTaken}}</h5>
+                  <span class="description-text">Appointment Taken</span>
                 </div>
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
               <div class="col-sm-3 col-6">
                 <div class="description-block">
-                  <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                  <h5 class="description-header">1200</h5>
-                  <span class="description-text">GOAL COMPLETIONS</span>
+                  <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthNoResponse > 0, 'text-danger': percentLastMonthNoResponse < 0,
+                        'text-warning': teleDashboard.lastMonthNoResponse == 0, 'text-info': percentLastMonthNoResponse == 0}">
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNoResponse > 0, 'fa-caret-down': percentLastMonthNoResponse < 0}"></i> {{percentLastMonthNoResponse}}%
+                  </span>
+                  <h5 class="description-header">{{teleDashboard.lastMonthNoResponse}}</h5>
+                  <span class="description-text">No Response</span>
                 </div>
                 <!-- /.description-block -->
               </div>

@@ -9,6 +9,11 @@ export class TeleDash {
   monthlyNotInterested: number;
   monthlyAppoinmentTaken: number;
   monthlyNoResponse: number;
+
+  lastMonthTotalLeads: number;
+  lastMonthNotInterested: number;
+  lastMonthAppoinmentTaken: number;
+  lastMonthNoResponse: number;
 }
 
 
