@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { NgForm, FormControl } from '@angular/forms';
 import { LeadMaster, OutcomeMaster, AppointmentDetail } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { RmanagerMaster } from '../models/rmanager-master';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 
 @Component({
@@ -31,7 +31,63 @@ export class LeadCreateComponent implements OnInit {
   successMsg: string;
   currentUser: UserMaster;
   appointmentDate: NgbDateStruct;
+  appointmentTime: NgbTimeStruct;
   minDate: NgbDateStruct;
+  minuteStep: number = 15;
+  isOnDatePickerLoad: boolean = true;
+  placement = 'left';
+
+  timeCtrl = new FormControl('', (control: FormControl) => {
+    const value = control.value;
+
+    if (!value) {
+      return null;
+    }
+
+    if (value.hour <= 9) {
+      if (value.minute < 30 || value.hour <= 9)
+        return { tooEarly: true };
+    }
+    if (value.hour >= 18 && value.minute >= 0) {
+      return { tooLate: true };
+    }
+
+    return null;
+  });
+
+  dateCtrl = new FormControl('', (control: FormControl) => {
+    const value = control.value;
+
+    if (!value) {
+      return null;
+    }
+
+    //if (this.isOnDatePickerLoad == false) {
+    //  if (value.day == this.minDate.day && value.month == this.minDate.month && value.year == this.minDate.year) {
+    //    var setTime = new Date();
+    //    setTime.setMinutes(setTime.getMinutes() + 15);
+    //    let hr = setTime.getHours();
+    //    let min = (Math.round(setTime.getMinutes() / 5) * 5) % 60;
+
+    //    this.appointmentTime = {
+    //      hour: hr,
+    //      minute: min,
+    //      second: 0
+    //    };
+    //    return null;
+    //  }
+    //  else {
+    //    this.appointmentTime = {
+    //      hour: 9,
+    //      minute: 30,
+    //      second: 0
+    //    };
+    //    return null;
+    //  }
+    //}
+    //this.isOnDatePickerLoad = false;
+  });
+
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
@@ -55,6 +111,11 @@ export class LeadCreateComponent implements OnInit {
                 day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
                 month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth() + 1,
                 year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
+              },
+              this.appointmentTime = {
+                hour: new Date(data.appointmentDetail[0].appointmentDateTime).getHours(),
+                minute: new Date(data.appointmentDetail[0].appointmentDateTime).getMinutes(),
+                second: 0
               }
           }
         }, error => console.error('Error!', error));
@@ -86,7 +147,7 @@ export class LeadCreateComponent implements OnInit {
       || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId)) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
       this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
-      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, 10, 0, 0, 0);
+      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
@@ -121,6 +182,33 @@ export class LeadCreateComponent implements OnInit {
       this.form.reset();
     this.is_progress = false;
     this.saveBtnTxt = "Save";
+  }
+
+  onDateChange(value: NgbDateStruct) {
+    if (value != null && this.isOnDatePickerLoad == false) {
+      if (value.day == this.minDate.day && value.month == this.minDate.month && value.year == this.minDate.year) {
+        var setTime = new Date();
+        setTime.setMinutes(setTime.getMinutes() + 15);
+        let hr = setTime.getHours();
+        let min = (Math.round(setTime.getMinutes() / 5) * 5) % 60;
+
+        this.appointmentTime = {
+          hour: hr,
+          minute: min,
+          second: 0
+        };
+
+      }
+      else {
+        this.appointmentTime = {
+          hour: 9,
+          minute: 30,
+          second: 0
+        };
+
+      }
+    }
+    this.isOnDatePickerLoad = false;
   }
 }
 

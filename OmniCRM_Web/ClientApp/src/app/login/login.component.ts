@@ -22,8 +22,8 @@ export class LoginComponent implements OnInit {
   public credentials = {
     //username: "admin@ostechlabs.com",
     //password: "ostech#852"
-    username: "",
-    password: ""
+    username: "r.crossworld@gmail.com",
+    password: "Rohan@123"
   };
 
   constructor(private auth: AuthenticationService, private router: Router, private route: ActivatedRoute, ) {

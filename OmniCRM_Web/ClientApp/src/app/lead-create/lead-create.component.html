@@ -15,7 +15,7 @@
         <div class="form-group col-sm-6">
           First Name<strong class="text-danger"> *</strong>
           <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
-                 class="form-control" [(ngModel)]="leadModel.firstName" placeholder="i.e. John" maxlength="50" [disabled]=is_edit/>
+                 class="form-control" [(ngModel)]="leadModel.firstName" placeholder="i.e. John" maxlength="50" [disabled]=is_edit />
           <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
           <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
         </div>
@@ -23,7 +23,7 @@
         <div class="form-group col-sm-6">
           Last Name<strong class="text-danger"> *</strong>
           <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'-]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
-                 class="form-control" [(ngModel)]="leadModel.lastName" placeholder="i.e Smith" maxlength="50" [disabled]=is_edit/>
+                 class="form-control" [(ngModel)]="leadModel.lastName" placeholder="i.e Smith" maxlength="50" [disabled]=is_edit />
           <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
           <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
         </div>
@@ -52,15 +52,26 @@
 
       <div class="row" *ngIf="leadModel.outComeId == 3">
         <div class="form-group col-sm-6">
-          Appoinment Date<strong class="text-danger"> *</strong>
+          Appoinment Date Time<strong class="text-danger"> *</strong>
           <div class="input-group">
-            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
-                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
+            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy HH:MM" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
+                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
+                   [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
+
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+              <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
             </div>
           </div>
-          <small class="text-danger" *ngIf="appoinDate.errors?.required && appoinDate.touched">* Appoinment date is required</small>
+          <small class="text-danger" *ngIf="dateCtrl.errors?.required && dateCtrl.touched">* Appoinment date time is required</small>
+
+          <ng-template #footerTemplate>
+            <ngb-timepicker required #appoinTime name="appoinTime" [(ngModel)]="appointmentTime" [meridian]="true" [minuteStep]="minuteStep" [formControl]="timeCtrl" [class.is-invalid]="timeCtrl.invalid && timeCtrl.touched" style="margin-left:10px; display:inline-block"></ngb-timepicker>
+            <br />
+            <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.required && timeCtrl.touched">* Appoinment time is required</small>
+            <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
+            <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
+          </ng-template>
+
         </div>
 
         <div class="form-group col-sm-6">
@@ -91,7 +102,7 @@
 
       <div class="form-group form-row form-inline">
         <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress" type="submit" style="width:120px;">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || appointmentTime == null || is_progress" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>

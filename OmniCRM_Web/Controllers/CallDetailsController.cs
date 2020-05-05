@@ -273,7 +273,11 @@ namespace OmniCRM_Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    callDetail.LastChangedDate = DateTime.Now;
+                    DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+
+                    callDetail.LastChangedDate = indianTime;
+                    callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
+
                     callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
                     {
                         //CallId = callDetail.CallId,
