@@ -4,8 +4,10 @@ import { LeadRepositoryService } from '../services/lead-repository.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
 import { GenericEnums } from '../services/generic-enums';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { release } from 'os';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -19,6 +21,7 @@ export class LeadFollowUpComponent implements OnInit {
   appointmentDetailObj: AppointmentDetail = new AppointmentDetail();
   folloupHistoryObj: FollowupHistory = new FollowupHistory();
   appointmentDate: NgbDateStruct;
+  appointmentTime: NgbTimeStruct;
   currentUser: UserMaster;
   followupTypeList: any[];
   callId: number;
@@ -30,7 +33,36 @@ export class LeadFollowUpComponent implements OnInit {
   errorMsg: string;
   successMsg: string;
   minDate: NgbDateStruct;
+  minuteStep: number = 15;
+  isOnDatePickerLoad: boolean = true;
+  placement = 'left';
 
+  timeCtrl = new FormControl('', (control: FormControl) => {
+    const value = control.value;
+
+    if (!value) {
+      return null;
+    }
+
+    if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
+        return { tooEarly: true };
+    }
+    if (value.hour >= 18 && value.minute >= 0) {
+      return { tooLate: true };
+    }
+
+    return null;
+  });
+
+  dateCtrl = new FormControl('', (control: FormControl) => {
+    const value = control.value;
+
+    if (!value) {
+      return null;
+    }
+
+    return null;
+  });
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
@@ -73,7 +105,7 @@ export class LeadFollowUpComponent implements OnInit {
     this.saveBtnTxt = "Saving...";
 
     if (this.appointmentDate != null) {
-      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, 10, 0, 0, 0);
+      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
       this.datePipe.transform(this.appointmentDetailObj.appointmentDateTime, "dd-MM-yyyy HH:mm a");
       //this.appointmentDetailObj.appointmentDateTime.setDate(this.appointmentDate.day);
       //this.appointmentDetailObj.appointmentDateTime.setMonth(this.appointmentDate.month);
@@ -113,5 +145,32 @@ export class LeadFollowUpComponent implements OnInit {
       { followupType: 'Email' },
       { followupType: 'WhatsApp' },
     ];
+  }
+
+  onDateChange(value: NgbDateStruct) {
+    if (value != null && this.isOnDatePickerLoad == false) {
+      if (value.day == this.minDate.day && value.month == this.minDate.month && value.year == this.minDate.year) {
+        var setTime = new Date();
+        setTime.setMinutes(setTime.getMinutes() + 15);
+        let hr = setTime.getHours();
+        let min = (Math.round(setTime.getMinutes() / 5) * 5) % 60;
+
+        this.appointmentTime = {
+          hour: hr,
+          minute: min,
+          second: 0
+        };
+
+      }
+      else {
+        this.appointmentTime = {
+          hour: 9,
+          minute: 30,
+          second: 0
+        };
+
+      }
+    }
+    this.isOnDatePickerLoad = false;
   }
 }

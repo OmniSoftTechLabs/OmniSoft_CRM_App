@@ -52,9 +52,9 @@
 
       <div class="row" *ngIf="leadModel.outComeId == 3">
         <div class="form-group col-sm-6">
-          Appoinment Date Time<strong class="text-danger"> *</strong>
+          Appointment Date Time<strong class="text-danger"> *</strong>
           <div class="input-group">
-            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy HH:MM" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
+            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
                    class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
                    [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
 

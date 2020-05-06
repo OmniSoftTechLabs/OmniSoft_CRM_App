@@ -61,31 +61,6 @@ export class LeadCreateComponent implements OnInit {
     if (!value) {
       return null;
     }
-
-    //if (this.isOnDatePickerLoad == false) {
-    //  if (value.day == this.minDate.day && value.month == this.minDate.month && value.year == this.minDate.year) {
-    //    var setTime = new Date();
-    //    setTime.setMinutes(setTime.getMinutes() + 15);
-    //    let hr = setTime.getHours();
-    //    let min = (Math.round(setTime.getMinutes() / 5) * 5) % 60;
-
-    //    this.appointmentTime = {
-    //      hour: hr,
-    //      minute: min,
-    //      second: 0
-    //    };
-    //    return null;
-    //  }
-    //  else {
-    //    this.appointmentTime = {
-    //      hour: 9,
-    //      minute: 30,
-    //      second: 0
-    //    };
-    //    return null;
-    //  }
-    //}
-    //this.isOnDatePickerLoad = false;
   });
 
 
@@ -142,14 +117,16 @@ export class LeadCreateComponent implements OnInit {
   onSavelead() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
-
+    const newAppDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
     if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && (this.leadModel.appointmentDetail.length == 0
-      || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId)) {
+      || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId
+      || this.leadModel.appointmentDetail[0].appointmentDateTime != newAppDateTime)) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
       this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
-      this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
+      this.appointmentDetailObj.appointmentDateTime = newAppDateTime;
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
+      this.leadModel.appointmentDetail.length = 0;
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
     }
 
@@ -178,7 +155,7 @@ export class LeadCreateComponent implements OnInit {
 
   onSaveCompleted() {
     setTimeout(() => { this.closeAlert(); }, 5000);
-    if (!this.is_edit)
+    if (!this.is_edit && !this.IsError)
       this.form.reset();
     this.is_progress = false;
     this.saveBtnTxt = "Save";
