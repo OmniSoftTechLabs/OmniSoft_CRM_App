@@ -194,6 +194,8 @@ namespace OmniCRM_Web.Controllers
                     return NotFound("Lead not found!");
                 }
 
+                _context.Entry(callDetail).State = EntityState.Modified;
+
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
@@ -204,7 +206,7 @@ namespace OmniCRM_Web.Controllers
                 {
                     List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
-                        && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).ToListAsync();
+                        && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
                     if (CollAppointments.Count > 0)
                     {
@@ -212,8 +214,6 @@ namespace OmniCRM_Web.Controllers
                             return BadRequest("Appointment time is already allocated on this day!");
                     }
                 }
-
-                _context.Entry(callDetail).State = EntityState.Modified;
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
                 if (callDetail.OutComeId != lastTrans.OutComeId)
@@ -225,7 +225,6 @@ namespace OmniCRM_Web.Controllers
                         Remarks = callDetail.Remark,
                     });
 
-                _context.Entry(callDetail).State = EntityState.Modified;
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "PutCallDetail: " + id + "-lead updated successfully");
@@ -258,6 +257,8 @@ namespace OmniCRM_Web.Controllers
                     return NotFound("Lead not found!");
                 }
 
+                _context.Entry(callDetail).State = EntityState.Modified;
+
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
@@ -268,7 +269,7 @@ namespace OmniCRM_Web.Controllers
                 {
                     List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
-                        && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).ToListAsync();
+                        && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
                     if (CollAppointments.Count > 0)
                     {
@@ -277,7 +278,6 @@ namespace OmniCRM_Web.Controllers
                     }
                 }
 
-                _context.Entry(callDetail).State = EntityState.Modified;
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
                 _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
 
@@ -314,7 +314,7 @@ namespace OmniCRM_Web.Controllers
                     {
                         List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                         CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
-                            && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).ToListAsync();
+                            && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
                         if (CollAppointments.Count > 0)
                         {

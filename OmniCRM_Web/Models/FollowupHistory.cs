@@ -10,6 +10,7 @@ namespace OmniCRM_Web.Models
         public DateTime CreatedDate { get; set; }
         public Guid CreatedByRmanagerId { get; set; }
         public string FollowupType { get; set; }
+        public DateTime AppoinDate { get; set; }
         public int AppoinStatusId { get; set; }
         public string Remarks { get; set; }
 

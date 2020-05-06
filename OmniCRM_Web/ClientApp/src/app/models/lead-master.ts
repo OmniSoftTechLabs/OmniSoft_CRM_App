@@ -50,6 +50,7 @@ export class FollowupHistory {
   createdDate: Date;
   createdByRmanagerId: string;
   followupType: string = "";
+  appoinDate: Date;
   appoinStatusId: number;
   remarks: string;
   appoinStatus: AppoinmentStatusMaster;

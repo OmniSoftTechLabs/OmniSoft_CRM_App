@@ -7,7 +7,6 @@ import { GenericEnums } from '../services/generic-enums';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
-import { release } from 'os';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -36,6 +35,7 @@ export class LeadFollowUpComponent implements OnInit {
   minuteStep: number = 15;
   isOnDatePickerLoad: boolean = true;
   placement = 'left';
+  lastAppoinDate: Date;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -45,7 +45,7 @@ export class LeadFollowUpComponent implements OnInit {
     }
 
     if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
-        return { tooEarly: true };
+      return { tooEarly: true };
     }
     if (value.hour >= 18 && value.minute >= 0) {
       return { tooLate: true };
@@ -77,7 +77,8 @@ export class LeadFollowUpComponent implements OnInit {
 
     this.leadRepo.getLeadById(this.callId).subscribe(
       data => (this.leadModel = data,
-        this.appointmentDetailObj = data.appointmentDetail[0]
+        this.appointmentDetailObj = data.appointmentDetail[0],
+        this.lastAppoinDate = this.appointmentDetailObj.appointmentDateTime
         //this.appointmentDate = {
         //  day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
         //  month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
@@ -115,6 +116,7 @@ export class LeadFollowUpComponent implements OnInit {
 
     this.folloupHistoryObj.appoinStatusId = this.appointmentDetailObj.appoinStatusId;
     this.folloupHistoryObj.callId = this.leadModel.callId;
+    this.folloupHistoryObj.appoinDate = this.lastAppoinDate;
     this.folloupHistoryObj.createdByRmanagerId = this.currentUser.userId;
     this.folloupHistoryObj.remarks = this.leadModel.remark;
 

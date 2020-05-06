@@ -178,6 +178,8 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.FollowupId).HasColumnName("FollowupID");
 
+                entity.Property(e => e.AppoinDate).HasColumnType("datetime");
+
                 entity.Property(e => e.AppoinStatusId).HasColumnName("AppoinStatusID");
 
                 entity.Property(e => e.CallId).HasColumnName("CallID");
@@ -243,6 +245,10 @@ namespace OmniCRM_Web.Models
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EmployeeCode)
                     .IsRequired()
                     .HasMaxLength(50);
 
