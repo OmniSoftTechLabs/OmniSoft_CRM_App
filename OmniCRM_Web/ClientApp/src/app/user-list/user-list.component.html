@@ -22,6 +22,7 @@
         <thead>
           <tr>
             <th scope="col">#</th>
+            <th scope="col" sortable="employeeCode" (sort)="onSort($event)">Emp. Code</th>
             <th scope="col" sortable="firstName" (sort)="onSort($event)">First Name</th>
             <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
             <th scope="col" sortable="email" (sort)="onSort($event)">Email</th>
@@ -35,11 +36,12 @@
           <tr *ngFor="let user of userList | async; index as i">
             <th scope="row">{{service.pageSize * (service.page - 1) + i + 1  }}</th>
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
+            <td> <ngb-highlight [result]="user.employeeCode"></ngb-highlight></td>
             <td> <ngb-highlight [result]="user.firstName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="user.lastName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.email" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="user.email"></ngb-highlight></td>
             <td> <ngb-highlight [result]="user.role.roleName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'"></ngb-highlight></td>
             <td> <button type="button" placement="top" ngbTooltip="Edit User" class="btn btn-sm btn-outline-warning rounded-circle" (click)="edituser(user.userId)"><i class="fas fa-edit"></i></button></td>
           </tr>
         </tbody>

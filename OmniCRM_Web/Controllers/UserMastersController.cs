@@ -159,7 +159,7 @@ namespace OmniCRM_Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (!UserMasterExists(userMaster.Email))
+                    if (!UserMasterExists(userMaster.Email, userMaster.EmployeeCode))
                     {
                         userMaster.LinkExpiryDate = DateTime.Now.AddDays(1);
                         _context.UserMaster.Add(userMaster);
@@ -216,12 +216,12 @@ namespace OmniCRM_Web.Controllers
 
         private bool UserMasterExists(Guid id)
         {
-            return _context.UserMaster.Any(e => e.UserId == id);
+            return _context.UserMaster.Any(e => e.UserId == id && e.Status == true);
         }
 
-        private bool UserMasterExists(string email)
+        private bool UserMasterExists(string email, string empCode)
         {
-            return _context.UserMaster.Any(e => e.Email == email);
+            return _context.UserMaster.Any(e => (e.Email == email || e.EmployeeCode == empCode) && e.Status == true);
         }
 
         //POST: api/UserMasters/ResetPassword
@@ -319,7 +319,7 @@ namespace OmniCRM_Web.Controllers
                     if (authModel.Username == "admin@ostechlabs.com" && authModel.Password == "ostech#852")
                         isSuperUser = true;
 
-                    if (isSuperUser || UserMasterExists(authModel.Username))
+                    if (isSuperUser || UserMasterExists(authModel.Username, ""))
                     {
                         var userMaster = await _context.UserMaster.FirstOrDefaultAsync(p => p.Email == authModel.Username && p.Status == true);
                         if (isSuperUser || userMaster != null)
@@ -388,7 +388,7 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                if (!UserMasterExists(id))
+                if (!UserMasterExists(id, ""))
                 {
                     GenericMethods.Log(LogType.ActivityLog.ToString(), "ForgotPassword: " + id + "-not found");
                     return this.NotFound("Email address does not exist.");
