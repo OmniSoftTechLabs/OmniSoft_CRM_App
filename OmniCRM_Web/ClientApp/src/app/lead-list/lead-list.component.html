@@ -46,7 +46,7 @@
         <div class="col-sm-2 form-group" *ngIf="isManager">
           Status: <select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">
             <option value="0">All</option>
-            <option *ngFor="let aStatus of appoinStatusList" [selected]="aStatus.appoinStatusId === 7" value="{{aStatus.appoinStatusId}}"> {{aStatus.status}}</option>
+            <option *ngFor="let aStatus of appoinStatusList" [selected]="aStatus.appoinStatusId === 0" value="{{aStatus.appoinStatusId}}"> {{aStatus.status}}</option>
           </select>
         </div>
         <div class="col-sm-2 form-group">
@@ -63,7 +63,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right">
               <a class="btn dropdown-item" (click)="onChangeFilterDateOption(1)">Created Date</a>
-              <a class="btn dropdown-item" (click)="onChangeFilterDateOption(2)">Appoinment Date</a>
+              <a class="btn dropdown-item" (click)="onChangeFilterDateOption(2)">Appointment Date</a>
             </div>
           </div>
           <div class="input-group">
@@ -104,7 +104,7 @@
             <th scope="col" sortable="outComeText" (sort)="onSort($event)">Status</th>
             <th scope="col" sortable="createdByName" (sort)="onSort($event)" *ngIf="isManager">Created By</th>
             <th scope="col" sortable="allocatedToName" (sort)="onSort($event)" *ngIf="isTeleCaller">Allocated To</th>
-            <th scope="col" sortable="appointmentDateTime" (sort)="onSort($event)">Appoinment DateTime</th>
+            <th scope="col" sortable="appointmentDateTime" (sort)="onSort($event)">Appointment DateTime</th>
             <th scope="col" sortable="remark" (sort)="onSort($event)">Remarks</th>
             <th scope="col">Actions</th>
             <!--<th scope="col"></th>-->

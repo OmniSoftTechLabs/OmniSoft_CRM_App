@@ -25,11 +25,11 @@
             <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Fetch data</a>
           </li>-->
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isTeleCaller || isRManager">
-            <a class="nav-link" [routerLink]="['/lead-list']">Lead Details</a>
+            <a class="nav-link underlineHover active" [routerLink]="['/lead-list']">Lead Details</a>
           </li>
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link" [routerLink]="['/user-list']">User Details</a>
+            <a class="nav-link underlineHover active" [routerLink]="['/user-list']">User Details</a>
           </li>
         </ul>
         <span class="navbar-text">
