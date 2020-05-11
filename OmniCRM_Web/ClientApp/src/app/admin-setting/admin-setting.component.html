@@ -1,0 +1,46 @@
+<div class="card mr-auto ml-auto col-md-4 nopadding">
+  <div class="card-header"><h5>Admin Setting</h5> </div>
+  <div class="card-body">
+    <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
+      <strong>Error!</strong> {{errorMsg}}
+    </div>
+    <div class="alert alert-success" id="success-alert" role="alert" *ngIf="IsSucess">
+      <button type="button" class="close" aria-label="Close" (click)="closeAlert()"><span aria-hidden="true">&times;</span></button>
+      <strong>Success!</strong> {{successMsg}}
+    </div>
+
+    <form #settingAdd="ngForm" (ngSubmit)="onSaveSetting()" novalidate>
+      <!--userAdd.reset()-->
+
+      <div class="form-group">
+        Appointment Time Interval (Minutes) :
+        <input type="text" #appoinTimeInterval="ngModel" name="appoinTimeInterval" pattern="^[0-9]{1,2}$" [class.is-invalid]="appoinTimeInterval.invalid && appoinTimeInterval.touched || appoinTimeInterval.errors?.pattern"
+               class="form-control" [(ngModel)]="settingModel.appoinTimeInterval" placeholder="i.e. 15" maxlength="2" />
+      </div>
+
+      <div class="form-group">
+        Daily Email Notification Time :
+        <ngb-timepicker #emailTime name="emailTime" [(ngModel)]="dailyEmailTime" [meridian]="true" [minuteStep]="minuteStep"></ngb-timepicker>
+      </div>
+
+      <div class="form-group">
+        Over due days for RM :
+        <input type="text" #overDueDaysRm="ngModel" name="overDueDaysRm" pattern="^[0-9]{1,2}$" [class.is-invalid]="overDueDaysRm.invalid && overDueDaysRm.touched || overDueDaysRm.errors?.pattern"
+               class="form-control" [(ngModel)]="settingModel.overDueDaysRm" placeholder="i.e. 7" maxlength="2" />
+      </div>
+
+      <div class="form-group form-row form-inline">
+        <div class=" col-md-12 ">
+          <button class="btn btn-primary" [disabled]="settingAdd.form.invalid || is_progress" type="submit" style="width:120px;">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+            {{saveBtnTxt}}
+          </button>
+          &nbsp; &nbsp;
+          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/dashboard']">Close</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+

@@ -7,6 +7,7 @@ namespace OmniCRM_Web.Models
     {
         public UserMaster()
         {
+            AdminSetting = new HashSet<AdminSetting>();
             AppointmentDetail = new HashSet<AppointmentDetail>();
             CallDetail = new HashSet<CallDetail>();
             CallTransactionDetail = new HashSet<CallTransactionDetail>();
@@ -26,6 +27,7 @@ namespace OmniCRM_Web.Models
         public DateTime? LinkExpiryDate { get; set; }
 
         public virtual RoleMaster Role { get; set; }
+        public virtual ICollection<AdminSetting> AdminSetting { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetail { get; set; }
         public virtual ICollection<CallDetail> CallDetail { get; set; }
         public virtual ICollection<CallTransactionDetail> CallTransactionDetail { get; set; }

@@ -4,6 +4,7 @@ import { RoleMaster } from '../models/role-master';
 import { UserMaster } from '../models/user-master';
 import { CreatePwd } from '../models/create-pwd'
 import { ChangePwd } from '../models/change-pwd';
+import { AdminSetting } from '../models/admin-setting';
 
 @Injectable({
   providedIn: 'root'
@@ -60,5 +61,14 @@ export class GeneralRepositoryService {
 
   changePassword(chngPwd: ChangePwd) {
     return this.http.put(this.baseUrl + 'api/UserMasters/ChangePassword', chngPwd, { responseType: 'text' }).pipe();
+  }
+
+  getAdminSetting() {
+    return this.http.get<AdminSetting>(this.baseUrl + 'api/AdminSettings/GetAdminSettingLast').pipe();
+  }
+
+  postAdminSetting(settingModel: AdminSetting) {
+    return this.http.post(this.baseUrl + 'api/AdminSettings', settingModel, { responseType: 'text' }).pipe();
+
   }
 }

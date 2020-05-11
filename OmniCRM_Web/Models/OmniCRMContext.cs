@@ -15,6 +15,7 @@ namespace OmniCRM_Web.Models
         {
         }
 
+        public virtual DbSet<AdminSetting> AdminSetting { get; set; }
         public virtual DbSet<AppoinmentStatusMaster> AppoinmentStatusMaster { get; set; }
         public virtual DbSet<AppointmentDetail> AppointmentDetail { get; set; }
         public virtual DbSet<CallDetail> CallDetail { get; set; }
@@ -35,6 +36,25 @@ namespace OmniCRM_Web.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AdminSetting>(entity =>
+            {
+                entity.HasKey(e => e.SettingId);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.DailyEmailTime).HasColumnType("datetime");
+
+                entity.Property(e => e.OverDueDaysRm).HasColumnName("OverDueDaysRM");
+
+                entity.HasOne(d => d.CreatedByNavigation)
+                    .WithMany(p => p.AdminSetting)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AdminSetting_UserMaster");
+            });
+
             modelBuilder.Entity<AppoinmentStatusMaster>(entity =>
             {
                 entity.HasKey(e => e.AppoinStatusId);

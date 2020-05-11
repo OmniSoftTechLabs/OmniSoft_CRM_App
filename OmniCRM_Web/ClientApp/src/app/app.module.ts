@@ -28,6 +28,7 @@ import { LeadFollowUpComponent } from './lead-follow-up/lead-follow-up.component
 import { DatePipe } from '@angular/common';
 import { CustomDateParserFormatterService } from './services/custom-date-parser-formatter.service';
 import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-telecaller.component';
+import { AdminSettingComponent } from './admin-setting/admin-setting.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-t
     LeadCreateComponent,
     LeadListComponent,
     LeadFollowUpComponent,
-    DashboardTelecallerComponent
+    DashboardTelecallerComponent,
+    AdminSettingComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -63,18 +65,18 @@ import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-t
       { path: 'forget-password', component: ForgetPasswordComponent },
       { path: 'chng-pwd', component: ChangePasswordComponent, canActivate: [AuthGuard] },
 
+      { path: 'setting', component: AdminSettingComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller', 'Relationship Manager'] } },
       { path: 'lead-followup', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dash-tele', component: DashboardTelecallerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
-      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
       //{ path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthGuard] },
     ]),
-    FontAwesomeModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

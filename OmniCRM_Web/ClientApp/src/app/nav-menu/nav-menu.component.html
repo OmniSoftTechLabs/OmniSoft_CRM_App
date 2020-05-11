@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
-      <a role="button" (click)="onBrandClick()" class="navbar-brand" style="cursor: pointer"><img src="../../assets/OmniCRM-Logo.png" height="40"/></a>
+      <a role="button" (click)="onBrandClick()" class="navbar-brand" style="cursor: pointer"><img src="../../assets/OmniCRM-Logo.png" height="40" /></a>
       <button class="navbar-toggler"
               type="button"
               data-toggle="collapse"
@@ -30,6 +30,10 @@
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
             <a class="nav-link underlineHover active" [routerLink]="['/user-list']">User Details</a>
+          </li>
+
+          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="nav-link underlineHover active" [routerLink]="['/setting']">Settings</a>
           </li>
         </ul>
         <span class="navbar-text">

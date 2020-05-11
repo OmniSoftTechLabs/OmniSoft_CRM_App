@@ -7,6 +7,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
+import { AdminSetting } from '../models/admin-setting';
 
 @Component({
   selector: 'app-lead-create',
@@ -36,6 +37,7 @@ export class LeadCreateComponent implements OnInit {
   minuteStep: number = 15;
   isOnDatePickerLoad: boolean = true;
   placement = 'left';
+  adminSetting: AdminSetting;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -44,9 +46,8 @@ export class LeadCreateComponent implements OnInit {
       return null;
     }
 
-    if (value.hour <= 9) {
-      if (value.minute < 30 || value.hour <= 9)
-        return { tooEarly: true };
+    if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
+      return { tooEarly: true };
     }
     if (value.hour >= 18 && value.minute >= 0) {
       return { tooLate: true };
@@ -67,6 +68,8 @@ export class LeadCreateComponent implements OnInit {
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
+    this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.minuteStep = this.adminSetting.appoinTimeInterval;
   }
 
   ngOnInit(): void {

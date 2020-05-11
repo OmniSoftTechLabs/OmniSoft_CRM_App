@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { error } from '@angular/compiler/src/util';
 import { UserMaster } from '../models/user-master';
 import { roles } from '../services/generic-enums';
+import { GeneralRepositoryService } from '../services/general-repository.service';
 
 @Component({
   selector: 'app-login',
@@ -22,17 +23,17 @@ export class LoginComponent implements OnInit {
   public credentials = {
     //username: "admin@ostechlabs.com",
     //password: "ostech#852"
-    username: "r.crossworld@gmail.com",
-    password: "Rohan@123"
+    username: "p.pansuriya@gmail.com",
+    password: "Piyush@456"
   };
 
-  constructor(private auth: AuthenticationService, private router: Router, private route: ActivatedRoute, ) {
+  constructor(private auth: AuthenticationService, private router: Router, private route: ActivatedRoute, private generalRepository: GeneralRepositoryService) {
     this.auth.logout();
   }
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-    
+
   }
 
   login(): void {
@@ -47,6 +48,12 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(this.credentials).subscribe({
       next: success => {
+
+        this.generalRepository.getAdminSetting().subscribe(
+          data => (localStorage.removeItem("adminSetting"), localStorage.setItem("adminSetting", JSON.stringify(data))),
+          error => (console.error('Error!', error))
+        );
+
         this.auth.currentUser.subscribe(x => this.userMaster = x);
         if (this.userMaster.roleId == roles["Tele Caller"])
           this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-tele';
