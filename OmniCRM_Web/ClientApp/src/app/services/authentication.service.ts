@@ -48,6 +48,7 @@ export class AuthenticationService {
   logout() {
     // remove user from local storage and set current user to null
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('adminSetting');
     this.currentUserSubject.next(null);
   }
 }

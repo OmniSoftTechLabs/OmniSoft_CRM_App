@@ -14,6 +14,7 @@ import { DatePipe } from '@angular/common';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { FilterOptions } from '../models/filter-options';
+import { AdminSetting } from '../models/admin-setting';
 
 @Component({
   selector: 'app-lead-list',
@@ -45,9 +46,13 @@ export class LeadListComponent implements OnInit {
   allocateCreateByTxt: string = "";
   modalTitle: string = "";
   uploadMsg: string = "";
+  adminSetting: AdminSetting;
+  overDueDays: number;
+
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
+
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
@@ -56,6 +61,8 @@ export class LeadListComponent implements OnInit {
 
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
+    this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.overDueDays = this.adminSetting.overDueDaysRm;
   }
 
   ngOnInit(): void {
@@ -105,6 +112,7 @@ export class LeadListComponent implements OnInit {
     this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).subscribe(
       (leads) => {
         this.service.xType = new LeadMaster();
+        leads.forEach((obj) => { obj.isOverDue = new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false });
         this.service.TABLE = leads;
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));

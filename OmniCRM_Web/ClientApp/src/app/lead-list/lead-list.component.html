@@ -112,7 +112,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let lead of leadList | async; index as i">
+          <tr *ngFor="let lead of leadList | async; index as i" [ngClass]="{'text-danger': lead.isOverDue == true}">
             <th scope="row">{{service.pageSize * (service.page - 1) + i + 1  }}</th>
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
             <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight></td>

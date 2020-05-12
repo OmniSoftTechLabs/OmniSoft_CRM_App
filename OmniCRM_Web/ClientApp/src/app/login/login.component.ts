@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       next: success => {
 
         this.generalRepository.getAdminSetting().subscribe(
-          data => (localStorage.removeItem("adminSetting"), localStorage.setItem("adminSetting", JSON.stringify(data))),
+          data => (localStorage.setItem("adminSetting", JSON.stringify(data))),
           error => (console.error('Error!', error))
         );
 

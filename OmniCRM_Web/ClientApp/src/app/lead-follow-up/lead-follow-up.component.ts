@@ -7,6 +7,7 @@ import { GenericEnums } from '../services/generic-enums';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
+import { AdminSetting } from '../models/admin-setting';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -36,6 +37,7 @@ export class LeadFollowUpComponent implements OnInit {
   isOnDatePickerLoad: boolean = true;
   placement = 'left';
   lastAppoinDate: Date;
+  adminSetting: AdminSetting;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -67,7 +69,8 @@ export class LeadFollowUpComponent implements OnInit {
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
-
+    this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.minuteStep = this.adminSetting.appoinTimeInterval;
   }
 
   ngOnInit(): void {
