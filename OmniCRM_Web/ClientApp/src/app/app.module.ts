@@ -29,6 +29,7 @@ import { DatePipe } from '@angular/common';
 import { CustomDateParserFormatterService } from './services/custom-date-parser-formatter.service';
 import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-telecaller.component';
 import { AdminSettingComponent } from './admin-setting/admin-setting.component';
+import { DashboardManagerComponent } from './dashboard-manager/dashboard-manager.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { AdminSettingComponent } from './admin-setting/admin-setting.component';
     LeadListComponent,
     LeadFollowUpComponent,
     DashboardTelecallerComponent,
-    AdminSettingComponent
+    AdminSettingComponent,
+    DashboardManagerComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -70,8 +72,9 @@ import { AdminSettingComponent } from './admin-setting/admin-setting.component';
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller', 'Relationship Manager'] } },
-      { path: 'lead-followup', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
+      { path: 'lead-followup/:callId', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dash-tele', component: DashboardTelecallerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
+      { path: 'dash-manager', component: DashboardManagerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },

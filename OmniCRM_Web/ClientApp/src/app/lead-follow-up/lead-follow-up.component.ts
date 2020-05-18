@@ -8,6 +8,7 @@ import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { AdminSetting } from '../models/admin-setting';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -66,7 +67,7 @@ export class LeadFollowUpComponent implements OnInit {
     return null;
   });
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private route: ActivatedRoute) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
@@ -76,7 +77,8 @@ export class LeadFollowUpComponent implements OnInit {
   ngOnInit(): void {
     this.fillAppoinmentStatus();
     this.fillFollowupType();
-    this.callId = Number(localStorage.getItem("callIdFollowUp"));
+    //this.callId = Number(localStorage.getItem("callIdFollowUp"));
+    this.callId = this.route.snapshot.params.callId;
 
     this.leadRepo.getLeadById(this.callId).subscribe(
       data => (this.leadModel = data,
@@ -87,8 +89,8 @@ export class LeadFollowUpComponent implements OnInit {
         //  month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
         //  year: new Date(data.appointmentDetail[0].appointmentDateTime).getFullYear()
         //}
-      ), error => console.error('Error!', error));
-    localStorage.removeItem("callIdFollowUp");
+      ), error => (console.error('Error!', error), this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted()));
+    //localStorage.removeItem("callIdFollowUp");
 
   }
 
@@ -127,8 +129,8 @@ export class LeadFollowUpComponent implements OnInit {
     this.leadModel.followupHistory.push(this.folloupHistoryObj);
 
     this.leadRepo.createFollowup(this.leadModel).subscribe({
-      next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
-      error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
+      next: data => (console.log('Success!', data), this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
+      error: error => (console.error('Error!', error), this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
     });
   }
 

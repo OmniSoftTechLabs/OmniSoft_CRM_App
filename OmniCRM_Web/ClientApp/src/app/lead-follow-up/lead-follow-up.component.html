@@ -108,7 +108,7 @@
 
       <div class="form-group form-row form-inline">
         <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress || appointmentDetailObj.appoinStatusId==7 || appointmentDate == null" type="submit" style="width:120px;">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress || appointmentDetailObj.appoinStatusId==7 || dateCtrl.invalid" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>

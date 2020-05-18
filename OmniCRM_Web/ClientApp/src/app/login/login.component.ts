@@ -50,18 +50,20 @@ export class LoginComponent implements OnInit {
       next: success => {
 
         this.generalRepository.getAdminSetting().subscribe(
-          data => (localStorage.setItem("adminSetting", JSON.stringify(data))),
+          data => (localStorage.setItem('adminSetting', JSON.stringify(data))),
           error => (console.error('Error!', error))
         );
 
-        this.auth.currentUser.subscribe(x => this.userMaster = x);
-        if (this.userMaster.roleId == roles["Tele Caller"])
-          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-tele';
-        else if (this.userMaster.roleId == roles["Relationship Manager"])
-          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-manager';
+        setTimeout(() => {
+          this.auth.currentUser.subscribe(x => this.userMaster = x);
+          if (this.userMaster.roleId == roles["Tele Caller"])
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-tele';
+          else if (this.userMaster.roleId == roles["Relationship Manager"])
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dash-manager';
 
-        this.router.navigate([this.returnUrl]);
-        this.isProgress = false;
+          this.router.navigate([this.returnUrl]);
+          this.isProgress = false;
+        }, 200);
       },
       error: error => (this.loginError = error.error, this.isProgress = false)
     })

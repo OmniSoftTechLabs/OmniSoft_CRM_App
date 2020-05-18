@@ -174,9 +174,9 @@ export class LeadListComponent implements OnInit {
   }
 
   followUp(callId: string) {
-    localStorage.removeItem("callIdFollowUp");
-    localStorage.setItem("callIdFollowUp", callId.toString());
-    this.router.navigate(['/lead-followup']);
+    //localStorage.removeItem("callIdFollowUp");
+    //localStorage.setItem("callIdFollowUp", callId.toString());
+    this.router.navigate(['/lead-followup/' + callId]);
   }
 
   onChangeFilterDateOption(id: number) {
