@@ -4,6 +4,7 @@ import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetai
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
 import { TeleDash } from '../models/tele-dash';
+import { ManagerDash } from '../models/manager-dash';
 
 @Injectable({
   providedIn: 'root'
@@ -84,4 +85,10 @@ export class LeadRepositoryService {
     let response = await this.http.get<TeleDash>(this.baseUrl + 'api/CallDetails/GetTeleCallerDashboard/' + id).toPromise();
     return response;
   }
+
+  async loadManagerDash(id) {
+    let response = await this.http.get<ManagerDash>(this.baseUrl + 'api/CallDetails/GetRManagerDashboard/' + id).toPromise();
+    return response;
+  }
+
 }

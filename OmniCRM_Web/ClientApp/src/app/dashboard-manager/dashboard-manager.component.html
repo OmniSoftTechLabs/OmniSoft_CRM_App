@@ -6,7 +6,7 @@
         <!-- small box -->
         <div class="small-box bg-info">
           <div class="inner">
-            <h3>150</h3>
+            <h3>{{managerDashboard.totalAllocatedLeads}}</h3>
 
             <p>Total Allocated Leads</p>
           </div>
@@ -21,7 +21,7 @@
         <div class="small-box bg-success">
           <div class="inner">
             <!--<h3>53<sup style="font-size: 20px">%</sup></h3>-->
-            <h3>53</h3>
+            <h3>{{managerDashboard.soldLeads}}</h3>
             <p>Total Sold Leads</p>
           </div>
           <div class="icon">
@@ -34,7 +34,7 @@
         <!-- small box -->
         <div class="small-box bg-warning">
           <div class="inner">
-            <h3>44</h3>
+            <h3>{{managerDashboard.holdLeads}}</h3>
 
             <p>Total Hold Leads</p>
           </div>
@@ -48,7 +48,7 @@
         <!-- small box -->
         <div class="small-box bg-danger">
           <div class="inner">
-            <h3>65</h3>
+            <h3>{{managerDashboard.droppedLeads}}</h3>
 
             <p>Total Dropped Leads</p>
           </div>
@@ -62,7 +62,7 @@
     <!-- /.row -->
 
     <div class="row">
-      <div class="col-lg-6 col-6">
+      <div class="col-lg-6 col-12">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">
@@ -72,10 +72,10 @@
             <div class="card-tools">
               <ul class="nav nav-pills ml-auto">
                 <li class="nav-item">
-                  <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
+                  <a class="nav-link active" href="#area-chart" data-toggle="tab">Area</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
+                  <a class="nav-link" href="#donut-chart" data-toggle="tab">Donut</a>
                 </li>
               </ul>
             </div>
@@ -83,19 +83,25 @@
           <div class="card-body">
             <div class="tab-content p-0">
               <!-- Morris chart - Sales -->
-              <div class="chart tab-pane active" id="revenue-chart"
-                   style="position: relative; height: 300px;">
-                <canvas #revenueChart id="revenue-chart-canvas" height="300" style="height: 300px;">{{revenueData}}</canvas>
+              <div class="chart tab-pane active" id="area-chart" style="position: relative; height: 400px;">
+                <p class="text-center">
+                  <strong>Follow-ups: Jan 01, {{currentYear}} - Dec 31, {{currentYear}}</strong>
+                </p>
+                <canvas #areaChart id="area-chart-canvas" height="350" style="height: 350px; max-height:350px">{{areaData}}</canvas>
               </div>
-              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
-                <canvas #salesChart id="sales-chart-canvas" height="300" style="height: 300px;">{{salesData}}</canvas>
+
+              <div class="chart tab-pane" id="donut-chart" style="position: relative; height: 400px;">
+                <p class="text-center">
+                  <strong>Goal of Month : {{currentMonth}}</strong>
+                </p>
+                <canvas #donutChart id="donut-chart-canvas" height="350" style="height: 350px; max-height:350px">{{donutData}}</canvas>
               </div>
             </div>
           </div><!-- /.card-body -->
         </div>
       </div>
 
-      <div class="col-lg-6 col-6">
+      <div class="col-lg-6 col-12">
         <div class="card card-primary">
           <div class="card-body p-0">
             <!-- THE CALENDAR -->

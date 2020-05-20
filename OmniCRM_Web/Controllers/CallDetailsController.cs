@@ -604,5 +604,53 @@ namespace OmniCRM_Web.Controllers
             }
 
         }
+
+
+        [HttpGet("{id}")]
+        [Route("GetRManagerDashboard/{id}")]
+        public async Task<ActionResult<RManagerDashboard>> GetRManagerDashboard(Guid id)
+        {
+            try
+            {
+                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).Include(p => p.FollowupHistory).Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id).ToListAsync();
+                int currentYear = DateTime.Now.Year;
+                int currentMonth = DateTime.Now.Month;
+                int lastMonth = DateTime.Now.AddMonths(-1).Month;
+
+
+                RManagerDashboard objManagerDash = new RManagerDashboard()
+                {
+                    TotalAllocatedLeads = callDetail.Count(),
+                    SoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    HoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    DroppedLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+
+                    MonthlySold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    MonthlyHold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    MonthlyDropped = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                };
+
+
+                objManagerDash.CollChartData = callDetail.Where(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear)
+                    .GroupBy(p => new { p.FollowupHistory.LastOrDefault().CreatedDate.Month }).Select(p => new ChartDataMnager()
+                    {
+                        MonthNumber = p.Key.Month,
+                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(p.Key.Month).Substring(0, 3),
+                        Sold = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                        Dropped = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                    }).OrderBy(p => p.MonthNumber).ToList();
+
+
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRManagerDashboard: " + id + "-get manager dashboard");
+                return objManagerDash;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetRManagerDashboard: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
     }
 }
