@@ -5,6 +5,43 @@ import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
 import { ManagerDash } from '../models/manager-dash';
 import { DatePipe } from '@angular/common';
+import { Subject } from 'rxjs';
+import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, } from 'date-fns';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, } from 'angular-calendar';
+import { addMinutes } from 'date-fns/fp';
+import { GenericEnums, AppoinmentStatus } from '../services/generic-enums';
+
+const colors: any = {
+  green: {
+    primary: '#32CD32',
+    secondary: '#32CD32',
+  },
+  blue: {
+    primary: '#4E95DD',
+    secondary: '#4E95DD',
+  },
+  yellow: {
+    primary: '#FFD700',
+    secondary: '#FFD700',
+  },
+  purple: {
+    primary: '#AD8CF0',
+    secondary: '#AD8CF0',
+  },
+  orange: {
+    primary: '#FA8072',
+    secondary: '#FA8072',
+  },
+  silver: {
+    primary: '#C0C0C0',
+    secondary: '#C0C0C0'
+  },
+  khaki: {
+    primary: '#BDB76B',
+    secondary: '#BDB76B'
+  }
+};
+
 
 @Component({
   selector: 'app-dashboard-manager',
@@ -25,9 +62,17 @@ export class DashboardManagerComponent implements OnInit {
 
   monthlyDonutData: number[] = [];
 
-
   areaData = [];
   donutData = [];
+
+  view: CalendarView = CalendarView.Month;
+  CalendarView = CalendarView;
+  viewDate: Date = new Date();
+  refresh: Subject<any> = new Subject();
+
+  events: CalendarEvent[] = [];
+  event: CalendarEvent;
+  activeDayIsOpen: boolean = true;
 
   constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
@@ -53,14 +98,48 @@ export class DashboardManagerComponent implements OnInit {
           this.dropped.push(item.dropped);
         });
 
+        this.managerDashboard.collCalendarEvents.forEach((item) => {
+
+          this.events = [
+            ...this.events,
+            {
+              title: item.clientName + " - " + item.appointStatus + " - " + this.datePipe.transform(item.appointmentTime, "HH:mm a"),
+              start: new Date(item.appointmentTime),
+              end: addMinutes(30, new Date(item.appointmentTime)), // new Date(new Date(item.appointmentTime).setMinutes(new Date(item.appointmentTime).getMinutes() + 30)),
+              color: item.appointStatusId == AppoinmentStatus.Pending ? colors.orange : colors.green,
+            },
+          ];
+        });
       },
       error => console.error(error)
     );
   }
 
+  closeOpenMonthViewDay() {
+    this.activeDayIsOpen = false;
+  }
+
+  setView(view: CalendarView) {
+    this.view = view;
+  }
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    if (isSameMonth(date, this.viewDate)) {
+      if (
+        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
+        events.length === 0
+      ) {
+        this.activeDayIsOpen = false;
+      } else {
+        this.activeDayIsOpen = true;
+      }
+      this.viewDate = date;
+    }
+  }
+
   ngAfterViewInit() {
     var revenueChartCanvas = this.areaChart.nativeElement.getContext('2d');
-    
+
     var salesChartData = {
       labels: this.months,
       datasets: [

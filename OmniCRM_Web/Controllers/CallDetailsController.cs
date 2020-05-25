@@ -612,7 +612,7 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).Include(p => p.FollowupHistory).Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id).ToListAsync();
+                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).Include(p => p.FollowupHistory).Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id).ToListAsync();
                 int currentYear = DateTime.Now.Year;
                 int currentMonth = DateTime.Now.Month;
                 int lastMonth = DateTime.Now.AddMonths(-1).Month;
@@ -640,7 +640,13 @@ namespace OmniCRM_Web.Controllers
                         Dropped = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
                     }).OrderBy(p => p.MonthNumber).ToList();
 
-
+                objManagerDash.CollCalendarEvents = (from call in callDetail select call).Select(p => new EventCalendar()
+                {
+                    AppointmentTime = Convert.ToDateTime(p.AppointmentDetail.LastOrDefault().AppointmentDateTime),
+                    AppointStatus = p.AppointmentDetail.LastOrDefault().AppoinStatus.Status,
+                    ClientName = p.FirstName + " " + p.LastName,
+                    AppointStatusId = p.AppointmentDetail.LastOrDefault().AppoinStatusId
+                }).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRManagerDashboard: " + id + "-get manager dashboard");
                 return objManagerDash;

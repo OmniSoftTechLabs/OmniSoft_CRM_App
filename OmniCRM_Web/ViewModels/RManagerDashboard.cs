@@ -17,6 +17,7 @@ namespace OmniCRM_Web.ViewModels
         public int MonthlyHold { get; set; }
         public int MonthlyDropped { get; set; }
 
+        public List<EventCalendar> CollCalendarEvents { get; set; }
     }
 
     public class ChartDataMnager
@@ -25,5 +26,13 @@ namespace OmniCRM_Web.ViewModels
         public string Month { get; set; }
         public int Sold { get; set; }
         public int Dropped { get; set; }
+    }
+
+    public class EventCalendar
+    {
+        public DateTime AppointmentTime { get; set; }
+        public string ClientName { get; set; }
+        public string AppointStatus { get; set; }
+        public int AppointStatusId { get; set; }
     }
 }

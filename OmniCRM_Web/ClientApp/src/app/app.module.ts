@@ -30,6 +30,9 @@ import { CustomDateParserFormatterService } from './services/custom-date-parser-
 import { DashboardTelecallerComponent } from './dashboard-telecaller/dashboard-telecaller.component';
 import { AdminSettingComponent } from './admin-setting/admin-setting.component';
 import { DashboardManagerComponent } from './dashboard-manager/dashboard-manager.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 @NgModule({
   declarations: [
@@ -60,6 +63,11 @@ import { DashboardManagerComponent } from './dashboard-manager/dashboard-manager
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
+    BrowserAnimationsModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
     RouterModule.forRoot([
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },

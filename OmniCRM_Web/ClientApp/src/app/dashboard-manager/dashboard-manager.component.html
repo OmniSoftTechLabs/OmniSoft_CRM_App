@@ -1,117 +1,188 @@
 <section class="content">
   <div class="container-fluid">
     <!-- Small boxes (Stat box) -->
-    <div class="row">
-      <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-info">
-          <div class="inner">
-            <h3>{{managerDashboard.totalAllocatedLeads}}</h3>
-
-            <p>Total Allocated Leads</p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-calculator"></i>
-          </div>
-        </div>
-      </div>
-      <!-- ./col -->
-      <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-success">
-          <div class="inner">
-            <!--<h3>53<sup style="font-size: 20px">%</sup></h3>-->
-            <h3>{{managerDashboard.soldLeads}}</h3>
-            <p>Total Sold Leads</p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-rupee-sign"></i>
-          </div>
-        </div>
-      </div>
-      <!-- ./col -->
-      <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-          <div class="inner">
-            <h3>{{managerDashboard.holdLeads}}</h3>
-
-            <p>Total Hold Leads</p>
-          </div>
-          <div class="icon">
-            <i class="far fa-pause-circle"></i>
-          </div>
-        </div>
-      </div>
-      <!-- ./col -->
-      <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-danger">
-          <div class="inner">
-            <h3>{{managerDashboard.droppedLeads}}</h3>
-
-            <p>Total Dropped Leads</p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-handshake-slash"></i>
-          </div>
-        </div>
-      </div>
-      <!-- ./col -->
-    </div>
-    <!-- /.row -->
 
     <div class="row">
       <div class="col-lg-6 col-12">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">
-              Lead Follow-up
-            </h3>
-            <div class="card-tools">
-              <ul class="nav nav-pills ml-auto">
-                <li class="nav-item">
-                  <a class="nav-link active" href="#area-chart" data-toggle="tab">Area</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#donut-chart" data-toggle="tab">Donut</a>
-                </li>
-              </ul>
-            </div>
-          </div><!-- /.card-header -->
-          <div class="card-body">
-            <div class="tab-content p-0">
-              <!-- Morris chart - Sales -->
-              <div class="chart tab-pane active" id="area-chart" style="position: relative; height: 400px;">
-                <p class="text-center">
-                  <strong>Follow-ups: Jan 01, {{currentYear}} - Dec 31, {{currentYear}}</strong>
-                </p>
-                <canvas #areaChart id="area-chart-canvas" height="350" style="height: 350px; max-height:350px">{{areaData}}</canvas>
-              </div>
 
-              <div class="chart tab-pane" id="donut-chart" style="position: relative; height: 400px;">
-                <p class="text-center">
-                  <strong>Goal of Month : {{currentMonth}}</strong>
-                </p>
-                <canvas #donutChart id="donut-chart-canvas" height="350" style="height: 350px; max-height:350px">{{donutData}}</canvas>
+        <div class="row">
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{managerDashboard.totalAllocatedLeads}}</h3>
+
+                <p>Total Allocated Leads</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-calculator"></i>
               </div>
             </div>
-          </div><!-- /.card-body -->
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <!--<h3>53<sup style="font-size: 20px">%</sup></h3>-->
+                <h3>{{managerDashboard.soldLeads}}</h3>
+                <p>Total Sold Leads</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-rupee-sign"></i>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div class="row">
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{managerDashboard.holdLeads}}</h3>
+
+                <p>Total Hold Leads</p>
+              </div>
+              <div class="icon">
+                <i class="far fa-pause-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>{{managerDashboard.droppedLeads}}</h3>
+
+                <p>Total Dropped Leads</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-handshake-slash"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  Lead Follow-up
+                </h3>
+                <div class="card-tools">
+                  <ul class="nav nav-pills ml-auto">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#area-chart" data-toggle="tab">Area</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#donut-chart" data-toggle="tab">Donut</a>
+                    </li>
+                  </ul>
+                </div>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content p-0">
+                  <!-- Morris chart - Sales -->
+                  <div class="chart tab-pane active" id="area-chart" style="position: relative; height: 400px;">
+                    <p class="text-center">
+                      <strong>Follow-ups: Jan 01, {{currentYear}} - Dec 31, {{currentYear}}</strong>
+                    </p>
+                    <canvas #areaChart id="area-chart-canvas" height="350" style="height: 350px; max-height:350px">{{areaData}}</canvas>
+                  </div>
+
+                  <div class="chart tab-pane" id="donut-chart" style="position: relative; height: 400px;">
+                    <p class="text-center">
+                      <strong>Goal of Month : {{currentMonth}}</strong>
+                    </p>
+                    <canvas #donutChart id="donut-chart-canvas" height="350" style="height: 350px; max-height:350px">{{donutData}}</canvas>
+                  </div>
+                </div>
+              </div><!-- /.card-body -->
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       <div class="col-lg-6 col-12">
-        <div class="card card-primary">
-          <div class="card-body p-0">
-            <!-- THE CALENDAR -->
-            <div id="calendar"></div>
+
+        <!-- THE CALENDAR -->
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="btn-group">
+              <div class="btn btn-primary"
+                   mwlCalendarPreviousView
+                   [view]="view"
+                   [(viewDate)]="viewDate"
+                   (viewDateChange)="closeOpenMonthViewDay()">
+                <i class="fas fa-chevron-left"></i>
+              </div>
+              <div class="btn btn-outline-secondary"
+                   mwlCalendarToday
+                   [(viewDate)]="viewDate">
+                Today
+              </div>
+              <div class="btn btn-primary"
+                   mwlCalendarNextView
+                   [view]="view"
+                   [(viewDate)]="viewDate"
+                   (viewDateChange)="closeOpenMonthViewDay()">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
           </div>
-          <!-- /.card-body -->
+          <div class="col-md-4">
+            <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+          </div>
+          <div class="col-md-4">
+            <div class="btn-group">
+              <div class="btn btn-primary"
+                   (click)="setView(CalendarView.Month)"
+                   [class.active]="view === CalendarView.Month">
+                Month
+              </div>
+              <div class="btn btn-primary"
+                   (click)="setView(CalendarView.Week)"
+                   [class.active]="view === CalendarView.Week">
+                Week
+              </div>
+              <div class="btn btn-primary"
+                   (click)="setView(CalendarView.Day)"
+                   [class.active]="view === CalendarView.Day">
+                Day
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- /.card -->
+        <br />
+        <div [ngSwitch]="view" style="max-height:400px">
+          <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month"
+                                   [viewDate]="viewDate"
+                                   [events]="events"
+                                   [refresh]="refresh"
+                                   [activeDayIsOpen]="activeDayIsOpen"
+                                   (dayClicked)="dayClicked($event.day)">
+          </mwl-calendar-month-view>
+          <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week"
+                                  [viewDate]="viewDate"
+                                  [events]="events"
+                                  [refresh]="refresh">
+          </mwl-calendar-week-view>
+          <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day"
+                                 [viewDate]="viewDate"
+                                 [events]="events"
+                                 [refresh]="refresh">
+          </mwl-calendar-day-view>
+        </div>
+
       </div>
-      <!-- /.col -->
+
     </div>
+
     <!--/row-->
   </div>
 </section>
