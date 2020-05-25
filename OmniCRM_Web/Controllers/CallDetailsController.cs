@@ -640,7 +640,7 @@ namespace OmniCRM_Web.Controllers
                         Dropped = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
                     }).OrderBy(p => p.MonthNumber).ToList();
 
-                objManagerDash.CollCalendarEvents = (from call in callDetail select call).Select(p => new EventCalendar()
+                objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppointmentDetail.LastOrDefault().AppointmentDateTime != null) select call).Select(p => new EventCalendar()
                 {
                     AppointmentTime = Convert.ToDateTime(p.AppointmentDetail.LastOrDefault().AppointmentDateTime),
                     AppointStatus = p.AppointmentDetail.LastOrDefault().AppoinStatus.Status,

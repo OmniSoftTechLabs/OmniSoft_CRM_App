@@ -103,10 +103,17 @@ export class DashboardManagerComponent implements OnInit {
           this.events = [
             ...this.events,
             {
-              title: item.clientName + " - " + item.appointStatus + " - " + this.datePipe.transform(item.appointmentTime, "HH:mm a"),
+              title: item.clientName + " - " + item.appointStatus + " - " + this.datePipe.transform(item.appointmentTime, "hh:mm a"),
               start: new Date(item.appointmentTime),
               end: addMinutes(30, new Date(item.appointmentTime)), // new Date(new Date(item.appointmentTime).setMinutes(new Date(item.appointmentTime).getMinutes() + 30)),
-              color: item.appointStatusId == AppoinmentStatus.Pending ? colors.orange : colors.green,
+              color: item.appointStatusId == AppoinmentStatus.Pending ? colors.orange :
+                item.appointStatusId == AppoinmentStatus.FirstMeeting ? colors.purple :
+                  item.appointStatusId == AppoinmentStatus.SecondMeeting ? colors.silver :
+                    item.appointStatusId == AppoinmentStatus.Sold ? colors.green :
+                      item.appointStatusId == AppoinmentStatus.Dropped ? colors.khaki :
+                        item.appointStatusId == AppoinmentStatus.Hold ? colors.yellow :
+                          item.appointStatusId == AppoinmentStatus.NotInterested ? colors.blue :
+                            colors.blue,
             },
           ];
         });
