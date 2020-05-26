@@ -160,7 +160,7 @@
           </div>
         </div>
         <br />
-        <div [ngSwitch]="view" style="max-height:400px">
+        <div [ngSwitch]="view" style="overflow:auto;max-height:700px">
           <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month"
                                    [viewDate]="viewDate"
                                    [events]="events"

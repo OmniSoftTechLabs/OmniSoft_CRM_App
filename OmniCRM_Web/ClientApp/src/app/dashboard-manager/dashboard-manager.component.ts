@@ -14,31 +14,31 @@ import { GenericEnums, AppoinmentStatus } from '../services/generic-enums';
 const colors: any = {
   green: {
     primary: '#32CD32',
-    secondary: '#32CD32',
+    secondary: '#99E699',
   },
   blue: {
     primary: '#4E95DD',
-    secondary: '#4E95DD',
+    secondary: '#A7CAEE',
   },
   yellow: {
     primary: '#FFD700',
-    secondary: '#FFD700',
+    secondary: '#FFEB80',
   },
   purple: {
     primary: '#AD8CF0',
-    secondary: '#AD8CF0',
+    secondary: '#D6C6F7',
   },
   orange: {
     primary: '#FA8072',
-    secondary: '#FA8072',
+    secondary: '#FCC0B9',
   },
   silver: {
     primary: '#C0C0C0',
-    secondary: '#C0C0C0'
+    secondary: '#E0E0E0'
   },
   khaki: {
     primary: '#BDB76B',
-    secondary: '#BDB76B'
+    secondary: '#DEDBB5'
   }
 };
 
