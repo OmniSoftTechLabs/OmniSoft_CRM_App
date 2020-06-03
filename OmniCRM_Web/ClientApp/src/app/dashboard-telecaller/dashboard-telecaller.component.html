@@ -175,7 +175,7 @@
 
                   <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthTotal > 0, 'text-danger': percentLastMonthTotal < 0,
                         'text-warning': teleDashboard.lastMonthTotalLeads == 0, 'text-info': percentLastMonthTotal == 0}">
-                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthTotal > 0, 'fa-caret-down': percentLastMonthTotal < 0}"></i> {{percentLastMonthTotal}}%
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthTotal > 0, 'fa-caret-down': percentLastMonthTotal < 0}"></i> {{percentLastMonthTotal | number:'1.0-0'}}%
                   </span>
                   <h5 class="description-header">{{teleDashboard.lastMonthTotalLeads}}</h5>
                   <span class="description-text">Total Leads</span>
@@ -187,7 +187,7 @@
                 <div class="description-block border-right">
                   <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthNotInter > 0, 'text-danger': percentLastMonthNotInter < 0,
                         'text-warning': teleDashboard.lastMonthNotInterested == 0, 'text-info': percentLastMonthNotInter == 0}">
-                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNotInter > 0, 'fa-caret-down': percentLastMonthNotInter < 0}"></i> {{percentLastMonthNotInter}}%
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNotInter > 0, 'fa-caret-down': percentLastMonthNotInter < 0}"></i> {{percentLastMonthNotInter | number:'1.0-0'}}%
                   </span>
                   <h5 class="description-header">{{teleDashboard.lastMonthNotInterested}}</h5>
                   <span class="description-text">Not Interested</span>
@@ -199,7 +199,7 @@
                 <div class="description-block border-right">
                   <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthAppoTaken > 0, 'text-danger': percentLastMonthAppoTaken < 0,
                         'text-warning': teleDashboard.lastMonthAppoinmentTaken == 0, 'text-info': percentLastMonthAppoTaken == 0}">
-                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthAppoTaken > 0, 'fa-caret-down': percentLastMonthAppoTaken < 0}"></i> {{percentLastMonthAppoTaken}}%
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthAppoTaken > 0, 'fa-caret-down': percentLastMonthAppoTaken < 0}"></i> {{percentLastMonthAppoTaken | number:'1.0-0'}}%
                   </span>
                   <h5 class="description-header">{{teleDashboard.lastMonthAppoinmentTaken}}</h5>
                   <span class="description-text">Appointment Taken</span>
@@ -211,7 +211,7 @@
                 <div class="description-block">
                   <span class="description-percentage" [ngClass]="{'text-success': percentLastMonthNoResponse > 0, 'text-danger': percentLastMonthNoResponse < 0,
                         'text-warning': teleDashboard.lastMonthNoResponse == 0, 'text-info': percentLastMonthNoResponse == 0}">
-                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNoResponse > 0, 'fa-caret-down': percentLastMonthNoResponse < 0}"></i> {{percentLastMonthNoResponse}}%
+                    <i class="fas" [ngClass]="{'fa-caret-up': percentLastMonthNoResponse > 0, 'fa-caret-down': percentLastMonthNoResponse < 0}"></i> {{percentLastMonthNoResponse | number:'1.0-0'}}%
                   </span>
                   <h5 class="description-header">{{teleDashboard.lastMonthNoResponse}}</h5>
                   <span class="description-text">No Response</span>

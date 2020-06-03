@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
-import { FormControl } from '@angular/forms';
+import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory, AppointmentDetail } from '../models/lead-master';
+import { FormControl, Validators } from '@angular/forms';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
 import { DataTableService } from '../services/data-table.service';
 import { LeadRepositoryService } from '../services/lead-repository.service';
@@ -48,17 +48,23 @@ export class LeadListComponent implements OnInit {
   uploadMsg: string = "";
   adminSetting: AdminSetting;
   overDueDays: number;
+  isCheckedBox: boolean;
+  checkedList: LeadMaster[] = [];
+  minDate: NgbDateStruct;
+  nextFollowupDate: NgbDateStruct;
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
+
+  dateCtrl = new FormControl('', Validators.required);
 
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
 
     let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
-
+    this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
@@ -112,7 +118,10 @@ export class LeadListComponent implements OnInit {
     this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).subscribe(
       (leads) => {
         this.service.xType = new LeadMaster();
-        leads.forEach((obj) => { obj.isOverDue = new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false });
+        leads.forEach((obj) => {
+          obj.isOverDue = obj.appointmentDateTime != null && new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false;
+          obj.isChecked = false;
+        });
         this.service.TABLE = leads;
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
@@ -121,6 +130,9 @@ export class LeadListComponent implements OnInit {
       error => console.error(error)
     );
     this.service.searchTerm = '';
+    //this.checkedList = [];
+    //this.isCheckedBox = false;
+    setTimeout(() => { this.onSelectAllLeads(false); }, 200);
   }
 
   fillOutCome() {
@@ -253,5 +265,55 @@ export class LeadListComponent implements OnInit {
       next: data => (this.uploadMsg = data, this.isUploadSucc = true),
       error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false)
     });
+  }
+
+  onSelectAllLeads(isChecked: boolean) {
+    this.isCheckedBox = isChecked;
+    this.leadList.subscribe(p => p.forEach((obj) => {
+      obj.isChecked = this.isCheckedBox;
+    }));
+    if (this.isCheckedBox) {
+      this.leadList.subscribe(p => p.forEach((obj) => {
+        this.checkedList.push(obj);
+      }));
+    }
+    else
+      this.checkedList = [];
+  }
+
+  onDismissAll() {
+
+    this.leadRepo.dismissLeads(this.checkedList).subscribe({
+      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
+      error: error => (console.error('Error!', error), this.fillLeadListByRM())
+    });
+  }
+
+  onRemindLater() {
+    let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, 0, 0, 0, 0);
+    let strDate = date.toDateString();
+    this.leadRepo.remindMelater(this.checkedList, strDate).subscribe({
+      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
+      error: error => (console.error('Error!', error), this.fillLeadListByRM())
+    });
+
+  }
+
+  showHideDismissButton(lead: LeadMaster, event: any) {
+    lead.isChecked = event.currentTarget.checked;
+    if (lead.isChecked)
+      this.checkedList.push(lead);
+    else {
+      const index = this.checkedList.indexOf(lead);
+      if (index > -1) {
+        this.checkedList.splice(index, 1);
+      }
+    }
+
+    if (this.checkedList.length > 0)
+      this.isCheckedBox = true;
+    else
+      this.isCheckedBox = false;
+
   }
 }

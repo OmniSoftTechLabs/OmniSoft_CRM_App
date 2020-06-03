@@ -21,6 +21,7 @@ export class LeadMaster {
   appointmentDetail: AppointmentDetail[] = [];
   followupHistory: FollowupHistory[] = [];
   isOverDue: boolean;
+  isChecked: boolean;
 }
 
 

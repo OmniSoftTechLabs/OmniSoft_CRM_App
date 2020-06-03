@@ -262,11 +262,11 @@ namespace OmniCRM_Web.Controllers
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
-                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
-
                 var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
-                if (ObjAppointment != null)
+                if (ObjAppointment != null && ObjAppointment.AppointmentDateTime != null)
                 {
+                    callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
+
                     List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                         && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
@@ -279,7 +279,7 @@ namespace OmniCRM_Web.Controllers
                 }
 
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
-                _context.FollowupHistory.UpdateRange(callDetail.FollowupHistory);
+                _context.FollowupHistory.AddRange(callDetail.FollowupHistory);
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "PutFollowupDetail: " + id + "-Followup created successfully");
                 await _context.SaveChangesAsync();
@@ -293,6 +293,90 @@ namespace OmniCRM_Web.Controllers
             }
         }
 
+
+        [HttpPut("DismissLeads")]
+        public async Task<IActionResult> DismissLeads(List<CallDetail> collCallDetail)
+        {
+            try
+            {
+                if (collCallDetail.Count > 0)
+                {
+                    foreach (var lead in collCallDetail)
+                    {
+                        var objLead = await GetCallDetail(lead.CallId);
+                        var objAppointment = objLead.Value.AppointmentDetail.LastOrDefault();
+                        objAppointment.Remarks = "Lead Dismissed";
+                        objAppointment.AppoinStatusId = 8;
+
+                        FollowupHistory objFollowup = new FollowupHistory();
+                        objFollowup.CallId = objLead.Value.CallId;
+                        objFollowup.CreatedByRmanagerId = objAppointment.RelationshipManagerId;
+                        objFollowup.FollowupType = string.Empty;
+                        objFollowup.AppoinDate = Convert.ToDateTime(objAppointment.AppointmentDateTime);
+                        objFollowup.AppoinStatusId = 8;
+                        objFollowup.Remarks = "Lead Dismissed";
+                        objAppointment.AppointmentDateTime = null;
+
+                        objLead.Value.FollowupHistory.Add(objFollowup);
+                        await PutFollowupDetail(lead.CallId, objLead.Value);
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "DismissLeads: " + lead.CallId + "-Lead dismissed successfully");
+                    }
+
+                    return Ok("Leads dismissed successfully!");
+                }
+                else
+                    return NotFound("Leads not found!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "DismissLeads: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPut("RemindMeLater/{strDate}")]
+        public async Task<IActionResult> RemindMeLater(string strDate, List<CallDetail> collCallDetail)
+        {
+            try
+            {
+                if (collCallDetail.Count > 0)
+                {
+                    DateTime date = DateTime.Parse(strDate);
+                         
+
+                    foreach (var lead in collCallDetail)
+                    {
+                        var objLead = await GetCallDetail(lead.CallId);
+                        var objAppointment = objLead.Value.AppointmentDetail.LastOrDefault();
+                        objAppointment.Remarks = "Remind Me Later";
+
+                        FollowupHistory objFollowup = new FollowupHistory();
+                        objFollowup.CallId = objLead.Value.CallId;
+                        objFollowup.CreatedByRmanagerId = objAppointment.RelationshipManagerId;
+                        objFollowup.FollowupType = string.Empty;
+                        objFollowup.AppoinDate = Convert.ToDateTime(objAppointment.AppointmentDateTime);
+                        objFollowup.AppoinStatusId = objAppointment.AppoinStatusId;
+                        objFollowup.Remarks = "Remind Me Later";
+                        objAppointment.AppointmentDateTime = new DateTime(date.Year, date.Month, date.Day, objAppointment.AppointmentDateTime.Value.Hour, objAppointment.AppointmentDateTime.Value.Minute, 0).ToUniversalTime();
+
+                        objLead.Value.FollowupHistory.Add(objFollowup);
+                        await PutFollowupDetail(lead.CallId, objLead.Value);
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "RemindMeLater: " + lead.CallId + "-Next Followup Updated successfully");
+                    }
+
+                    return Ok("Leads next followup updated successfully!");
+                }
+                else
+                    return NotFound("Leads not found!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "RemindMeLater: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
 
         // POST: api/CallDetails
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for

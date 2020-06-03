@@ -39,6 +39,14 @@ export class LeadRepositoryService {
     return this.http.put(this.baseUrl + 'api/CallDetails/PutFollowupDetail/' + leadModel.callId, leadModel, { responseType: 'text' }).pipe();
   }
 
+  dismissLeads(collLeads: LeadMaster[]) {
+    return this.http.put(this.baseUrl + 'api/CallDetails/DismissLeads/', collLeads, { responseType: 'text' }).pipe();
+  }
+
+  remindMelater(collLeads: LeadMaster[], strDate: string) {
+    return this.http.put(this.baseUrl + 'api/CallDetails/RemindMeLater/' + strDate, collLeads, { responseType: 'text' }).pipe();
+  }
+
   getLeadById(id) {
     return this.http.get<LeadMaster>(this.baseUrl + 'api/CallDetails/GetLeadById/' + id).pipe();
   }
