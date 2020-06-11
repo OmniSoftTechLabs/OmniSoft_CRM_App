@@ -128,7 +128,7 @@
                   Created Leads
                   <span class="float-right"><b>{{teleDashboard.monthlyTotalLeads}}</b>/200</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-info" style="width: {{percentTotal}}%"></div>
+                    <div class="progress-bar bg-info" [style.width]="percentTotal + '%'"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
@@ -137,7 +137,7 @@
                   Not Interested
                   <span class="float-right"><b>{{teleDashboard.monthlyNotInterested}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-danger" style="width: {{percentNotInter}}%"></div>
+                    <div class="progress-bar bg-danger" [style.width]="percentNotInter + '%'"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
@@ -146,7 +146,7 @@
                   <span class="progress-text">Appointment Taken</span>
                   <span class="float-right"><b>{{teleDashboard.monthlyAppoinmentTaken}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-success" style="width: {{percentAppoTaken}}%"></div>
+                    <div class="progress-bar bg-success" [style.width]="percentAppoTaken + '%'"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
@@ -155,7 +155,7 @@
                   No Response
                   <span class="float-right"><b>{{teleDashboard.monthlyNoResponse}}</b>/{{teleDashboard.monthlyTotalLeads}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-warning" style="width: {{percentNoResponse}}%"></div>
+                    <div class="progress-bar bg-warning" [style.width]="percentNoResponse + '%'"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->
