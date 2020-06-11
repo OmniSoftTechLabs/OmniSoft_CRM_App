@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm, FormControl } from '@angular/forms';
-import { LeadMaster, OutcomeMaster, AppointmentDetail } from '../models/lead-master';
+import { NgForm, FormControl, Validators } from '@angular/forms';
+import { LeadMaster, OutcomeMaster, AppointmentDetail, StateMaster, CityMaster } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
@@ -8,6 +8,8 @@ import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 import { AdminSetting } from '../models/admin-setting';
+import { Observable, concat, of, Subject } from 'rxjs';
+import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lead-create',
@@ -38,6 +40,13 @@ export class LeadCreateComponent implements OnInit {
   isOnDatePickerLoad: boolean = true;
   placement = 'left';
   adminSetting: AdminSetting;
+  stateInput = new Subject<string>();
+  stateMaster: Observable<StateMaster[]>;
+  cityInput = new Subject<string>();
+  cityMaster: Observable<CityMaster[]>;
+  selectedState: StateMaster;
+  selectedCity: CityMaster;
+  loading: boolean;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -75,6 +84,9 @@ export class LeadCreateComponent implements OnInit {
   ngOnInit(): void {
     this.fillOutCome();
     this.fillRManagerList();
+    this.searchStateMaster();
+    this.searchCityMaster();
+
     this.callId = Number(localStorage.getItem("callIdEdit"));
 
     if (this.callId > 0) {
@@ -96,7 +108,10 @@ export class LeadCreateComponent implements OnInit {
                 second: 0
               }
           }
+          this.leadRepo.getSelectedState(data.stateId).subscribe(state => { this.selectedState = state });
+          this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city });
         }, error => console.error('Error!', error));
+
       localStorage.removeItem("callIdEdit");
     }
   }
@@ -117,10 +132,53 @@ export class LeadCreateComponent implements OnInit {
     );
   }
 
+  searchStateMaster() {
+    this.stateMaster = concat(
+      of([]), // default items
+      this.stateInput.pipe(
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(term => this.loadStateMaster(term).pipe(
+
+          catchError(() => of([])), // empty list on error
+          tap(() => this.loading = false)
+        ))
+      )
+    );
+  }
+
+  loadStateMaster(term: string): Observable<StateMaster[]> {
+    return this.leadRepo.loadStateMaster(term);
+  }
+
+  searchCityMaster() {
+    this.cityMaster = concat(
+      of([]), // default items
+      this.cityInput.pipe(
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(term => this.loadCityMaster(term).pipe(
+
+          catchError(() => of([])), // empty list on error
+          tap(() => this.loading = false)
+        ))
+      )
+    );
+  }
+
+  loadCityMaster(term: string): Observable<CityMaster[]> {
+    return this.leadRepo.loadCityMaster(this.selectedState.stateId, term);
+  }
+
   onSavelead() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
-    const newAppDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
+    this.leadModel.stateId = this.selectedState.stateId;
+    this.leadModel.cityId = this.selectedCity.cityId;
+
+    let newAppDateTime: any;
+    if (this.appointmentDate != null)
+      newAppDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
     if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && (this.leadModel.appointmentDetail.length == 0
       || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId
       || this.leadModel.appointmentDetail[0].appointmentDateTime != newAppDateTime)) {
@@ -189,6 +247,11 @@ export class LeadCreateComponent implements OnInit {
       }
     }
     this.isOnDatePickerLoad = false;
+  }
+
+  onStateChange(value: any) {
+    if (this.selectedCity != null && value.stateId != this.selectedCity.stateId)
+      this.selectedCity = null;
   }
 }
 

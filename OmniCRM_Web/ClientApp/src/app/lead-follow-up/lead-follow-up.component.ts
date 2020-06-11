@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppoinmentStatusMaster, LeadMaster, AppointmentDetail, FollowupHistory } from '../models/lead-master';
+import { AppoinmentStatusMaster, LeadMaster, AppointmentDetail, FollowupHistory, StateMaster, CityMaster } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
@@ -9,6 +9,8 @@ import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { AdminSetting } from '../models/admin-setting';
 import { ActivatedRoute } from '@angular/router';
+import { Subject, Observable, concat, of } from 'rxjs';
+import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -39,6 +41,13 @@ export class LeadFollowUpComponent implements OnInit {
   placement = 'left';
   lastAppoinDate: Date;
   adminSetting: AdminSetting;
+  stateInput = new Subject<string>();
+  stateMaster: Observable<StateMaster[]>;
+  cityInput = new Subject<string>();
+  cityMaster: Observable<CityMaster[]>;
+  selectedState: StateMaster;
+  selectedCity: CityMaster;
+  loading: boolean;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -77,13 +86,17 @@ export class LeadFollowUpComponent implements OnInit {
   ngOnInit(): void {
     this.fillAppoinmentStatus();
     this.fillFollowupType();
+    this.searchStateMaster();
+    this.searchCityMaster();
     //this.callId = Number(localStorage.getItem("callIdFollowUp"));
     this.callId = this.route.snapshot.params.callId;
 
     this.leadRepo.getLeadById(this.callId).subscribe(
       data => (this.leadModel = data,
         this.appointmentDetailObj = data.appointmentDetail[0],
-        this.lastAppoinDate = this.appointmentDetailObj.appointmentDateTime
+        this.lastAppoinDate = this.appointmentDetailObj.appointmentDateTime,
+        this.leadRepo.getSelectedState(data.stateId).subscribe(state => { this.selectedState = state }),
+        this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city })
         //this.appointmentDate = {
         //  day: new Date(data.appointmentDetail[0].appointmentDateTime).getDate(),
         //  month: new Date(data.appointmentDetail[0].appointmentDateTime).getMonth(),
@@ -106,9 +119,49 @@ export class LeadFollowUpComponent implements OnInit {
     this.followupTypeList = this.getFollowupType();
   }
 
+  searchStateMaster() {
+    this.stateMaster = concat(
+      of([]), // default items
+      this.stateInput.pipe(
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(term => this.loadStateMaster(term).pipe(
+
+          catchError(() => of([])), // empty list on error
+          tap(() => this.loading = false)
+        ))
+      )
+    );
+  }
+
+  loadStateMaster(term: string): Observable<StateMaster[]> {
+    return this.leadRepo.loadStateMaster(term);
+  }
+
+  searchCityMaster() {
+    this.cityMaster = concat(
+      of([]), // default items
+      this.cityInput.pipe(
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(term => this.loadCityMaster(term).pipe(
+
+          catchError(() => of([])), // empty list on error
+          tap(() => this.loading = false)
+        ))
+      )
+    );
+  }
+
+  loadCityMaster(term: string): Observable<CityMaster[]> {
+    return this.leadRepo.loadCityMaster(this.selectedState.stateId, term);
+  }
+
   onSavelead() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
+    this.leadModel.stateId = this.selectedState.stateId;
+    this.leadModel.cityId = this.selectedCity.cityId;
 
     if (this.appointmentDate != null) {
       this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);

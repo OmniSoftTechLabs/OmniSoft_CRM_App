@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   public credentials = {
     //username: "admin@ostechlabs.com",
     //password: "ostech#852"
-    username: "kt.sav@gmailll.com",
+    username: "r.crossworld@gmail.com",
     password: "Rohan@123"
   };
 

@@ -21,8 +21,10 @@ namespace OmniCRM_Web.Models
         public virtual DbSet<CallDetail> CallDetail { get; set; }
         public virtual DbSet<CallOutcomeMaster> CallOutcomeMaster { get; set; }
         public virtual DbSet<CallTransactionDetail> CallTransactionDetail { get; set; }
+        public virtual DbSet<CityMaster> CityMaster { get; set; }
         public virtual DbSet<FollowupHistory> FollowupHistory { get; set; }
         public virtual DbSet<RoleMaster> RoleMaster { get; set; }
+        public virtual DbSet<StateMaster> StateMaster { get; set; }
         public virtual DbSet<UserMaster> UserMaster { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -113,6 +115,8 @@ namespace OmniCRM_Web.Models
                     .IsRequired()
                     .HasMaxLength(512);
 
+                entity.Property(e => e.CityId).HasColumnName("CityID");
+
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -135,6 +139,14 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.OutComeId).HasColumnName("OutComeID");
 
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+
+                entity.HasOne(d => d.City)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.CityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CallDetail_CityMaster");
+
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CreatedBy)
@@ -146,6 +158,12 @@ namespace OmniCRM_Web.Models
                     .HasForeignKey(d => d.OutComeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_CallOutcomeMaster");
+
+                entity.HasOne(d => d.State)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.StateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CallDetail_StateMaster");
             });
 
             modelBuilder.Entity<CallOutcomeMaster>(entity =>
@@ -190,6 +208,25 @@ namespace OmniCRM_Web.Models
                     .HasForeignKey(d => d.OutComeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallTransactionDetail_CallOutcomeMaster");
+            });
+
+            modelBuilder.Entity<CityMaster>(entity =>
+            {
+                entity.HasKey(e => e.CityId);
+
+                entity.Property(e => e.CityId).HasColumnName("CityID");
+
+                entity.Property(e => e.CityName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+
+                entity.HasOne(d => d.State)
+                    .WithMany(p => p.CityMaster)
+                    .HasForeignKey(d => d.StateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CityMaster_StateMaster");
             });
 
             modelBuilder.Entity<FollowupHistory>(entity =>
@@ -244,6 +281,17 @@ namespace OmniCRM_Web.Models
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.RoleName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<StateMaster>(entity =>
+            {
+                entity.HasKey(e => e.StateId);
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+
+                entity.Property(e => e.StateName)
                     .IsRequired()
                     .HasMaxLength(50);
             });

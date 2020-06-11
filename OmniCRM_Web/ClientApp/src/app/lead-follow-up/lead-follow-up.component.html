@@ -64,16 +64,16 @@
         <div class="form-group col-sm-6">
           Next Followup Date
           <!--<div class="input-group">
-            <input ngbDatepicker #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
-                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
-            </div>
-          </div>-->
+        <input ngbDatepicker #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
+               class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+        </div>
+      </div>-->
           <div class="input-group">
             <input ngbDatepicker [required]="appointmentDetailObj.appoinStatusId != 3 && appointmentDetailObj.appoinStatusId != 4 && appointmentDetailObj.appoinStatusId != 6" #appoinDate="ngbDatepicker" name="appoinDate"
                    placeholder="dd/mm/yyyy" [formControl]="dateCtrl" class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
-                   [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"/>
+                   [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" />
             <div class="input-group-append">
               <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
             </div>
@@ -87,6 +87,24 @@
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
           </ng-template>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          State<strong class="text-danger"> *</strong>
+          <ng-select [items]="stateMaster | async" required #stateId="ngModel" [(ngModel)]="selectedState" name="stateId"
+                     bindLabel="stateName" [typeahead]="stateInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+          </ng-select>
+          <small class="text-danger" *ngIf="stateId.errors?.required && stateId.touched">* State is required</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          City<strong class="text-danger"> *</strong>
+          <ng-select [items]="cityMaster | async" required #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId"
+                     bindLabel="cityName" [typeahead]="cityInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+          </ng-select>
+          <small class="text-danger" *ngIf="cityId.errors?.required && cityId.touched">* City is required</small>
         </div>
       </div>
 

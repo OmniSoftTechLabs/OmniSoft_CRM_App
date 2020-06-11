@@ -14,6 +14,8 @@ namespace OmniCRM_Web.ViewModels
         public string MobileNumber { get; set; }
         public string FirmName { get; set; }
         public string Address { get; set; }
+        public string CityName { get; set; }
+        public string StateName { get; set; }
         public DateTime LastChangedDate { get; set; }
         public int OutComeId { get; set; }
         public string Remark { get; set; }

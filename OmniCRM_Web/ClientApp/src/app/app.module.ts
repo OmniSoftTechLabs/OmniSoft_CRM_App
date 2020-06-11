@@ -33,6 +33,7 @@ import { DashboardManagerComponent } from './dashboard-manager/dashboard-manager
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
+    NgSelectModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot({
       provide: DateAdapter,

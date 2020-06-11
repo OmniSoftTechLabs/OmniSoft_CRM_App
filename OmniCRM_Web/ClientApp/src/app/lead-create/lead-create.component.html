@@ -86,9 +86,27 @@
 
       <div class="row">
         <div class="form-group col-sm-6">
+          State<strong class="text-danger"> *</strong>
+          <ng-select [items]="stateMaster | async" required #stateId="ngModel" [(ngModel)]="selectedState" name="stateId" (change)="onStateChange($event)"
+                     bindLabel="stateName" [typeahead]="stateInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+          </ng-select>
+          <small class="text-danger" *ngIf="stateId.errors?.required && stateId.touched">* State is required</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          City<strong class="text-danger"> *</strong>
+          <ng-select [items]="cityMaster | async" required #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId" 
+                     bindLabel="cityName" [typeahead]="cityInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+          </ng-select>
+          <small class="text-danger" *ngIf="cityId.errors?.required && cityId.touched">* City is required</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
           Address<strong class="text-danger"> *</strong>
           <textarea type="text" required #address="ngModel" name="address" rows="2" [class.is-invalid]="address.invalid && address.touched"
-                    class="form-control" [(ngModel)]="leadModel.address" placeholder="i.e Door number, Street name, Area, City" maxlength="512"></textarea>
+                    class="form-control" [(ngModel)]="leadModel.address" placeholder="i.e Door number, Street name, Area" maxlength="512"></textarea>
           <small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>
         </div>
 
@@ -102,7 +120,7 @@
 
       <div class="form-group form-row form-inline">
         <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || appointmentTime == null || is_progress" type="submit" style="width:120px;">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || (leadModel.outComeId == 3 && appointmentTime == null) || is_progress" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>

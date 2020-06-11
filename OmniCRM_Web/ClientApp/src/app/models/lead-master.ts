@@ -10,6 +10,8 @@ export class LeadMaster {
   mobileNumber: string;
   firmName: string;
   address: string;
+  stateId: number;
+  cityId: number;
   lastChangedDate: Date;
   outComeId: number = 0;
   remark: string;
@@ -68,4 +70,15 @@ export class CallTransactionDetail {
   remarks: string;
   outCome: OutcomeMaster;
   createdByNavigation: RmanagerMaster;
+}
+
+export class StateMaster {
+  stateId: number;
+  stateName: string;
+}
+
+export class CityMaster {
+  cityId: number;
+  stateId: number;
+  cityName: string;
 }

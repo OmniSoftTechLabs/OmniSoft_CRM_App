@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory } from '../models/lead-master';
+import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory, StateMaster, CityMaster } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
 import { TeleDash } from '../models/tele-dash';
@@ -58,6 +58,22 @@ export class LeadRepositoryService {
 
   loadTeleCallerList() {
     return this.http.get<RmanagerMaster[]>(this.baseUrl + 'api/CallDetails/GetTeleCallerList').pipe();
+  }
+
+  loadStateMaster(term: string) {
+    return this.http.get<StateMaster[]>(this.baseUrl + 'api/StateMasters/GetStateMasterByName/' + term).pipe();
+  }
+
+  loadCityMaster(id: number, term: string) {
+    return this.http.get<CityMaster[]>(this.baseUrl + 'api/StateMasters/GetCityMaster/' + id + '/' + term).pipe();
+  }
+
+  getSelectedState(id: number) {
+    return this.http.get<StateMaster>(this.baseUrl + 'api/StateMasters/' + id).pipe();
+  }
+
+  getSelectedCity(id: number) {
+    return this.http.get<CityMaster>(this.baseUrl + 'api/StateMasters/GetCityMaster/' + id).pipe();
   }
 
   async loadLeadListByCreatedBy(id, filterOption: FilterOptions) {
