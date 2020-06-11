@@ -10,6 +10,8 @@ export class LeadMaster {
   mobileNumber: string;
   firmName: string;
   address: string;
+  stateName: string;
+  cityName: string;
   stateId: number;
   cityId: number;
   lastChangedDate: Date;

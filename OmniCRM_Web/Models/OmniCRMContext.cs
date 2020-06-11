@@ -144,7 +144,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CityId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_CityMaster");
 
                 entity.HasOne(d => d.CreatedByNavigation)
@@ -162,7 +161,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.State)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.StateId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_StateMaster");
             });
 

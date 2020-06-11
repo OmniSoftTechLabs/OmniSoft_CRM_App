@@ -112,6 +112,8 @@
             <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
             <th scope="col" sortable="mobileNumber" (sort)="onSort($event)">Mobile No.</th>
             <th scope="col" sortable="address" (sort)="onSort($event)">Address</th>
+            <th scope="col" sortable="cityName" (sort)="onSort($event)">City</th>
+            <th scope="col" sortable="stateName" (sort)="onSort($event)">State</th>
             <th scope="col" sortable="createdDate" (sort)="onSort($event)">Created Date</th>
             <th scope="col" sortable="outComeText" (sort)="onSort($event)">Status</th>
             <th scope="col" sortable="createdByName" (sort)="onSort($event)" *ngIf="isManager">Created By</th>
@@ -137,6 +139,8 @@
             <td> <ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.mobileNumber" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.address" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.cityName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.stateName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.createdDate | date" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.outComeText" [term]="service.searchTerm"></ngb-highlight></td>
             <td *ngIf="isManager"> <ngb-highlight [result]="lead.createdByName" [term]="service.searchTerm"></ngb-highlight></td>
@@ -145,7 +149,7 @@
             <td> <ngb-highlight [result]="lead.remark" [term]="service.searchTerm"></ngb-highlight></td>
             <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
             <!--<td *ngIf="isTeleCaller"> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
-            <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
+  <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
             <td class="d-flex flex-row">
               <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="editLead(lead.callId)" *ngIf="isTeleCaller"><i class="fas fa-edit"></i></button>
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="followUp(lead.callId)" *ngIf="isManager"><i class="fas fa-phone-square-alt"></i></button>

@@ -56,6 +56,8 @@ namespace OmniCRM_Web.Controllers
                                           MobileNumber = p.MobileNumber,
                                           FirmName = p.FirmName,
                                           Address = p.Address,
+                                          StateName = _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName,
+                                          CityName = _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName,
                                           LastChangedDate = p.LastChangedDate,
                                           OutComeId = p.OutComeId,
                                           Remark = p.Remark,
@@ -114,6 +116,8 @@ namespace OmniCRM_Web.Controllers
                                       MobileNumber = p.MobileNumber,
                                       FirmName = p.FirmName,
                                       Address = p.Address,
+                                      StateName = _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName,
+                                      CityName = _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName,
                                       LastChangedDate = p.LastChangedDate,
                                       OutComeId = p.OutComeId,
                                       Remark = p.Remark,
@@ -343,7 +347,7 @@ namespace OmniCRM_Web.Controllers
                 if (collCallDetail.Count > 0)
                 {
                     DateTime date = DateTime.Parse(strDate);
-                         
+
 
                     foreach (var lead in collCallDetail)
                     {
