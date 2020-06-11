@@ -241,13 +241,13 @@ export class LeadListComponent implements OnInit {
     let ExportleadArray: any[];
     if (this.isTeleCaller == true) {
       ExportleadArray = leadArray.map(obj => ({
-        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
+        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
         'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
       }));
     }
     else if (this.isManager == true) {
       ExportleadArray = leadArray.map(obj => ({
-        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
+        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
         'Status': obj.outComeText, 'Created By': obj.createdByName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
       }));
     }
