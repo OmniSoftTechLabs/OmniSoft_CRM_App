@@ -81,10 +81,9 @@ namespace OmniCRM_Web
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            //services.AddSingleton<IHostedService, DailyEmailService>();
-            //services.AddHostedService<DailyEmailService>();
             DailyEmailService._configuration = Configuration;
             DailyEmailService._hostingEnvironment = HostingEnvironment;
+            GenericMethods._hostingEnvironment = HostingEnvironment;
             DailyEmailService.StartTimer();
         }
 

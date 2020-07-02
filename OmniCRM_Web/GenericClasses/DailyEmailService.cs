@@ -33,11 +33,13 @@ namespace OmniCRM_Web.GenericClasses
 
         public static void StartTimer()
         {
+            GenericMethods.Log(LogType.ActivityLog.ToString(), "DailyEmailService StartTimer");
             timer = new Timer();
             _context = new OmniCRMContext();
             timer.Interval = GetNextInterval();
             timer.Start();
             timer.Elapsed += Timer_Elapsed;
+
         }
 
         private static async void Timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -50,11 +52,13 @@ namespace OmniCRM_Web.GenericClasses
         {
             try
             {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "DailyEmailService SetTimer");
                 timer.Stop();
                 //System.Threading.Thread.Sleep(300000);
                 double inter = (double)GetNextInterval();
                 timer.Interval = inter;
                 timer.Start();
+
             }
             catch (Exception ex)
             {
@@ -64,6 +68,7 @@ namespace OmniCRM_Web.GenericClasses
 
         private static double GetNextInterval()
         {
+            GenericMethods.Log(LogType.ActivityLog.ToString(), "DailyEmailService GetNextInterval");
             if (_context.AdminSetting.Count() > 0)
             {
                 int lastSettingId = _context.AdminSetting.Max(p => p.SettingId);
@@ -88,6 +93,8 @@ namespace OmniCRM_Web.GenericClasses
         {
             try
             {
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "DailyEmailService SendEmailDailyAppointmentToRM");
+
                 List<AppointmentDetail> appointListToday = new List<AppointmentDetail>();
 
                 appointListToday = await _context.AppointmentDetail.Where(p => p.AppointmentDateTime != null).ToListAsync();
@@ -176,7 +183,7 @@ namespace OmniCRM_Web.GenericClasses
             }
             catch (Exception ex)
             {
-                GenericMethods.Log(LogType.ErrorLog.ToString(), "CreateSendEmailBody: " + ex.ToString());
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "SendEmailDailyAppointmentToRM: " + ex.ToString());
             }
         }
     }

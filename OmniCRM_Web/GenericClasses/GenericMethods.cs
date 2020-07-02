@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,30 +14,49 @@ namespace OmniCRM_Web.GenericClasses
     public class GenericMethods
     {
         public static TimeZoneInfo Indian_Zone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+        public static IHostingEnvironment _hostingEnvironment;
+
+
         public static void Log(string logType, string logMessage)
         {
             try
             {
-                if (!Directory.Exists(@"C:\OmniCRMLogs\" + logType))
+                if (!Directory.Exists(_hostingEnvironment.ContentRootPath + "//OmniCRMLogs//" + logType))
                 {
-                    Directory.CreateDirectory(@"C:\OmniCRMLogs\" + logType);
+                    Directory.CreateDirectory(_hostingEnvironment.ContentRootPath + "//OmniCRMLogs//" + logType);
                 }
 
-                string logPath = @"C:\OmniCRMLogs\" + logType;
-                if (!File.Exists(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt"))
-                {
-                    File.Create(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt");
-                }
+                string logPath = _hostingEnvironment.ContentRootPath + "//OmniCRMLogs//" + logType;
+                //if (!File.Exists(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt"))
+                //{
+                //    File.Create(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt");
+                //}
 
-                using (StreamWriter w = File.AppendText(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt"))
-                //using (StreamWriter w = new StreamWriter(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", true))
-                {
-                    w.Write("\r\nLog Entry : ");
-                    w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
-                    //w.WriteLine("  Error Message :");
-                    w.WriteLine($" {logMessage}");
-                    w.WriteLine("==============================================================");
-                }
+
+                FileStream fs = new FileStream(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", FileMode.OpenOrCreate);
+                StreamWriter str = new StreamWriter(fs);
+                str.BaseStream.Seek(0, SeekOrigin.End);
+                str.Write("\r\n=============== Log Entry : " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + " ===============\r\n");
+                //str.WriteLine(DateTime.Now.ToLongTimeString() + " " +
+                //              DateTime.Now.ToLongDateString());
+                string addtext = logMessage + Environment.NewLine;
+                str.Flush();
+                str.Close();
+                fs.Close();
+
+
+                File.AppendAllText(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", addtext);
+
+
+                //using (StreamWriter w = File.AppendText(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt"))
+                ////using (StreamWriter w = new StreamWriter(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", true))
+                //{
+                //    w.Write("\r\nLog Entry : ");
+                //    w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
+                //    //w.WriteLine("  Error Message :");
+                //    w.WriteLine($" {logMessage}");
+                //    w.WriteLine("==============================================================");
+                //}
             }
             catch (Exception ex)
             {
