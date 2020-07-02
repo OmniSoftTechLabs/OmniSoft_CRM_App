@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 using System;
 using System.Text;
@@ -18,12 +19,14 @@ namespace OmniCRM_Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public Microsoft.AspNetCore.Hosting.IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -77,6 +80,12 @@ namespace OmniCRM_Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            //services.AddSingleton<IHostedService, DailyEmailService>();
+            //services.AddHostedService<DailyEmailService>();
+            DailyEmailService._configuration = Configuration;
+            DailyEmailService._hostingEnvironment = HostingEnvironment;
+            DailyEmailService.StartTimer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
