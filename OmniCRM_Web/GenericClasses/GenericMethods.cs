@@ -33,7 +33,7 @@ namespace OmniCRM_Web.GenericClasses
                 //}
 
 
-                FileStream fs = new FileStream(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", FileMode.OpenOrCreate);
+                FileStream fs = new FileStream(logPath + "\\log_" + DateTime.Now.ToString("dd-MM-yyyy") + ".txt", FileMode.OpenOrCreate);
                 StreamWriter str = new StreamWriter(fs);
                 str.BaseStream.Seek(0, SeekOrigin.End);
                 str.Write("\r\n=============== Log Entry : " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + " ===============\r\n");
@@ -45,7 +45,7 @@ namespace OmniCRM_Web.GenericClasses
                 fs.Close();
 
 
-                File.AppendAllText(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt", addtext);
+                File.AppendAllText(logPath + "\\log_" + DateTime.Now.ToString("dd-MM-yyyy") + ".txt", addtext);
 
 
                 //using (StreamWriter w = File.AppendText(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt"))
@@ -60,7 +60,7 @@ namespace OmniCRM_Web.GenericClasses
             }
             catch (Exception ex)
             {
-                // throw;
+                throw new Exception(ex.Message, ex);
             }
         }
 
