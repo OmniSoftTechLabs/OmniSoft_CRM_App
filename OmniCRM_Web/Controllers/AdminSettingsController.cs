@@ -118,7 +118,8 @@ namespace OmniCRM_Web.Controllers
                     adminSetting.DailyEmailTime = TimeZone.CurrentTimeZone.ToLocalTime(Convert.ToDateTime(adminSetting.DailyEmailTime));
                     _context.AdminSetting.Add(adminSetting);
                     await _context.SaveChangesAsync();
-                    DailyEmailService.SetTimer();
+                    //DailyEmailService.SetTimer();
+                    DailyEmailService.RestartEmailService();
                     GenericMethods.Log(LogType.ActivityLog.ToString(), "PostAdminSetting: " + adminSetting.CreatedBy + "-Setting created successfully");
                     return Ok("Settings saved successfully!");
                 }

@@ -82,9 +82,9 @@ namespace OmniCRM_Web
             });
 
             DailyEmailService._configuration = Configuration;
-            DailyEmailService._hostingEnvironment = HostingEnvironment;
+            //DailyEmailService._hostingEnvironment = HostingEnvironment;
             GenericMethods._hostingEnvironment = HostingEnvironment;
-            DailyEmailService.StartTimer();
+            //DailyEmailService.StartTimer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

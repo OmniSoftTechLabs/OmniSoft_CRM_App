@@ -146,14 +146,14 @@ namespace OmniCRM_Web.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(StatusCodes.Status200OK);
         }
 
         // POST: api/UserMasters
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult> PostUserMaster([FromBody]UserMaster userMaster)
+        public async Task<ActionResult> PostUserMaster([FromBody] UserMaster userMaster)
         {
             try
             {

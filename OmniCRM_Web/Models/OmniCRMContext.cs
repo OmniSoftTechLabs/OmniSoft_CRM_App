@@ -32,8 +32,9 @@ namespace OmniCRM_Web.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=OmniCRM;Trusted_Connection=True;");
-                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=OmniCRMProd;User ID=sa;pwd=sa123");
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=OmniCRM;Trusted_Connection=True;");
+                //optionsBuilder.UseSqlServer("Server=.\\MSSQLSERVER2016; Database=OmniCRMProd; User ID=omnicrmprod; Password=O$tL@103");
+                //optionsBuilder.UseSqlServer("Server=.\\MSSQLSERVER2016; Database=OmniCRMStgg; User ID=omnicrmstgg; Password=O$tL@103");
             }
         }
 

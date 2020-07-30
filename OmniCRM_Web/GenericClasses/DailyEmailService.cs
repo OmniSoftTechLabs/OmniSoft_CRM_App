@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -184,6 +185,31 @@ namespace OmniCRM_Web.GenericClasses
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "SendEmailDailyAppointmentToRM: " + ex.ToString());
+            }
+        }
+
+        public static void RestartEmailService()
+        {
+            string serviceName = _configuration.GetSection("EmailService").GetSection("ServiceName").Value;
+            ServiceController service = new ServiceController(serviceName);
+            try
+            {
+                int millisec1 = Environment.TickCount;
+                TimeSpan timeout = TimeSpan.FromMilliseconds(1000);
+
+                service.Stop();
+                service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+
+                // count the rest of the timeout
+                int millisec2 = Environment.TickCount;
+                timeout = TimeSpan.FromMilliseconds(1000 - (millisec2 - millisec1));
+
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+            }
+            catch(Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "RestartEmailService: " + ex.ToString());
             }
         }
     }

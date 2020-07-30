@@ -1,0 +1,16 @@
+
+=============== Log Entry : 15:10:25 30 July 2020 ===============
+RestartEmailService: System.InvalidOperationException: Cannot open 'OmniCRM_EmailService' service on computer '.'.
+ ---> System.ComponentModel.Win32Exception (5): Access is denied.
+   --- End of inner exception stack trace ---
+   at System.ServiceProcess.ServiceController.GetServiceHandle(Int32 desiredAccess)
+   at System.ServiceProcess.ServiceController.Stop()
+   at OmniCRM_Web.GenericClasses.DailyEmailService.RestartEmailService() in E:\Source\Repos\OmniSoft_CRM_App\OmniCRM_Web\GenericClasses\DailyEmailService.cs:line 200
+
+=============== Log Entry : 15:12:06 30 July 2020 ===============
+RestartEmailService: System.InvalidOperationException: Cannot open 'OmniCRM_EmailService' service on computer '.'.
+ ---> System.ComponentModel.Win32Exception (5): Access is denied.
+   --- End of inner exception stack trace ---
+   at System.ServiceProcess.ServiceController.GetServiceHandle(Int32 desiredAccess)
+   at System.ServiceProcess.ServiceController.Stop()
+   at OmniCRM_Web.GenericClasses.DailyEmailService.RestartEmailService() in E:\Source\Repos\OmniSoft_CRM_App\OmniCRM_Web\GenericClasses\DailyEmailService.cs:line 200
