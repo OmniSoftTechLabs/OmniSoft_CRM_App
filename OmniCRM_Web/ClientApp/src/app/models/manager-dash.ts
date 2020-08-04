@@ -19,6 +19,7 @@ export class ChartDataMnager {
 }
 
 export class EventCalendar {
+  callId: number
   appointmentTime: Date;
   clientName: string;
   appointStatus: string;

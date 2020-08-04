@@ -730,6 +730,7 @@ namespace OmniCRM_Web.Controllers
 
                 objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppointmentDetail.LastOrDefault().AppointmentDateTime != null) select call).Select(p => new EventCalendar()
                 {
+                    CallId = p.CallId,
                     AppointmentTime = Convert.ToDateTime(p.AppointmentDetail.LastOrDefault().AppointmentDateTime),
                     AppointStatus = p.AppointmentDetail.LastOrDefault().AppoinStatus.Status,
                     ClientName = p.FirstName + " " + p.LastName,

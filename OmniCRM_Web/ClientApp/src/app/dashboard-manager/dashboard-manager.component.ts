@@ -10,6 +10,7 @@ import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMo
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, } from 'angular-calendar';
 import { addMinutes } from 'date-fns/fp';
 import { GenericEnums, AppoinmentStatus } from '../services/generic-enums';
+import { Router } from '@angular/router';
 
 const colors: any = {
   green: {
@@ -74,7 +75,7 @@ export class DashboardManagerComponent implements OnInit {
   event: CalendarEvent;
   activeDayIsOpen: boolean = true;
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private router: Router) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.currentYear = new Date().getFullYear();
     this.currentMonth = datePipe.transform(new Date(), "MMM yyyy");
@@ -103,6 +104,7 @@ export class DashboardManagerComponent implements OnInit {
           this.events = [
             ...this.events,
             {
+              id: item.callId,
               title: item.clientName + " - " + item.appointStatus + " - " + this.datePipe.transform(item.appointmentTime, "hh:mm a"),
               start: new Date(item.appointmentTime),
               end: addMinutes(30, new Date(item.appointmentTime)), // new Date(new Date(item.appointmentTime).setMinutes(new Date(item.appointmentTime).getMinutes() + 30)),
@@ -143,6 +145,12 @@ export class DashboardManagerComponent implements OnInit {
       this.viewDate = date;
     }
   }
+
+  handleEvent(action: string, event: CalendarEvent): void {
+    let callId = event.id;
+    this.router.navigate(['/lead-followup/' + callId]);
+  }
+
 
   ngAfterViewInit() {
     var revenueChartCanvas = this.areaChart.nativeElement.getContext('2d');

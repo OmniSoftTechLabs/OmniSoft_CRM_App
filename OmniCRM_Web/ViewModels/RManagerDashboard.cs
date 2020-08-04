@@ -30,6 +30,7 @@ namespace OmniCRM_Web.ViewModels
 
     public class EventCalendar
     {
+        public int CallId { get; set; }
         public DateTime AppointmentTime { get; set; }
         public string ClientName { get; set; }
         public string AppointStatus { get; set; }
