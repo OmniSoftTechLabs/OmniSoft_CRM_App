@@ -60,6 +60,7 @@ namespace OmniCRM_Web.Controllers
                                           CityName = _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName,
                                           LastChangedDate = p.LastChangedDate,
                                           OutComeId = p.OutComeId,
+                                          NextCallDate = p.NextCallDate,
                                           Remark = p.Remark,
                                           CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
                                           OutComeText = p.OutCome.OutCome,
@@ -71,7 +72,8 @@ namespace OmniCRM_Web.Controllers
 
 
                 if (filterOption.DateFilterBy == 1)
-                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
+                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date
+                    || (p.OutComeId == (int)CallOutcome.CallLater && Convert.ToDateTime(p.NextCallDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.NextCallDate).Date <= filterOption.Todate.Date)).ToList();
                 else if (filterOption.DateFilterBy == 2)
                     listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
 
@@ -396,6 +398,9 @@ namespace OmniCRM_Web.Controllers
 
                     callDetail.LastChangedDate = indianTime;
                     callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
+
+                    if (callDetail.NextCallDate != null)
+                        callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
 
                     var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
                     if (ObjAppointment != null)

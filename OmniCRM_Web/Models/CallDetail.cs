@@ -24,6 +24,7 @@ namespace OmniCRM_Web.Models
         public int? CityId { get; set; }
         public DateTime LastChangedDate { get; set; }
         public int OutComeId { get; set; }
+        public DateTime? NextCallDate { get; set; }
         public string Remark { get; set; }
 
         public virtual CityMaster City { get; set; }

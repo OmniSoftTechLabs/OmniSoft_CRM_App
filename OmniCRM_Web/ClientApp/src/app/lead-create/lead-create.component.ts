@@ -35,6 +35,8 @@ export class LeadCreateComponent implements OnInit {
   currentUser: UserMaster;
   appointmentDate: NgbDateStruct;
   appointmentTime: NgbTimeStruct;
+  nextCallDateNg: NgbDateStruct;
+  nextCallTimeNg: NgbTimeStruct;
   minDate: NgbDateStruct;
   minuteStep: number = 15;
   isOnDatePickerLoad: boolean = true;
@@ -179,6 +181,15 @@ export class LeadCreateComponent implements OnInit {
     let newAppDateTime: any;
     if (this.appointmentDate != null)
       newAppDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
+
+    let nextCalldate: any;
+    if (this.nextCallDateNg != null)
+      nextCalldate = new Date(this.nextCallDateNg.year, this.nextCallDateNg.month - 1, this.nextCallDateNg.day, this.nextCallTimeNg.hour, this.nextCallTimeNg.minute, 0, 0);
+
+    if (this.leadModel.outComeId == LeadOutCome.CallLater) {
+      this.leadModel.nextCallDate = nextCalldate;
+    }
+
     if (this.leadModel.outComeId == LeadOutCome.AppoinmentTaken && (this.leadModel.appointmentDetail.length == 0
       || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId
       || this.leadModel.appointmentDetail[0].appointmentDateTime != newAppDateTime)) {
@@ -230,7 +241,7 @@ export class LeadCreateComponent implements OnInit {
         let hr = setTime.getHours();
         let min = (Math.round(setTime.getMinutes() / 5) * 5) % 60;
 
-        this.appointmentTime = {
+        this.appointmentTime = this.nextCallTimeNg = {
           hour: hr,
           minute: min,
           second: 0
@@ -238,7 +249,7 @@ export class LeadCreateComponent implements OnInit {
 
       }
       else {
-        this.appointmentTime = {
+        this.appointmentTime = this.nextCallTimeNg = {
           hour: 9,
           minute: 30,
           second: 0

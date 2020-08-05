@@ -50,84 +50,108 @@
         </div>
       </div>
 
-      <div class="row" *ngIf="leadModel.outComeId == 3">
+      <div class="row" *ngIf="leadModel.outComeId == 4">
         <div class="form-group col-sm-6">
-          Appointment Date Time<strong class="text-danger"> *</strong>
+          Next Call Date Time<strong class="text-danger"> *</strong>
           <div class="input-group">
-            <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
-                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
+            <input ngbDatepicker required #nextCallDate="ngbDatepicker" name="nextCallDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
+                   class="form-control" [(ngModel)]="nextCallDateNg" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
                    [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
 
             <div class="input-group-append">
-              <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+              <button #buttonEl class="btn btn-outline-secondary calendar" (click)="nextCallDate.toggle()" type="button"></button>
             </div>
           </div>
-          <small class="text-danger" *ngIf="dateCtrl.errors?.required && dateCtrl.touched">* Appointment date time is required</small>
+          <small class="text-danger" *ngIf="dateCtrl.errors?.required && dateCtrl.touched">* Next call date time is required</small>
 
           <ng-template #footerTemplate>
-            <ngb-timepicker required #appoinTime name="appoinTime" [(ngModel)]="appointmentTime" [meridian]="true" [minuteStep]="minuteStep" [formControl]="timeCtrl" [class.is-invalid]="timeCtrl.invalid && timeCtrl.touched" style="margin-left:10px; display:inline-block"></ngb-timepicker>
+            <ngb-timepicker required #nextCallTime name="nextCallTime" [(ngModel)]="nextCallTimeNg" [meridian]="true" [minuteStep]="minuteStep" [formControl]="timeCtrl" [class.is-invalid]="timeCtrl.invalid && timeCtrl.touched" style="margin-left:10px; display:inline-block"></ngb-timepicker>
             <br />
-            <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.required && timeCtrl.touched">* Appointment time is required</small>
+            <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.required && timeCtrl.touched">* Next call time is required</small>
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
           </ng-template>
-
-        </div>
-
-        <div class="form-group col-sm-6">
-          Relationship Manager<strong class="text-danger"> *</strong>
-          <select class="form-control custom-select" required #relationshipManagerId="ngModel" [(ngModel)]="appointmentDetailObj.relationshipManagerId" name="relationshipManagerId" [class.is-invalid]="relationshipManagerId.invalid && relationshipManagerId.touched">
-            <option selected disabled value="0">Choose...</option>
-            <option *ngFor="let manager of rManagerList" value="{{manager.userId}}"> {{manager.firstName}} {{manager.lastName}}</option>
-          </select>
-          <small class="text-danger" [class.d-none]="relationshipManagerId.valid || relationshipManagerId.untouched">* Manager is required</small>
         </div>
       </div>
 
-      <div class="row">
-        <div class="form-group col-sm-6">
-          State<strong class="text-danger"> *</strong>
-          <ng-select [items]="stateMaster | async" required #stateId="ngModel" [(ngModel)]="selectedState" name="stateId" (change)="onStateChange($event)"
-                     bindLabel="stateName" [typeahead]="stateInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
-          </ng-select>
-          <small class="text-danger" *ngIf="stateId.errors?.required && stateId.touched">* State is required</small>
+        <div class="row" *ngIf="leadModel.outComeId == 3">
+          <div class="form-group col-sm-6">
+            Appointment Date Time<strong class="text-danger"> *</strong>
+            <div class="input-group">
+              <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
+                     class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
+                     [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
+
+              <div class="input-group-append">
+                <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+              </div>
+            </div>
+            <small class="text-danger" *ngIf="dateCtrl.errors?.required && dateCtrl.touched">* Appointment date time is required</small>
+
+            <ng-template #footerTemplate>
+              <ngb-timepicker required #appoinTime name="appoinTime" [(ngModel)]="appointmentTime" [meridian]="true" [minuteStep]="minuteStep" [formControl]="timeCtrl" [class.is-invalid]="timeCtrl.invalid && timeCtrl.touched" style="margin-left:10px; display:inline-block"></ngb-timepicker>
+              <br />
+              <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.required && timeCtrl.touched">* Appointment time is required</small>
+              <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
+              <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
+            </ng-template>
+
+          </div>
+
+          <div class="form-group col-sm-6">
+            Relationship Manager<strong class="text-danger"> *</strong>
+            <select class="form-control custom-select" required #relationshipManagerId="ngModel" [(ngModel)]="appointmentDetailObj.relationshipManagerId" name="relationshipManagerId" [class.is-invalid]="relationshipManagerId.invalid && relationshipManagerId.touched">
+              <option selected disabled value="0">Choose...</option>
+              <option *ngFor="let manager of rManagerList" value="{{manager.userId}}"> {{manager.firstName}} {{manager.lastName}}</option>
+            </select>
+            <small class="text-danger" [class.d-none]="relationshipManagerId.valid || relationshipManagerId.untouched">* Manager is required</small>
+          </div>
         </div>
 
-        <div class="form-group col-sm-6">
-          City<strong class="text-danger"> *</strong>
-          <ng-select [items]="cityMaster | async" required #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId" 
-                     bindLabel="cityName" [typeahead]="cityInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
-          </ng-select>
-          <small class="text-danger" *ngIf="cityId.errors?.required && cityId.touched">* City is required</small>
-        </div>
-      </div>
+        <div class="row">
+          <div class="form-group col-sm-6">
+            State<strong class="text-danger"> *</strong>
+            <ng-select [items]="stateMaster | async" required #stateId="ngModel" [(ngModel)]="selectedState" name="stateId" (change)="onStateChange($event)"
+                       bindLabel="stateName" [typeahead]="stateInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+            </ng-select>
+            <small class="text-danger" *ngIf="stateId.errors?.required && stateId.touched">* State is required</small>
+          </div>
 
-      <div class="row">
-        <div class="form-group col-sm-6">
-          Address<strong class="text-danger"> *</strong>
-          <textarea type="text" required #address="ngModel" name="address" rows="2" [class.is-invalid]="address.invalid && address.touched"
-                    class="form-control" [(ngModel)]="leadModel.address" placeholder="i.e Door number, Street name, Area" maxlength="512"></textarea>
-          <small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>
+          <div class="form-group col-sm-6">
+            City<strong class="text-danger"> *</strong>
+            <ng-select [items]="cityMaster | async" required #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId"
+                       bindLabel="cityName" [typeahead]="cityInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
+            </ng-select>
+            <small class="text-danger" *ngIf="cityId.errors?.required && cityId.touched">* City is required</small>
+          </div>
         </div>
 
-        <div class="form-group col-sm-6">
-          Remark
-          <textarea type="text" #remark="ngModel" name="remark"
-                    class="form-control" [(ngModel)]="leadModel.remark" placeholder="i.e notes regarding lead" rows="2" maxlength="1024"></textarea>
-          <!--<small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>-->
-        </div>
-      </div>
+        <div class="row">
+          <div class="form-group col-sm-6">
+            Address<strong class="text-danger"> *</strong>
+            <textarea type="text" required #address="ngModel" name="address" rows="2" [class.is-invalid]="address.invalid && address.touched"
+                      class="form-control" [(ngModel)]="leadModel.address" placeholder="i.e Door number, Street name, Area" maxlength="512"></textarea>
+            <small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>
+          </div>
 
-      <div class="form-group form-row form-inline">
-        <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || (leadModel.outComeId == 3 && appointmentTime == null) || is_progress" type="submit" style="width:120px;">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
-            {{saveBtnTxt}}
-          </button>
-          &nbsp; &nbsp;
-          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/lead-list']">Close</button>
+          <div class="form-group col-sm-6">
+            Remark
+            <textarea type="text" #remark="ngModel" name="remark"
+                      class="form-control" [(ngModel)]="leadModel.remark" placeholder="i.e notes regarding lead" rows="2" maxlength="1024"></textarea>
+            <!--<small class="text-danger" *ngIf="address.errors?.required && address.touched">* Address Name is required</small>-->
+          </div>
         </div>
-      </div>
+
+        <div class="form-group form-row form-inline">
+          <div class=" col-md-12 ">
+            <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || (leadModel.outComeId == 3 && appointmentTime == null) || is_progress" type="submit" style="width:120px;">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+              {{saveBtnTxt}}
+            </button>
+            &nbsp; &nbsp;
+            <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/lead-list']">Close</button>
+          </div>
+        </div>
     </form>
   </div>
 </div>

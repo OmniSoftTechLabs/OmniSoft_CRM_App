@@ -22,6 +22,7 @@ export enum AppoinmentStatus {
 export enum LeadOutCome {
   NoResponse = 1,
   NotInterested = 2,
-  AppoinmentTaken = 3
+  AppoinmentTaken = 3,
+  CallLater = 4,
 }
 

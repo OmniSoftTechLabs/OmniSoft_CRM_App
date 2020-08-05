@@ -139,6 +139,8 @@ namespace OmniCRM_Web.Models
                     .IsRequired()
                     .HasMaxLength(12);
 
+                entity.Property(e => e.NextCallDate).HasColumnType("datetime");
+
                 entity.Property(e => e.OutComeId).HasColumnName("OutComeID");
 
                 entity.Property(e => e.StateId).HasColumnName("StateID");

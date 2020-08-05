@@ -16,6 +16,7 @@ export class LeadMaster {
   cityId: number;
   lastChangedDate: Date;
   outComeId: number = 0;
+  nextCallDate: Date;
   remark: string;
   outCome: OutcomeMaster;
   outComeText: string;

@@ -35,7 +35,7 @@ export class LeadListComponent implements OnInit {
   isTeleCaller: boolean;
   isManager: boolean;
   isUploadSucc: boolean = undefined;
-  outComeId: number = 1;
+  outComeId: number = 0;
   appoinStatusId: number = 0;
   filteruserId: string = "0";
   filterDateOption: string = "Created Date";
@@ -315,5 +315,14 @@ export class LeadListComponent implements OnInit {
     else
       this.isCheckedBox = false;
 
+  }
+
+  onCardClose() {
+    if (this.currentUser.roleId == roles["Tele Caller"])
+      this.router.navigate(['/dash-tele']);
+    else if (this.currentUser.roleId == roles["Relationship Manager"])
+      this.router.navigate(['/dash-manager']);
+    else
+      this.router.navigate(['/dashboard']);
   }
 }
