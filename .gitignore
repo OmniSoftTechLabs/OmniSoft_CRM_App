@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /OmniCRM_Web/OmniCRMLogs/ActivityLog
+/OmniCRM_Web/OmniCRMLogs/ErrorLog
