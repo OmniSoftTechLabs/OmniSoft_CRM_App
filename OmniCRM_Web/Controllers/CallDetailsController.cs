@@ -594,9 +594,9 @@ namespace OmniCRM_Web.Controllers
                         ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
 
                         int firstName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "First Name").Start.Column;
-                        int lastName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Last Name").Start.Column;
+                        //int lastName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Last Name").Start.Column;
                         int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
-                        int address = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Address").Start.Column;
+                        //int address = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Address").Start.Column;
                         var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
                         int remarks = 0;
                         if (remarksCell != null)
@@ -612,9 +612,9 @@ namespace OmniCRM_Web.Controllers
                             {
                                 CreatedBy = id,
                                 FirstName = workSheet.Cells[i, firstName].Value.ToString(),
-                                LastName = workSheet.Cells[i, lastName].Value.ToString(),
+                                //LastName = workSheet.Cells[i, lastName].Value.ToString(),
                                 MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
-                                Address = workSheet.Cells[i, address].Value.ToString(),
+                                //Address = workSheet.Cells[i, address].Value.ToString(),
                                 LastChangedDate = DateTime.Now,
                                 OutComeId = (int)CallOutcome.NoResponse,
                                 Remark = remarks > 0 ? workSheet.Cells[i, remarks].Value.ToString() : "Uploaded from excel",

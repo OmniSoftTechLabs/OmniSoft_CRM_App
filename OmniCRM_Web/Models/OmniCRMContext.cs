@@ -33,8 +33,6 @@ namespace OmniCRM_Web.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=OmniCRM;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=.\\MSSQLSERVER2016; Database=OmniCRMProd; User ID=omnicrmprod; Password=O$tL@103");
-                //optionsBuilder.UseSqlServer("Server=.\\MSSQLSERVER2016; Database=OmniCRMStgg; User ID=omnicrmstgg; Password=O$tL@103");
             }
         }
 
@@ -113,9 +111,7 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.CallId).HasColumnName("CallID");
 
-                entity.Property(e => e.Address)
-                    .IsRequired()
-                    .HasMaxLength(512);
+                entity.Property(e => e.Address).HasMaxLength(512);
 
                 entity.Property(e => e.CityId).HasColumnName("CityID");
 
@@ -131,9 +127,7 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.LastChangedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.LastName)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.MobileNumber)
                     .IsRequired()
