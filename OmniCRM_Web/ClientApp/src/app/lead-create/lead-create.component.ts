@@ -110,8 +110,10 @@ export class LeadCreateComponent implements OnInit {
                 second: 0
               }
           }
-          this.leadRepo.getSelectedState(data.stateId).subscribe(state => { this.selectedState = state });
-          this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city });
+          if (data.stateId != null)
+            this.leadRepo.getSelectedState(data.stateId).subscribe(state => { this.selectedState = state });
+          if (data.cityId != null)
+            this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city });
         }, error => console.error('Error!', error));
 
       localStorage.removeItem("callIdEdit");
@@ -175,8 +177,10 @@ export class LeadCreateComponent implements OnInit {
   onSavelead() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
-    this.leadModel.stateId = this.selectedState.stateId;
-    this.leadModel.cityId = this.selectedCity.cityId;
+    if (this.selectedState != null)
+      this.leadModel.stateId = this.selectedState.stateId;
+    if (this.selectedCity != null)
+      this.leadModel.cityId = this.selectedCity.cityId;
 
     let newAppDateTime: any;
     if (this.appointmentDate != null)

@@ -39,6 +39,7 @@ namespace OmniCRM_Web.GenericClasses
             NotInterested = 2,
             AppoinmentTaken = 3,
             CallLater = 4,
+            WrongNumber = 5,
         }
     }
 
