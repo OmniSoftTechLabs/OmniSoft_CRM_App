@@ -51,6 +51,7 @@ export class UserListComponent implements OnInit {
   }
 
   fillUserList() {
+    this.service.TABLE = [];
     this.generalRepository.loadUserList().subscribe(
       (users) => {
         //setTimeout(() => { this.service.TABLE = users }, 100);

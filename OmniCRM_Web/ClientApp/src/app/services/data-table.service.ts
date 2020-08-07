@@ -118,7 +118,6 @@ export class DataTableService {
   private _search(): Observable<SearchResult> {
     const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
 
-
     // 1. sort
     let dataList = sort(this.TABLE, sortColumn, sortDirection);
 
@@ -129,6 +128,7 @@ export class DataTableService {
     // 3. paginate
     dataList = dataList.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
     return of({ dataList, total });
+
   }
 
 }

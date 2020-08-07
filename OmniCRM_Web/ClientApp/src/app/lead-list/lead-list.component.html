@@ -168,8 +168,10 @@
       </table>
 
       <div class="d-flex justify-content-between p-2">
-        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
-        </ngb-pagination>
+        <!--<ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>-->
+        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+
         <strong>Total Leads : {{total$ | async}}</strong>
         <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
           <option [ngValue]="5">5 items per page</option>

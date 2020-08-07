@@ -97,14 +97,15 @@ export class LeadListComponent implements OnInit {
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.service.TABLE = [];
     await this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
         this.service.TABLE = leads;
-        delay(200);
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
+
       },
       error => console.error(error)
     );
@@ -117,6 +118,7 @@ export class LeadListComponent implements OnInit {
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.service.TABLE = [];
     this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).subscribe(
       (leads) => {
         this.service.xType = new LeadMaster();
