@@ -597,10 +597,13 @@ namespace OmniCRM_Web.Controllers
                         //int lastName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Last Name").Start.Column;
                         int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
                         //int address = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Address").Start.Column;
-                        var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
-                        int remarks = 0;
-                        if (remarksCell != null)
-                            remarks = remarksCell.Start.Column;
+                        //var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
+                        //int remarks = 0;
+                        //if (remarksCell != null)
+                        //    remarks = remarksCell.Start.Column;
+
+                        int remarks = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks").Start.Column;
+
 
                         int totalRows = workSheet.Dimension.Rows;
 
@@ -617,14 +620,14 @@ namespace OmniCRM_Web.Controllers
                                 //Address = workSheet.Cells[i, address].Value.ToString(),
                                 LastChangedDate = DateTime.Now,
                                 OutComeId = (int)CallOutcome.NoResponse,
-                                Remark = remarks > 0 ? workSheet.Cells[i, remarks].Value.ToString() : "Uploaded from excel",
+                                Remark = Convert.ToString(workSheet.Cells[i, remarks].Value),
                                 CallTransactionDetail = new List<CallTransactionDetail>()
                                 {
                                     new CallTransactionDetail()
                                     {
                                         CreatedBy=id,
                                         OutComeId=(int)CallOutcome.NoResponse,
-                                        Remarks= remarks > 0 ? workSheet.Cells[i, remarks].Value.ToString() : "Uploaded from excel"
+                                        Remarks=Convert.ToString(workSheet.Cells[i, remarks].Value)
                                     }
                                 }
                             });

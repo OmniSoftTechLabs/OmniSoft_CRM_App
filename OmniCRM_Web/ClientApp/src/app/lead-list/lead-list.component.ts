@@ -15,6 +15,7 @@ import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { FilterOptions } from '../models/filter-options';
 import { AdminSetting } from '../models/admin-setting';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lead-list',
@@ -100,6 +101,7 @@ export class LeadListComponent implements OnInit {
       (leads) => {
         this.service.xType = new LeadMaster();
         this.service.TABLE = leads;
+        delay(200);
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
@@ -123,6 +125,7 @@ export class LeadListComponent implements OnInit {
           obj.isChecked = false;
         });
         this.service.TABLE = leads;
+        delay(200);
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;

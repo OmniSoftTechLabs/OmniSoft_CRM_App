@@ -47,7 +47,7 @@ function matches(objData: any, xType: UserMaster | LeadMaster, term: string, pip
   if (xType instanceof LeadMaster) {
     var objlead = objData as LeadMaster;
     return objlead.firstName.toLowerCase().includes(term)
-      || objlead.lastName.toLowerCase().includes(term)
+      || (objlead.lastName != null && objlead.lastName.toLowerCase().includes(term))
       || objlead.mobileNumber.toLowerCase().includes(term)
   }
 
@@ -83,7 +83,7 @@ export class DataTableService {
 
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      delay(400),
+      delay(500),
       //debounceTime(500),
       switchMap(() => this._search()),
       delay(200),
