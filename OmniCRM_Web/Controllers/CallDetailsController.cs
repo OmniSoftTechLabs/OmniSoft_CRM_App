@@ -594,16 +594,22 @@ namespace OmniCRM_Web.Controllers
                         ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
 
                         int firstName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "First Name").Start.Column;
-                        //int lastName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Last Name").Start.Column;
                         int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
-                        //int address = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Address").Start.Column;
-                        //var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
-                        //int remarks = 0;
-                        //if (remarksCell != null)
-                        //    remarks = remarksCell.Start.Column;
 
-                        int remarks = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks").Start.Column;
+                        var lastNameCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Last Name");
+                        int lastName = 0;
+                        if (lastNameCell != null)
+                            lastName = lastNameCell.Start.Column;
 
+                        var addressCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Address");
+                        int address = 0;
+                        if (addressCell != null)
+                            address = addressCell.Start.Column;
+
+                        var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
+                        int remarks = 0;
+                        if (remarksCell != null)
+                            remarks = remarksCell.Start.Column;
 
                         int totalRows = workSheet.Dimension.Rows;
 
@@ -615,12 +621,12 @@ namespace OmniCRM_Web.Controllers
                             {
                                 CreatedBy = id,
                                 FirstName = workSheet.Cells[i, firstName].Value.ToString(),
-                                //LastName = workSheet.Cells[i, lastName].Value.ToString(),
                                 MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
-                                //Address = workSheet.Cells[i, address].Value.ToString(),
+                                LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
+                                Address = address > 0 ? Convert.ToString(workSheet.Cells[i, address].Value) : null,
                                 LastChangedDate = DateTime.Now,
                                 OutComeId = (int)CallOutcome.NoResponse,
-                                Remark = Convert.ToString(workSheet.Cells[i, remarks].Value),
+                                Remark = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null,
                                 CallTransactionDetail = new List<CallTransactionDetail>()
                                 {
                                     new CallTransactionDetail()
