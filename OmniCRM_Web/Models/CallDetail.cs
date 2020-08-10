@@ -26,6 +26,7 @@ namespace OmniCRM_Web.Models
         public int OutComeId { get; set; }
         public DateTime? NextCallDate { get; set; }
         public string Remark { get; set; }
+        public bool? IsDeleted { get; set; }
 
         public virtual CityMaster City { get; set; }
         public virtual UserMaster CreatedByNavigation { get; set; }

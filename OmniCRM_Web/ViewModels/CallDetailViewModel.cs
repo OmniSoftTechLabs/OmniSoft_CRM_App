@@ -27,5 +27,7 @@ namespace OmniCRM_Web.ViewModels
         public int? AppoinStatusId { get; set; }
         public Guid CreatedById { get; set; }
         public Guid AllocatedToId { get; set; }
+        public bool? IsDeleted { get; set; }
+
     }
 }

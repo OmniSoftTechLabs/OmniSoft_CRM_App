@@ -267,7 +267,7 @@ export class LeadListComponent implements OnInit {
     let formData = new FormData();
     formData.append('upload', this.fileInput.nativeElement.files[0]);
     this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe({
-      next: data => (this.uploadMsg = data, this.isUploadSucc = true),
+      next: data => (this.uploadMsg = data, this.isUploadSucc = true, this.fillLeadListCreatedBy()),
       error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false)
     });
   }
@@ -329,5 +329,20 @@ export class LeadListComponent implements OnInit {
       this.router.navigate(['/dash-manager']);
     else
       this.router.navigate(['/dashboard']);
+  }
+
+  setDeleteLeadId(callId: string) {
+    localStorage.removeItem("callIdDelete");
+    localStorage.setItem("callIdDelete", callId.toString());
+  }
+
+  onDeleteLead(isDelete: boolean) {
+    let callId = Number(localStorage.getItem("callIdDelete"));
+    if (isDelete == true) {
+      this.leadRepo.deleteLead(callId).subscribe({
+        next: data => (console.log('Success!', data), this.fillLeadListCreatedBy()),
+        error: error => (console.error('Error!', error), this.fillLeadListCreatedBy())
+      });
+    }
   }
 }

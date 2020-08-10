@@ -27,6 +27,7 @@ export class LeadMaster {
   followupHistory: FollowupHistory[] = [];
   isOverDue: boolean;
   isChecked: boolean;
+  isDeleted: boolean;
 }
 
 

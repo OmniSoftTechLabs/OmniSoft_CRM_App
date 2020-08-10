@@ -67,9 +67,10 @@ namespace OmniCRM_Web.Controllers
                                           AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
                                           AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
                                           AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
-
+                                          IsDeleted = p.IsDeleted,
                                       }).ToList();
 
+                listCallDetail = listCallDetail.Where(p => p.IsDeleted != true).ToList();
 
                 if (filterOption.DateFilterBy == 1)
                     listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date
@@ -207,6 +208,9 @@ namespace OmniCRM_Web.Controllers
                 callDetail.LastChangedDate = indianTime;
                 callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
 
+                if (callDetail.NextCallDate != null)
+                    callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
+
                 var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
                 if (ObjAppointment != null)
                 {
@@ -222,7 +226,7 @@ namespace OmniCRM_Web.Controllers
                 }
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
-                if (callDetail.OutComeId != lastTrans.OutComeId)
+                if (callDetail.OutComeId != lastTrans.OutComeId || callDetail.NextCallDate != null)
                     callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
                     {
                         //CallId = callDetail.CallId,
@@ -448,7 +452,7 @@ namespace OmniCRM_Web.Controllers
 
         // DELETE: api/CallDetails/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CallDetail>> DeleteCallDetail(int id)
+        public async Task<ActionResult<CallDetail>> DeletCallDetail(int id)
         {
             var callDetail = await _context.CallDetail.FindAsync(id);
             if (callDetail == null)
@@ -460,6 +464,39 @@ namespace OmniCRM_Web.Controllers
             await _context.SaveChangesAsync();
 
             return callDetail;
+        }
+
+        // Delete Set isDelete
+        [HttpPut("DeleteCallDetail/{id}")]
+        public async Task<IActionResult> DeleteCallDetail(int id)
+        {
+            try
+            {
+                if (!CallDetailExists(id))
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "DeleteCallDetail: -lead not exist");
+                    return NotFound("Lead not found!");
+                }
+
+                CallDetail callDetail = _context.CallDetail.FirstOrDefault(p => p.CallId == id);
+
+                _context.Entry(callDetail).State = EntityState.Modified;
+
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+
+                callDetail.LastChangedDate = indianTime;
+                callDetail.IsDeleted = true;
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + id + "-Deleted successfully");
+                await _context.SaveChangesAsync();
+                return Ok("Lead Deleted successfully!");
+
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "DeleteCallDetail: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         private bool CallDetailExists(int id)
@@ -660,7 +697,7 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                var callDetail = await _context.CallDetail.Where(p => p.CreatedBy == id).ToListAsync();
+                var callDetail = await _context.CallDetail.Where(p => p.CreatedBy == id && p.IsDeleted != true).ToListAsync();
                 int currentYear = DateTime.Now.Year;
                 int currentMonth = DateTime.Now.Month;
                 int lastMonth = DateTime.Now.AddMonths(-1).Month;

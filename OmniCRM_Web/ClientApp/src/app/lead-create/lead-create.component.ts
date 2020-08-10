@@ -268,5 +268,11 @@ export class LeadCreateComponent implements OnInit {
     if (this.selectedCity != null && value.stateId != this.selectedCity.stateId)
       this.selectedCity = null;
   }
+
+  onStatusChange(value: any) {
+    let outComeId = value.currentTarget.value;
+    if (outComeId != 4)
+      this.leadModel.nextCallDate = null;
+  }
 }
 

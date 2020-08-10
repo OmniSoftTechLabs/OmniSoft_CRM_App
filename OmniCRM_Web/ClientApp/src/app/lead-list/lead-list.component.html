@@ -161,6 +161,8 @@
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="followUp(lead.callId)" *ngIf="isManager"><i class="fas fa-phone-square-alt"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
+              &nbsp;
+              <button type="button" placement="top" ngbTooltip="Delete Lead" class="btn btn-sm btn-outline-danger rounded-circle" data-toggle="modal" data-target="#modelDeleteConfirm" (click)="setDeleteLeadId(lead.callId)" *ngIf="isTeleCaller"><i class="fas fa-trash-alt"></i></button>
             </td>
 
           </tr>
@@ -273,8 +275,29 @@
   </div>
 </div>
 
+<!--Modal Delete Confirm-->
+<div class="modal fade" id="modelDeleteConfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure to delete this lead?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onDeleteLead(true)">Yes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <!--<button type="button" class="btn btn-primary">Understood</button>-->
+      </div>
+    </div>
+  </div>
+</div>
 
-<!--Modal Confirm-->
+<!--Modal Dismiss Confirm-->
 <div class="modal fade" id="modelConfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">

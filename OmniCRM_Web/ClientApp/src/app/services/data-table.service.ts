@@ -83,7 +83,7 @@ export class DataTableService {
 
     this._search$.pipe(
       tap(() => this._loading$.next(true)),
-      delay(500),
+      delay(200),
       //debounceTime(500),
       switchMap(() => this._search()),
       delay(200),
