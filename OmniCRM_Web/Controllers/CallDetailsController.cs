@@ -81,8 +81,8 @@ namespace OmniCRM_Web.Controllers
                 if (filterOption.AllocatedTo != "0")
                     listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
 
-                if (filterOption.Status > 0)
-                    listCallDetail = listCallDetail.Where(p => p.OutComeId == filterOption.Status).ToList();
+                if (filterOption.Status.Count > 0)
+                    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.OutComeId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get all Lead by created user");
                 return await Task.FromResult(listCallDetail);
@@ -141,8 +141,8 @@ namespace OmniCRM_Web.Controllers
                 if (filterOption.CreatedBy != "0")
                     listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
 
-                if (filterOption.Status > 0)
-                    listCallDetail = listCallDetail.Where(p => p.AppoinStatusId == filterOption.Status).ToList();
+                if (filterOption.Status.Count > 0)
+                    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.AppoinStatusId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
                 return await Task.FromResult(listCallDetail);

@@ -21,7 +21,7 @@
       <div class="form-row">
 
         <div class="col-sm form-group form-inline">
-          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:80%" placeholder="Search by First Name, Last Name or Mobile Number" />
+          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:75%" placeholder="Search by First Name, Last Name or Mobile Number" />
           <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
         </div>
         <div class="col-sm form-group">
@@ -36,16 +36,25 @@
               <a class="btn dropdown-item text-success" data-toggle="modal" data-target="#modelImportExcel"><i class="fas fa-file-upload mr-2"></i> Import</a>
             </div>
           </div>
-
-
         </div>
       </div>
       <div class="form-row">
-        <div class="col-sm-2 form-group" *ngIf="isTeleCaller">
-          Status: <select class="form-control custom-select" [(ngModel)]="outComeId" name="outComeId">
+        <div class="col-sm-3 form-group" *ngIf="isTeleCaller">
+          Status: <ng-select [items]="outcomeList"
+                             [multiple]="true"
+                             [closeOnSelect]="false"
+                             [searchable]="true"
+                             bindLabel="outCome"
+                             bindValue="outComeId"
+                             placeholder="All"
+                             [(ngModel)]="outComeId"
+                             [ngModelOptions]="{standalone: true}">
+          </ng-select>
+
+          <!--<select class="form-control custom-select" [(ngModel)]="outComeId" name="outComeId">
             <option value="0">All</option>
             <option *ngFor="let objOutCome of outcomeList" [selected]="objOutCome.outComeId === 0" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
-          </select>
+          </select>-->
         </div>
         <div class="col-sm-2 form-group" *ngIf="isManager">
           Status: <select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">

@@ -7,7 +7,7 @@ namespace OmniCRM_Web.GenericClasses
 {
     public class FilterOptions
     {
-        public int Status { get; set; }
+        public List<int> Status { get; set; }
         public string CreatedBy { get; set; }
         public string AllocatedTo { get; set; }
         public int DateFilterBy { get; set; }

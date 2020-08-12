@@ -36,8 +36,8 @@ export class LeadListComponent implements OnInit {
   isTeleCaller: boolean;
   isManager: boolean;
   isUploadSucc: boolean = undefined;
-  outComeId: number = 0;
-  appoinStatusId: number = 0;
+  outComeId: number[] = [];
+  appoinStatusId: [] = [];
   filteruserId: string = "0";
   filterDateOption: string = "Created Date";
   filterDateById: number;

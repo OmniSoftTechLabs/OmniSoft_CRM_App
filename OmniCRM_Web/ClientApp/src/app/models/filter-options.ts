@@ -1,5 +1,5 @@
 export class FilterOptions {
-  status: number;
+  status: number[] = [];
   createdBy: string;
   allocatedTo: string;
   dateFilterBy: number;

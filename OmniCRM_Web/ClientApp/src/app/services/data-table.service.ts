@@ -27,7 +27,7 @@ function sort(dataList: any[], column: SortColumn, direction: string): any[] {
     return dataList;
   } else {
     return [...dataList].sort((a, b) => {
-      const res = compare(`${a[column].toString().toLocaleLowerCase()}`, `${b[column].toString().toLocaleLowerCase()}`);
+      const res = compare(`${String(a[column] == null ? '' : a[column]).toLocaleLowerCase()}`, `${String(b[column] == null ? '' : b[column]).toLocaleLowerCase()}`);
       return direction === 'asc' ? res : -res;
     });
   }
