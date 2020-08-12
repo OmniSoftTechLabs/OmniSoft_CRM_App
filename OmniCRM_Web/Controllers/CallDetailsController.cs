@@ -244,7 +244,7 @@ namespace OmniCRM_Web.Controllers
             }
             catch (Exception ex)
             {
-                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutFollowupDetail: " + ex.ToString());
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PutCallDetail: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
@@ -489,7 +489,7 @@ namespace OmniCRM_Web.Controllers
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + id + "-Deleted successfully");
                 await _context.SaveChangesAsync();
-                return Ok("Lead Deleted successfully!");
+                return Ok("Lead deleted successfully!");
 
             }
             catch (Exception ex)

@@ -112,14 +112,14 @@ export class LeadListComponent implements OnInit {
     this.service.searchTerm = '';
   }
 
-  fillLeadListByRM() {
+  async fillLeadListByRM() {
     this.filterOption.status = this.appoinStatusId;
     this.filterOption.createdBy = this.filteruserId;
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
     this.service.TABLE = [];
-    this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).subscribe(
+    await this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
         leads.forEach((obj) => {
@@ -127,7 +127,6 @@ export class LeadListComponent implements OnInit {
           obj.isChecked = false;
         });
         this.service.TABLE = leads;
-        delay(200);
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
@@ -137,7 +136,7 @@ export class LeadListComponent implements OnInit {
     this.service.searchTerm = '';
     //this.checkedList = [];
     //this.isCheckedBox = false;
-    setTimeout(() => { this.onSelectAllLeads(false); }, 200);
+    setTimeout(() => { this.onSelectAllLeads(false); }, 300);
   }
 
   fillOutCome() {

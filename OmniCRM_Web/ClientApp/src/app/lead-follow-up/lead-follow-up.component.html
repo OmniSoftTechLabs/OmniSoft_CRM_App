@@ -93,7 +93,7 @@
       <div class="row">
         <div class="form-group col-sm-6">
           State<!--<strong class="text-danger"> *</strong>-->
-          <ng-select [items]="stateMaster | async" #stateId="ngModel" [(ngModel)]="selectedState" name="stateId"
+          <ng-select [items]="stateMaster | async" #stateId="ngModel" [(ngModel)]="selectedState" name="stateId" (change)="onStateChange($event)" (close)="stateId.blur(); stateId.focus()"
                      bindLabel="stateName" [typeahead]="stateInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
           </ng-select>
           <!--<small class="text-danger" *ngIf="stateId.errors?.required && stateId.touched">* State is required</small>-->
@@ -101,7 +101,7 @@
 
         <div class="form-group col-sm-6">
           City<!--<strong class="text-danger"> *</strong>-->
-          <ng-select [items]="cityMaster | async" #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId"
+          <ng-select [items]="cityMaster | async" #cityId="ngModel" [(ngModel)]="selectedCity" name="cityId" (close)="cityId.blur(); cityId.focus()"
                      bindLabel="cityName" [typeahead]="cityInput" [minTermLength]="2" typeToSearchText="Please enter 2 or more characters" [loading]="loading">
           </ng-select>
           <!--<small class="text-danger" *ngIf="cityId.errors?.required && cityId.touched">* City is required</small>-->

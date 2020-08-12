@@ -160,8 +160,10 @@ export class LeadFollowUpComponent implements OnInit {
   onSavelead() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
-    this.leadModel.stateId = this.selectedState.stateId;
-    this.leadModel.cityId = this.selectedCity.cityId;
+    if (this.selectedState != null)
+      this.leadModel.stateId = this.selectedState.stateId;
+    if (this.selectedCity != null)
+      this.leadModel.cityId = this.selectedCity.cityId;
 
     if (this.appointmentDate != null) {
       this.appointmentDetailObj.appointmentDateTime = new Date(this.appointmentDate.year, this.appointmentDate.month - 1, this.appointmentDate.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
@@ -170,6 +172,9 @@ export class LeadFollowUpComponent implements OnInit {
       //this.appointmentDetailObj.appointmentDateTime.setMonth(this.appointmentDate.month);
       //this.appointmentDetailObj.appointmentDateTime.setFullYear(this.appointmentDate.year);
     }
+    else
+      this.appointmentDetailObj.appointmentDateTime = null;
+
     this.appointmentDetailObj.remarks = this.leadModel.remark;
 
     this.folloupHistoryObj.appoinStatusId = this.appointmentDetailObj.appoinStatusId;
@@ -205,6 +210,11 @@ export class LeadFollowUpComponent implements OnInit {
       { followupType: 'Email' },
       { followupType: 'WhatsApp' },
     ];
+  }
+
+  onStateChange(value: any) {
+    if (value != null && this.selectedCity != null && value.stateId != this.selectedCity.stateId)
+      this.selectedCity = null;
   }
 
   onDateChange(value: NgbDateStruct) {

@@ -66,3 +66,7 @@ button.calendar, button.calendar:active {
   background-size: 23px;
   background-position: center;
 }
+
+.ng-select.ng-select.ng-select-single.ng-select-filtered:not(.ng-select-opened) .ng-select-container.ng-has-value .ng-value-container .ng-value {
+  visibility: visible;
+}

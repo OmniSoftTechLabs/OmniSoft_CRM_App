@@ -265,7 +265,7 @@ export class LeadCreateComponent implements OnInit {
   }
 
   onStateChange(value: any) {
-    if (this.selectedCity != null && value.stateId != this.selectedCity.stateId)
+    if (value != null && this.selectedCity != null && value.stateId != this.selectedCity.stateId)
       this.selectedCity = null;
   }
 

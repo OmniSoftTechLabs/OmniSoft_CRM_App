@@ -44,7 +44,7 @@ export class LeadRepositoryService {
   }
 
   deleteLead(id: number) {
-    return this.http.put(this.baseUrl + 'api/CallDetails/DeleteCallDetail/' + id, { responseType: 'text' }).pipe();
+    return this.http.put(this.baseUrl + 'api/CallDetails/DeleteCallDetail/' + id, id, { responseType: 'text' }).pipe();
   }
 
   remindMelater(collLeads: LeadMaster[], strDate: string) {
@@ -85,8 +85,9 @@ export class LeadRepositoryService {
     return response;
   }
 
-  loadLeadListByRM(id, filterOption: FilterOptions) {
-    return this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id, filterOption).pipe();
+  async loadLeadListByRM(id, filterOption: FilterOptions) {
+    let response = await this.http.post<LeadMaster[]>(this.baseUrl + 'api/CallDetails/GetCallDetailByRM/' + id, filterOption).toPromise();
+    return response;
   }
 
   async loadCallTransById(id) {
