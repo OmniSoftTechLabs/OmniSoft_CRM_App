@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { NgForm, FormControl, Validators } from '@angular/forms';
 import { LeadMaster, OutcomeMaster, AppointmentDetail, StateMaster, CityMaster } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { RmanagerMaster } from '../models/rmanager-master';
-import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 import { AdminSetting } from '../models/admin-setting';
 import { Observable, concat, of, Subject } from 'rxjs';
@@ -19,7 +19,9 @@ import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators
 export class LeadCreateComponent implements OnInit {
 
   @ViewChild('leadAdd') form: NgForm;
-  callId: number;
+  @Input() callId: number;
+
+  //callId: number;
   IsSucess: boolean = false;
   IsError: boolean = false;
   formTitle: string = "Create Lead";
@@ -76,7 +78,7 @@ export class LeadCreateComponent implements OnInit {
   });
 
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, public activeModal: NgbActiveModal) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
@@ -89,7 +91,7 @@ export class LeadCreateComponent implements OnInit {
     this.searchStateMaster();
     this.searchCityMaster();
 
-    this.callId = Number(localStorage.getItem("callIdEdit"));
+    //this.callId = Number(localStorage.getItem("callIdEdit"));
 
     if (this.callId > 0) {
       this.is_edit = true;
@@ -116,7 +118,7 @@ export class LeadCreateComponent implements OnInit {
             this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city });
         }, error => console.error('Error!', error));
 
-      localStorage.removeItem("callIdEdit");
+      //localStorage.removeItem("callIdEdit");
     }
   }
 

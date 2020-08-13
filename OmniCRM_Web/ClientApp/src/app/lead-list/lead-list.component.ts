@@ -12,10 +12,12 @@ import { roles } from '../services/generic-enums';
 import { ExcelExportService } from '../services/excel-export.service';
 import { DatePipe } from '@angular/common';
 import { RmanagerMaster } from '../models/rmanager-master';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FilterOptions } from '../models/filter-options';
 import { AdminSetting } from '../models/admin-setting';
 import { delay } from 'rxjs/operators';
+import { LeadCreateComponent } from '../lead-create/lead-create.component';
+import { LeadFollowUpComponent } from '../lead-follow-up/lead-follow-up.component';
 
 @Component({
   selector: 'app-lead-list',
@@ -61,9 +63,10 @@ export class LeadListComponent implements OnInit {
   dateCtrl = new FormControl('', Validators.required);
 
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
-    private excelService: ExcelExportService, private datePipe: DatePipe) {
+    private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
-
+    modalConfig.backdrop = 'static';
+    modalConfig.keyboard = false;
     let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
     this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
@@ -193,6 +196,22 @@ export class LeadListComponent implements OnInit {
     //localStorage.removeItem("callIdFollowUp");
     //localStorage.setItem("callIdFollowUp", callId.toString());
     this.router.navigate(['/lead-followup/' + callId]);
+  }
+
+  onOpenLeadModal(callId: number) {
+    const modalRef = this.modalService.open(LeadCreateComponent, { size: 'lg' });
+    modalRef.componentInstance.callId = callId;
+    modalRef.result.then((result) => {
+      this.fillLeadListCreatedBy();
+    });
+  }
+
+  onOpenFollowupModal(callId: number) {
+    const modalRef = this.modalService.open(LeadFollowUpComponent, { size: 'lg' });
+    modalRef.componentInstance.callId = callId;
+    modalRef.result.then((result) => {
+      this.fillLeadListByRM();
+    });
   }
 
   onChangeFilterDateOption(id: number) {

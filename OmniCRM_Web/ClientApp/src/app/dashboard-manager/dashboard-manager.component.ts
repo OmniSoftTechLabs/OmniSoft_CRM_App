@@ -11,6 +11,8 @@ import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, Cal
 import { addMinutes } from 'date-fns/fp';
 import { GenericEnums, AppoinmentStatus } from '../services/generic-enums';
 import { Router } from '@angular/router';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { LeadFollowUpComponent } from '../lead-follow-up/lead-follow-up.component';
 
 const colors: any = {
   green: {
@@ -75,7 +77,10 @@ export class DashboardManagerComponent implements OnInit {
   event: CalendarEvent;
   activeDayIsOpen: boolean = true;
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private router: Router) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private router: Router
+    , private modalService: NgbModal, private modalConfig: NgbModalConfig) {
+    modalConfig.backdrop = 'static';
+    modalConfig.keyboard = false;
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.currentYear = new Date().getFullYear();
     this.currentMonth = datePipe.transform(new Date(), "MMM yyyy");
@@ -99,6 +104,7 @@ export class DashboardManagerComponent implements OnInit {
           this.dropped.push(item.dropped);
         });
 
+        this.events = [];
         this.managerDashboard.collCalendarEvents.forEach((item) => {
 
           this.events = [
@@ -148,7 +154,14 @@ export class DashboardManagerComponent implements OnInit {
 
   handleEvent(action: string, event: CalendarEvent): void {
     let callId = event.id;
-    this.router.navigate(['/lead-followup/' + callId]);
+    //this.router.navigate(['/lead-followup/' + callId]);
+
+    const modalRef = this.modalService.open(LeadFollowUpComponent, { size: 'lg' });
+    modalRef.componentInstance.callId = callId;
+    modalRef.result.then((result) => {
+      this.LoadData();
+    });
+
   }
 
 

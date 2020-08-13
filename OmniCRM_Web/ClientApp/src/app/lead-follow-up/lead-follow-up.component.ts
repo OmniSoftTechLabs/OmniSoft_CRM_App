@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AppoinmentStatusMaster, LeadMaster, AppointmentDetail, FollowupHistory, StateMaster, CityMaster } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserMaster } from '../models/user-master';
 import { GenericEnums } from '../services/generic-enums';
-import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { AdminSetting } from '../models/admin-setting';
@@ -19,6 +19,7 @@ import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators
 })
 export class LeadFollowUpComponent implements OnInit {
 
+  @Input() callId: number;
   appoinmentStatusList: AppoinmentStatusMaster[] = [];
   leadModel: LeadMaster = new LeadMaster();
   appointmentDetailObj: AppointmentDetail = new AppointmentDetail();
@@ -27,7 +28,6 @@ export class LeadFollowUpComponent implements OnInit {
   appointmentTime: NgbTimeStruct;
   currentUser: UserMaster;
   followupTypeList: any[];
-  callId: number;
   IsSucess: boolean = false;
   IsError: boolean = false;
   formTitle: string = "Follow up Lead";
@@ -76,7 +76,7 @@ export class LeadFollowUpComponent implements OnInit {
     return null;
   });
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private route: ActivatedRoute) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, private datePipe: DatePipe, private route: ActivatedRoute, public activeModal: NgbActiveModal) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
@@ -89,7 +89,8 @@ export class LeadFollowUpComponent implements OnInit {
     this.searchStateMaster();
     this.searchCityMaster();
     //this.callId = Number(localStorage.getItem("callIdFollowUp"));
-    this.callId = this.route.snapshot.params.callId;
+    if (this.callId == null)
+      this.callId = this.route.snapshot.params.callId;
 
     this.leadRepo.getLeadById(this.callId).subscribe(
       data => (this.leadModel = data,
