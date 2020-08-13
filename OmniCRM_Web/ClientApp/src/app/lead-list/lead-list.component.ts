@@ -37,7 +37,7 @@ export class LeadListComponent implements OnInit {
   isManager: boolean;
   isUploadSucc: boolean = undefined;
   outComeId: number[] = [];
-  appoinStatusId: [] = [];
+  appoinStatusId: number[] = [];
   filteruserId: string = "0";
   filterDateOption: string = "Created Date";
   filterDateById: number;

@@ -56,11 +56,22 @@
             <option *ngFor="let objOutCome of outcomeList" [selected]="objOutCome.outComeId === 0" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
           </select>-->
         </div>
-        <div class="col-sm-2 form-group" *ngIf="isManager">
-          Status: <select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">
+        <div class="col-sm-3 form-group" *ngIf="isManager">
+          Status:
+          <ng-select [items]="appoinStatusList"
+                     [multiple]="true"
+                     [closeOnSelect]="false"
+                     [searchable]="true"
+                     bindLabel="status"
+                     bindValue="appoinStatusId"
+                     placeholder="All"
+                     [(ngModel)]="appoinStatusId"
+                     [ngModelOptions]="{standalone: true}">
+          </ng-select>
+          <!--<select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">
             <option value="0">All</option>
             <option *ngFor="let aStatus of appoinStatusList" [selected]="aStatus.appoinStatusId === 0" value="{{aStatus.appoinStatusId}}"> {{aStatus.status}}</option>
-          </select>
+          </select>-->
         </div>
         <div class="col-sm-2 form-group">
           {{allocateCreateByTxt}}: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
@@ -80,13 +91,13 @@
             </div>
           </div>
           <div class="input-group">
-            <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="fromDate" name="fDate" placeholder="From Date" />
+            <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="fromDate" name="fDate" placeholder="From Date" style="width:180px"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
             </div>
           </div>
           <div class="input-group">
-            <input ngbDatepicker class="form-control" #tDate="ngbDatepicker" [(ngModel)]="toDate" name="tDate" placeholder="To Date" />
+            <input ngbDatepicker class="form-control" #tDate="ngbDatepicker" [(ngModel)]="toDate" name="tDate" placeholder="To Date" style="width:180px"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary calendar" (click)="tDate.toggle()" type="button"></button>
             </div>
@@ -95,17 +106,14 @@
             <button type="button" class="btn btn-outline-primary" placement="right" ngbTooltip="Filter" (click)="onFilterSearch()"><i class="fas fa-search"></i></button>
           </div>
 
-          <div class="col-sm" *ngIf="isCheckedBox">
+          <div *ngIf="isCheckedBox">
             <button type="button" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
             <button type="button" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
           </div>
         </div>
 
-
-
         <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
         <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
-
 
       </div>
 
