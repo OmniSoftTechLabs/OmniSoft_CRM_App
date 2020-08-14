@@ -88,6 +88,7 @@
             <div class="dropdown-menu dropdown-menu-right">
               <a class="btn dropdown-item" (click)="onChangeFilterDateOption(1)">Created Date</a>
               <a class="btn dropdown-item" (click)="onChangeFilterDateOption(2)">Appointment Date</a>
+              <a class="btn dropdown-item" (click)="onChangeFilterDateOption(3)">Last Change Date</a>
             </div>
           </div>
           <div class="input-group">
@@ -107,8 +108,9 @@
           </div>
 
           <div *ngIf="isCheckedBox">
-            <button type="button" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
-            <button type="button" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
+            <button type="button" *ngIf="isManager" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
+            <button type="button" *ngIf="isManager" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
+            <button type="button" *ngIf="isTeleCaller" class="btn btn-outline-danger float-right" placement="top" ngbTooltip="Delete Leads" data-toggle="modal" data-target="#modelDeleteConfirm"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
 
@@ -122,13 +124,13 @@
         <!--datatable [dtOptions]="dtOptions"-->
         <thead>
           <tr>
-            <th scope="col" *ngIf="isManager">
+            <th scope="col">
               <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="selectAll" (click)="onSelectAllLeads($event.currentTarget.checked)">
                 <label class="custom-control-label" for="selectAll">#</label>
               </div>
             </th>
-            <th scope="col" *ngIf="isTeleCaller">#</th>
+            <!--<th scope="col" *ngIf="isTeleCaller">#</th>-->
             <th scope="col" sortable="firstName" (sort)="onSort($event)">First Name</th>
             <th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>
             <th scope="col" sortable="mobileNumber" (sort)="onSort($event)">Mobile No.</th>
@@ -149,13 +151,13 @@
         </thead>
         <tbody>
           <tr *ngFor="let lead of leadList | async; index as i" [ngClass]="{'text-danger': lead.isOverDue == true}">
-            <th scope="row" *ngIf="isManager">
+            <th scope="row">
               <div class="custom-control custom-checkbox">
-                <input *ngIf="isManager" type="checkbox" class="custom-control-input" id="customCheck{{i+1}}" [checked]="lead.isChecked" (change)="showHideDismissButton(lead , $event)">
+                <input type="checkbox" class="custom-control-input" id="customCheck{{i+1}}" [checked]="lead.isChecked" (change)="showHideDismissButton(lead , $event)">
                 <label class="custom-control-label" for="customCheck{{i+1}}">{{service.pageSize * (service.page - 1) + i + 1  }}</label>
               </div>
             </th>
-            <th scope="row" *ngIf="isTeleCaller">{{service.pageSize * (service.page - 1) + i + 1  }}</th>
+            <!--<th scope="row" *ngIf="isTeleCaller">{{service.pageSize * (service.page - 1) + i + 1  }}</th>-->
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
             <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>
@@ -178,8 +180,6 @@
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenFollowupModal(lead.callId)" *ngIf="isManager"><i class="fas fa-phone-square-alt"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
-              &nbsp;
-              <button type="button" placement="top" ngbTooltip="Delete Lead" class="btn btn-sm btn-outline-danger rounded-circle" data-toggle="modal" data-target="#modelDeleteConfirm" (click)="setDeleteLeadId(lead.callId)" *ngIf="isTeleCaller"><i class="fas fa-trash-alt"></i></button>
             </td>
 
           </tr>

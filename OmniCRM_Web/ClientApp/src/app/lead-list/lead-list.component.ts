@@ -101,9 +101,11 @@ export class LeadListComponent implements OnInit {
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
     this.service.TABLE = [];
+    this.checkedList = [];
     await this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
+        leads.forEach((obj) => { obj.isChecked = false; });
         this.service.TABLE = leads;
         this.leadList = this.service.dataList$;
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
@@ -113,6 +115,8 @@ export class LeadListComponent implements OnInit {
       error => console.error(error)
     );
     this.service.searchTerm = '';
+    setTimeout(() => { this.onSelectAllLeads(false); }, 300);
+
   }
 
   async fillLeadListByRM() {
@@ -137,8 +141,6 @@ export class LeadListComponent implements OnInit {
       error => console.error(error)
     );
     this.service.searchTerm = '';
-    //this.checkedList = [];
-    //this.isCheckedBox = false;
     setTimeout(() => { this.onSelectAllLeads(false); }, 300);
   }
 
@@ -222,6 +224,10 @@ export class LeadListComponent implements OnInit {
     else if (id == 2) {
       this.filterDateOption = "Appoinment Date";
       this.filterDateById = 2;
+    }
+    else if (id == 3) {
+      this.filterDateOption = "Last Change Date";
+      this.filterDateById = 3;
     }
   }
 
@@ -349,15 +355,15 @@ export class LeadListComponent implements OnInit {
       this.router.navigate(['/dashboard']);
   }
 
-  setDeleteLeadId(callId: string) {
-    localStorage.removeItem("callIdDelete");
-    localStorage.setItem("callIdDelete", callId.toString());
-  }
+  //setDeleteLeadId(callId: string) {
+  //  localStorage.removeItem("callIdDelete");
+  //  localStorage.setItem("callIdDelete", callId.toString());
+  //}
 
   onDeleteLead(isDelete: boolean) {
-    let callId = Number(localStorage.getItem("callIdDelete"));
+    //let callId = Number(localStorage.getItem("callIdDelete"));
     if (isDelete == true) {
-      this.leadRepo.deleteLead(callId).subscribe({
+      this.leadRepo.deleteLead(this.checkedList).subscribe({
         next: data => (console.log('Success!', data), this.fillLeadListCreatedBy()),
         error: error => (console.error('Error!', error), this.fillLeadListCreatedBy())
       });

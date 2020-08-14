@@ -25,6 +25,6 @@ export enum LeadOutCome {
   AppoinmentTaken = 3,
   CallLater = 4,
   WrongNumber = 5,
-
+  None = 6,
 }
 

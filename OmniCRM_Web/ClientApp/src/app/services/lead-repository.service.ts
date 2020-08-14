@@ -43,8 +43,8 @@ export class LeadRepositoryService {
     return this.http.put(this.baseUrl + 'api/CallDetails/DismissLeads/', collLeads, { responseType: 'text' }).pipe();
   }
 
-  deleteLead(id: number) {
-    return this.http.put(this.baseUrl + 'api/CallDetails/DeleteCallDetail/' + id, id, { responseType: 'text' }).pipe();
+  deleteLead(collLeads: LeadMaster[]) {
+    return this.http.put(this.baseUrl + 'api/CallDetails/DeleteCallDetail/', collLeads, { responseType: 'text' }).pipe();
   }
 
   remindMelater(collLeads: LeadMaster[], strDate: string) {

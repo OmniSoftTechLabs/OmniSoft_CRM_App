@@ -74,9 +74,11 @@ namespace OmniCRM_Web.Controllers
 
                 if (filterOption.DateFilterBy == 1)
                     listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date
-                    || (p.OutComeId == (int)CallOutcome.CallLater && Convert.ToDateTime(p.NextCallDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.NextCallDate).Date <= filterOption.Todate.Date)).ToList();
+                        || (p.OutComeId == (int)CallOutcome.CallLater && Convert.ToDateTime(p.NextCallDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.NextCallDate).Date <= filterOption.Todate.Date)).ToList();
                 else if (filterOption.DateFilterBy == 2)
                     listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                else if (filterOption.DateFilterBy == 3)
+                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
 
                 if (filterOption.AllocatedTo != "0")
                     listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
@@ -137,6 +139,8 @@ namespace OmniCRM_Web.Controllers
                     listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
                 else if (filterOption.DateFilterBy == 2)
                     listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                else if (filterOption.DateFilterBy == 3)
+                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
 
                 if (filterOption.CreatedBy != "0")
                     listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
@@ -467,30 +471,33 @@ namespace OmniCRM_Web.Controllers
         }
 
         // Delete Set isDelete
-        [HttpPut("DeleteCallDetail/{id}")]
-        public async Task<IActionResult> DeleteCallDetail(int id)
+        [HttpPut("DeleteCallDetail")]
+        public async Task<IActionResult> DeleteCallDetail(List<CallDetail> collCallDetail)
         {
             try
             {
-                if (!CallDetailExists(id))
+                if (collCallDetail.Count > 0)
+                {
+                    foreach (var lead in collCallDetail)
+                    {
+                        var objLead = await GetCallDetail(lead.CallId);
+
+                        _context.Entry(objLead.Value).State = EntityState.Modified;
+
+                        DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+
+                        objLead.Value.LastChangedDate = indianTime;
+                        objLead.Value.IsDeleted = true;
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + objLead.Value.CallId + "-Deleted successfully");
+                    }
+                    await _context.SaveChangesAsync();
+                    return Ok("Lead deleted successfully!");
+                }
+                else
                 {
                     GenericMethods.Log(LogType.ErrorLog.ToString(), "DeleteCallDetail: -lead not exist");
-                    return NotFound("Lead not found!");
+                    return NotFound("Leads not found!");
                 }
-
-                CallDetail callDetail = _context.CallDetail.FirstOrDefault(p => p.CallId == id);
-
-                _context.Entry(callDetail).State = EntityState.Modified;
-
-                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
-
-                callDetail.LastChangedDate = indianTime;
-                callDetail.IsDeleted = true;
-
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + id + "-Deleted successfully");
-                await _context.SaveChangesAsync();
-                return Ok("Lead deleted successfully!");
-
             }
             catch (Exception ex)
             {
@@ -662,7 +669,7 @@ namespace OmniCRM_Web.Controllers
                                 LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
                                 Address = address > 0 ? Convert.ToString(workSheet.Cells[i, address].Value) : null,
                                 LastChangedDate = DateTime.Now,
-                                OutComeId = (int)CallOutcome.NoResponse,
+                                OutComeId = (int)CallOutcome.None,
                                 Remark = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null,
                                 CallTransactionDetail = new List<CallTransactionDetail>()
                                 {
