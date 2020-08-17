@@ -193,9 +193,9 @@
 
         <strong>Total Leads : {{total$ | async}}</strong>
         <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
-          <option [ngValue]="5">5 items per page</option>
-          <option [ngValue]="10">10 items per page</option>
-          <option [ngValue]="20">20 items per page</option>
+          <option [ngValue]="50">50 items per page</option>
+          <option [ngValue]="100">100 items per page</option>
+          <option [ngValue]="200">200 items per page</option>
         </select>
       </div>
 

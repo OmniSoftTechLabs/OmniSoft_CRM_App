@@ -108,13 +108,12 @@ export class LeadListComponent implements OnInit {
         leads.forEach((obj) => { obj.isChecked = false; });
         this.service.TABLE = leads;
         this.leadList = this.service.dataList$;
+        this.service.searchTerm = '';
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
-
       },
       error => console.error(error)
     );
-    this.service.searchTerm = '';
     setTimeout(() => { this.onSelectAllLeads(false); }, 300);
 
   }
@@ -135,12 +134,12 @@ export class LeadListComponent implements OnInit {
         });
         this.service.TABLE = leads;
         this.leadList = this.service.dataList$;
+        this.service.searchTerm = '';
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
       },
       error => console.error(error)
     );
-    this.service.searchTerm = '';
     setTimeout(() => { this.onSelectAllLeads(false); }, 300);
   }
 
