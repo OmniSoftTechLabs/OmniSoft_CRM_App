@@ -63,6 +63,7 @@ namespace OmniCRM_Web.Controllers
                                           OutComeId = p.OutComeId,
                                           NextCallDate = p.NextCallDate,
                                           Remark = p.Remark,
+                                          CreatedById = p.CreatedBy,
                                           CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
                                           OutComeText = p.OutCome.OutCome,
                                           AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
@@ -81,8 +82,11 @@ namespace OmniCRM_Web.Controllers
                 else if (filterOption.DateFilterBy == 3)
                     listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
 
-                if (filterOption.AllocatedTo != "0")
+                if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
                     listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+
+                if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
+                    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
 
                 if (filterOption.Status.Count > 0)
                     listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.OutComeId)).ToList();
@@ -109,10 +113,11 @@ namespace OmniCRM_Web.Controllers
                 List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
 
                 var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
+                bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
 
                 //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
 
-                listCallDetail = (from lead in callDetail.Where(p => p.AppointmentDetail.Count > 0 && p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id)
+                listCallDetail = (from lead in callDetail.Where(p => p.AppointmentDetail.Count > 0 && (isAdmin == false ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id : p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId != null))
                                   select lead).Select(p => new CallDetailViewModel()
                                   {
                                       CallId = p.CallId,
@@ -131,10 +136,10 @@ namespace OmniCRM_Web.Controllers
                                       CreatedById = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).UserId,
                                       AppoinStatusId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatusId : (int?)null,
                                       OutComeText = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatus.Status : "",
+                                      AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
                                       AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
                                       AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
                                   }).ToList();
-
 
                 if (filterOption.DateFilterBy == 1)
                     listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
@@ -143,7 +148,10 @@ namespace OmniCRM_Web.Controllers
                 else if (filterOption.DateFilterBy == 3)
                     listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
 
-                if (filterOption.CreatedBy != "0")
+                if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
+                    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+
+                if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
                     listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
 
                 if (filterOption.Status.Count > 0)
@@ -235,7 +243,8 @@ namespace OmniCRM_Web.Controllers
                     callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
                     {
                         //CallId = callDetail.CallId,
-                        CreatedBy = callDetail.CreatedBy,
+                        //CreatedBy = callDetail.CreatedBy,
+                        CreatedBy = new Guid(User.Claims.FirstOrDefault().Value),
                         OutComeId = callDetail.OutComeId,
                         Remarks = callDetail.Remark,
                     });

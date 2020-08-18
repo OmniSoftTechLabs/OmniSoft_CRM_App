@@ -15,6 +15,7 @@ import { LeadFollowUpComponent } from '../lead-follow-up/lead-follow-up.componen
 import { Observable } from 'rxjs';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
+import { roles } from '../services/generic-enums';
 
 @Component({
   selector: 'app-lead-list-rm',
@@ -41,7 +42,9 @@ export class LeadListRmComponent implements OnInit {
   uploadMsg: string = "";
   adminSetting: AdminSetting;
   overDueDays: number;
+  allocateCreatedBytxt: string = "";
   isCheckedBox: boolean;
+  isAdmin: boolean;
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
   nextFollowupDate: NgbDateStruct;
@@ -55,6 +58,8 @@ export class LeadListRmComponent implements OnInit {
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser.roleId == roles["Admin"])
+      this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
     let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -66,15 +71,24 @@ export class LeadListRmComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onChangeFilterDateOption(2);
-    this.fillLeadListByRM();
+    if (this.isAdmin == true) {
+      this.fillRManagerList();
+      this.onChangeFilterDateOption(3);
+    }
+    else {
+      this.fillTeleCallerList();
+      this.onChangeFilterDateOption(2);
+    }
     this.fillAppoinStatus();
-    this.fillTeleCallerList();
+    this.fillLeadListByRM();
   }
 
   async fillLeadListByRM() {
     this.filterOption.status = this.appoinStatusId;
-    this.filterOption.createdBy = this.filteruserId;
+    if (this.isAdmin == true)
+      this.filterOption.allocatedTo = this.filteruserId;
+    else
+      this.filterOption.createdBy = this.filteruserId;
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
@@ -106,7 +120,17 @@ export class LeadListRmComponent implements OnInit {
   }
 
   fillTeleCallerList() {
+    this.allocateCreatedBytxt = "Created By";
     this.leadRepo.loadTeleCallerList().subscribe(
+      rManager => {
+        this.filterUserList = rManager;
+      }, error => console.error(error)
+    );
+  }
+
+  fillRManagerList() {
+    this.allocateCreatedBytxt = "Allocated To";
+    this.leadRepo.loadRManagerList().subscribe(
       rManager => {
         this.filterUserList = rManager;
       }, error => console.error(error)
@@ -173,8 +197,8 @@ export class LeadListRmComponent implements OnInit {
     this.leadList.subscribe(data => leadArray = data);
     let ExportleadArray: any[];
     ExportleadArray = leadArray.map(obj => ({
-      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
-      'Status': obj.outComeText, 'Created By': obj.createdByName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
+      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
+      'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"), 'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
     }));
     this.excelService.exportAsExcelFile(ExportleadArray, 'LeadDetail');
   }
@@ -230,7 +254,10 @@ export class LeadListRmComponent implements OnInit {
   }
 
   onCardClose() {
-    this.router.navigate(['/dash-manager']);
+    if (this.isAdmin == true)
+      this.router.navigate(['/dashboard']);
+    else
+      this.router.navigate(['/dash-manager']);
   }
 
 }

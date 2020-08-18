@@ -13,7 +13,7 @@ namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.RelationshipManager)]
+    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.RelationshipManager + "," + StringConstant.Admin)]
     public class AppoinmentStatusMastersController : ControllerBase
     {
         private readonly OmniCRMContext _context;

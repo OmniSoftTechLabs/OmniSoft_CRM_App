@@ -41,6 +41,7 @@ export class LeadListComponent implements OnInit {
   filterOption: FilterOptions = new FilterOptions();
   modalTitle: string = "";
   uploadMsg: string = "";
+  allocateCreatedBytxt: string = "";
   isCheckedBox: boolean;
   isAdmin: boolean;
   checkedList: LeadMaster[] = [];
@@ -55,6 +56,8 @@ export class LeadListComponent implements OnInit {
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
+    if (this.currentUser.roleId == roles["Admin"])
+      this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
     let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -64,17 +67,25 @@ export class LeadListComponent implements OnInit {
 
   ngOnInit(): void {
     this.onChangeFilterDateOption(1);
-    this.fillLeadListCreatedBy();
-    this.fillOutCome();
-    if (this.isAdmin == true)
+    
+    if (this.isAdmin == true) {
       this.fillTeleCallerList();
-    else
+      this.onChangeFilterDateOption(3);
+    }
+    else {
       this.fillRManagerList();
+      this.onChangeFilterDateOption(1);
+    }
+    this.fillOutCome();
+    this.fillLeadListCreatedBy();
   }
 
   async fillLeadListCreatedBy() {
     this.filterOption.status = this.outComeId;
-    this.filterOption.allocatedTo = this.filteruserId;
+    if (this.isAdmin == true)
+      this.filterOption.createdBy = this.filteruserId;
+    else
+      this.filterOption.allocatedTo = this.filteruserId;
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
@@ -105,6 +116,7 @@ export class LeadListComponent implements OnInit {
   }
 
   fillRManagerList() {
+    this.allocateCreatedBytxt = "Allocated To";
     this.leadRepo.loadRManagerList().subscribe(
       rManager => {
         this.filterUserList = rManager;
@@ -113,9 +125,10 @@ export class LeadListComponent implements OnInit {
   }
 
   fillTeleCallerList() {
+    this.allocateCreatedBytxt = "Created By";
     this.leadRepo.loadTeleCallerList().subscribe(
-      rManager => {
-        this.filterUserList = rManager;
+      tCaller => {
+        this.filterUserList = tCaller;
       }, error => console.error(error)
     );
   }
@@ -185,8 +198,9 @@ export class LeadListComponent implements OnInit {
     //});
     let ExportleadArray: any[];
     ExportleadArray = leadArray.map(obj => ({
-      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
-      'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
+      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
+      'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"), 'Status': obj.outComeText, 'NextCall DateTime': this.datePipe.transform(obj.nextCallDate, "dd-MM-yyyy HH:mm a"),
+      'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
     }));
 
     this.excelService.exportAsExcelFile(ExportleadArray, 'LeadDetail');
@@ -238,12 +252,10 @@ export class LeadListComponent implements OnInit {
   }
 
   onCardClose() {
-    if (this.currentUser.roleId == roles["Tele Caller"])
-      this.router.navigate(['/dash-tele']);
-    else if (this.currentUser.roleId == roles["Relationship Manager"])
-      this.router.navigate(['/dash-manager']);
-    else
+    if (this.isAdmin == true)
       this.router.navigate(['/dashboard']);
+    else
+      this.router.navigate(['/dash-tele']);
   }
 
   //setDeleteLeadId(callId: string) {

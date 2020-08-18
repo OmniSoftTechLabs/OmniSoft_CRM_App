@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <h5 class="card-title">Lead Details</h5>
+    <h5 class="card-title">Telecaller Lead Details</h5>
     <div class="card-tools">
       <button type="button" class="btn btn-tool" data-card-widget="remove" (click)="onCardClose()">
         <i class="fas fa-times"></i>
@@ -23,11 +23,11 @@
           <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
         </div>
         <div class="col-sm form-group">
-          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
+          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)" *ngIf="!isAdmin"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
 
-          <div class="btn-group float-right mr-4">
+          <div [ngClass]="{'btn-group mr-4': !isAdmin}" class="float-right">
             <button type="button" class="btn btn-outline-success" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
-            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" *ngIf="!isAdmin">
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -55,7 +55,7 @@
           </select>-->
         </div>
         <div class="col-sm-2 form-group">
-          Allocated To: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
+          {{allocateCreatedBytxt}}: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
             <option value="0">All</option>
             <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
           </select>
@@ -136,6 +136,7 @@
                 <label class="custom-control-label" for="customCheck{{i+1}}">{{service.pageSize * (service.page - 1) + i + 1  }}</label>
               </div>
             </th>
+
             <!--<th scope="row" *ngIf="isTeleCaller">{{service.pageSize * (service.page - 1) + i + 1  }}</th>-->
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
             <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight></td>
@@ -153,7 +154,7 @@
             <td> <ngb-highlight [result]="lead.remark" [term]="service.searchTerm"></ngb-highlight></td>
             <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
             <!--<td *ngIf="isTeleCaller"> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
-  <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
+            <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
             <td class="d-flex flex-row">
               <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenLeadModal(lead.callId)"><i class="fas fa-edit"></i></button>
               &nbsp;
