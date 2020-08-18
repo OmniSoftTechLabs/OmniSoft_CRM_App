@@ -17,19 +17,17 @@
   <div class="card-body">
 
     <form>
-
       <div class="form-row">
-
         <div class="col-sm form-group form-inline">
           Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:75%" placeholder="Search by First Name, Last Name or Mobile Number" />
           <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
         </div>
         <div class="col-sm form-group">
-          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)" *ngIf="isTeleCaller"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
+          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
 
           <div class="btn-group float-right mr-4">
             <button type="button" class="btn btn-outline-success" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
-            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" *ngIf="isTeleCaller">
+            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -39,7 +37,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="col-sm-3 form-group" *ngIf="isTeleCaller">
+        <div class="col-sm-3 form-group">
           Status: <ng-select [items]="outcomeList"
                              [multiple]="true"
                              [closeOnSelect]="false"
@@ -56,25 +54,8 @@
             <option *ngFor="let objOutCome of outcomeList" [selected]="objOutCome.outComeId === 0" value="{{objOutCome.outComeId}}"> {{objOutCome.outCome}}</option>
           </select>-->
         </div>
-        <div class="col-sm-3 form-group" *ngIf="isManager">
-          Status:
-          <ng-select [items]="appoinStatusList"
-                     [multiple]="true"
-                     [closeOnSelect]="false"
-                     [searchable]="true"
-                     bindLabel="status"
-                     bindValue="appoinStatusId"
-                     placeholder="All"
-                     [(ngModel)]="appoinStatusId"
-                     [ngModelOptions]="{standalone: true}">
-          </ng-select>
-          <!--<select class="form-control custom-select" [(ngModel)]="appoinStatusId" name="appoinStatusId">
-            <option value="0">All</option>
-            <option *ngFor="let aStatus of appoinStatusList" [selected]="aStatus.appoinStatusId === 0" value="{{aStatus.appoinStatusId}}"> {{aStatus.status}}</option>
-          </select>-->
-        </div>
         <div class="col-sm-2 form-group">
-          {{allocateCreateByTxt}}: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
+          Allocated To: <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
             <option value="0">All</option>
             <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
           </select>
@@ -108,9 +89,7 @@
           </div>
 
           <div *ngIf="isCheckedBox">
-            <button type="button" *ngIf="isManager" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
-            <button type="button" *ngIf="isManager" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
-            <button type="button" *ngIf="isTeleCaller" class="btn btn-outline-danger float-right" placement="top" ngbTooltip="Delete Leads" data-toggle="modal" data-target="#modelDeleteConfirm"><i class="fas fa-trash-alt"></i></button>
+            <button type="button" class="btn btn-outline-danger float-right" placement="top" ngbTooltip="Delete Leads" data-toggle="modal" data-target="#modelDeleteConfirm"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
 
@@ -137,11 +116,11 @@
             <th scope="col" sortable="address" (sort)="onSort($event)">Address</th>
             <th scope="col" sortable="cityName" (sort)="onSort($event)">City</th>
             <th scope="col" sortable="stateName" (sort)="onSort($event)">State</th>
+            <th scope="col" sortable="createdByName" (sort)="onSort($event)" *ngIf="isAdmin">Created By</th>
             <th scope="col" sortable="createdDate" (sort)="onSort($event)">Created Date</th>
             <th scope="col" sortable="outComeText" (sort)="onSort($event)">Status</th>
-            <th scope="col" sortable="nextCallDate" (sort)="onSort($event)" *ngIf="isTeleCaller">Next Call DateTime</th>
-            <th scope="col" sortable="createdByName" (sort)="onSort($event)" *ngIf="isManager">Created By</th>
-            <th scope="col" sortable="allocatedToName" (sort)="onSort($event)" *ngIf="isTeleCaller">Allocated To</th>
+            <th scope="col" sortable="nextCallDate" (sort)="onSort($event)">Next Call DateTime</th>
+            <th scope="col" sortable="allocatedToName" (sort)="onSort($event)">Allocated To</th>
             <th scope="col" sortable="appointmentDateTime" (sort)="onSort($event)">Appointment DateTime</th>
             <th scope="col" sortable="remark" (sort)="onSort($event)">Remarks</th>
             <th scope="col">Actions</th>
@@ -165,19 +144,18 @@
             <td> <ngb-highlight [result]="lead.address" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.cityName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.stateName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td *ngIf="isAdmin"> <ngb-highlight [result]="lead.createdByName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.createdDate | date" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.outComeText" [term]="service.searchTerm"></ngb-highlight></td>
-            <td *ngIf="isTeleCaller"> <ngb-highlight [result]="lead.nextCallDate | date:'medium'" [term]="service.searchTerm"></ngb-highlight></td>
-            <td *ngIf="isManager"> <ngb-highlight [result]="lead.createdByName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td *ngIf="isTeleCaller"> <ngb-highlight [result]="lead.allocatedToName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.nextCallDate | date:'medium'" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="lead.allocatedToName" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.appointmentDateTime | date:'medium'" [term]="service.searchTerm"></ngb-highlight></td>
             <td> <ngb-highlight [result]="lead.remark" [term]="service.searchTerm"></ngb-highlight></td>
             <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
             <!--<td *ngIf="isTeleCaller"> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
-            <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
+  <td *ngIf="isManager"> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
             <td class="d-flex flex-row">
-              <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenLeadModal(lead.callId)" *ngIf="isTeleCaller"><i class="fas fa-edit"></i></button>
-              <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenFollowupModal(lead.callId)" *ngIf="isManager"><i class="fas fa-phone-square-alt"></i></button>
+              <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenLeadModal(lead.callId)"><i class="fas fa-edit"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
             </td>
@@ -198,9 +176,7 @@
           <option [ngValue]="200">200 items per page</option>
         </select>
       </div>
-
     </form>
-
   </div>
 </div>
 
@@ -222,28 +198,17 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Created Date</th>
-              <th scope="col" *ngIf="isManager">Followup Type</th>
-              <th scope="col" *ngIf="isManager">Appoint. Date</th>
               <th scope="col">Status</th>
               <th scope="col">Created By</th>
               <th scope="col">Remarks</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let history of (isTeleCaller ? callHistory : followupHistory); index as i">
-              <!--<tr *ngIf="isManager" *ngFor="let history of followupHistory; index as i">-->
+            <tr *ngFor="let history of callHistory; index as i">
               <th scope="row">{{i + 1}}</th>
               <td>{{history.createdDate | date:'medium'}}</td>
-
-              <td *ngIf="isManager">{{history.followupType}}</td>
-              <td *ngIf="isManager">{{history.appoinDate | date:'medium'}}</td>
-
-              <td *ngIf="isTeleCaller">{{history.outCome.outCome}}</td>
-              <td *ngIf="isManager">{{history.appoinStatus.status}}</td>
-
-              <td *ngIf="isTeleCaller">{{history.createdByNavigation.firstName}} {{history.createdByNavigation.lastName}}</td>
-              <td *ngIf="isManager">{{history.createdByRmanager.firstName}} {{history.createdByRmanager.lastName}}</td>
-
+              <td>{{history.outCome.outCome}}</td>
+              <td>{{history.createdByNavigation.firstName}} {{history.createdByNavigation.lastName}}</td>
               <td>{{history.remarks}}</td>
             </tr>
 
@@ -308,56 +273,6 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onDeleteLead(true)">Yes</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-        <!--<button type="button" class="btn btn-primary">Understood</button>-->
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Modal Dismiss Confirm-->
-<div class="modal fade" id="modelConfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Confirmation</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Are you sure to dismiss selected leads?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onDismissAll()">Yes</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-        <!--<button type="button" class="btn btn-primary">Understood</button>-->
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Modal Remind Later-->
-<div class="modal fade" id="modelRemindLater" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Select next follow-up date</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="input-group">
-          <input ngbDatepicker required #remindDate="ngbDatepicker" name="remindDate" [formControl]="dateCtrl" class="form-control"
-                 placeholder="dd/mm/yyyy" [(ngModel)]="nextFollowupDate" [minDate]="minDate" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" />
-          <div class="input-group-append">
-            <button #buttonEl class="btn btn-outline-secondary calendar" (click)="remindDate.toggle()" type="button"></button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onRemindLater()" [disabled]="nextFollowupDate == null || dateCtrl.invalid">Ok</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <!--<button type="button" class="btn btn-primary">Understood</button>-->
       </div>
     </div>

@@ -19,7 +19,7 @@ namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = StringConstant.TeleCaller + "," + StringConstant.RelationshipManager)]
+    [Authorize(Roles = StringConstant.TeleCaller + "," + StringConstant.RelationshipManager + "," + StringConstant.Admin + "," + StringConstant.SuperUser)]
 
     public class CallDetailsController : ControllerBase
     {
@@ -45,8 +45,9 @@ namespace OmniCRM_Web.Controllers
                 //var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync();
                 //var listLead = _mapper.Map<List<CallDetailViewModel>>(callDetail);
                 //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
+                bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
 
-                var listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => p.CreatedBy == id).ToListAsync()
+                var listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => isAdmin == false ? p.CreatedBy == id : true).ToListAsync()
                                       select lead).Select(p => new CallDetailViewModel()
                                       {
                                           CallId = p.CallId,

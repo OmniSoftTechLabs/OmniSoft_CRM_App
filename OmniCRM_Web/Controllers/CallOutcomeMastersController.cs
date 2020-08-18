@@ -13,7 +13,7 @@ namespace OmniCRM_Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller)]
+    [Authorize(Roles = StringConstant.SuperUser + "," + StringConstant.TeleCaller + "," + StringConstant.Admin)]
 
     public class CallOutcomeMastersController : ControllerBase
     {

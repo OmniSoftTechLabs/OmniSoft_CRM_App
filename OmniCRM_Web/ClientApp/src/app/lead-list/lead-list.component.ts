@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LeadMaster, OutcomeMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory, AppointmentDetail } from '../models/lead-master';
+import { LeadMaster, OutcomeMaster, CallTransactionDetail } from '../models/lead-master';
 import { FormControl, Validators } from '@angular/forms';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
 import { DataTableService } from '../services/data-table.service';
@@ -14,10 +14,8 @@ import { DatePipe } from '@angular/common';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FilterOptions } from '../models/filter-options';
-import { AdminSetting } from '../models/admin-setting';
 import { delay } from 'rxjs/operators';
 import { LeadCreateComponent } from '../lead-create/lead-create.component';
-import { LeadFollowUpComponent } from '../lead-follow-up/lead-follow-up.component';
 
 @Component({
   selector: 'app-lead-list',
@@ -28,33 +26,25 @@ export class LeadListComponent implements OnInit {
 
   currentUser: UserMaster;
   outcomeList: OutcomeMaster[] = [];
-  appoinStatusList: AppoinmentStatusMaster[] = [];
   filterUserList: RmanagerMaster[] = [];
   leadList: Observable<LeadMaster[]>;
   callHistory: CallTransactionDetail[] = [];
-  followupHistory: FollowupHistory[] = [];
   total$: Observable<number>;
   filter = new FormControl('');
-  isTeleCaller: boolean;
-  isManager: boolean;
   isUploadSucc: boolean = undefined;
   outComeId: number[] = [];
-  appoinStatusId: number[] = [];
   filteruserId: string = "0";
   filterDateOption: string = "Created Date";
   filterDateById: number;
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
   filterOption: FilterOptions = new FilterOptions();
-  allocateCreateByTxt: string = "";
   modalTitle: string = "";
   uploadMsg: string = "";
-  adminSetting: AdminSetting;
-  overDueDays: number;
   isCheckedBox: boolean;
+  isAdmin: boolean;
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
-  nextFollowupDate: NgbDateStruct;
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
@@ -68,30 +58,18 @@ export class LeadListComponent implements OnInit {
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
     let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
-    this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
-    this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
-    this.overDueDays = this.adminSetting.overDueDaysRm;
   }
 
   ngOnInit(): void {
-    if (this.currentUser.roleId == roles["Relationship Manager"]) {
-      this.allocateCreateByTxt = "Created By";
-      this.onChangeFilterDateOption(2);
-      this.fillLeadListByRM();
-      this.fillAppoinStatus();
+    this.onChangeFilterDateOption(1);
+    this.fillLeadListCreatedBy();
+    this.fillOutCome();
+    if (this.isAdmin == true)
       this.fillTeleCallerList();
-      this.isManager = true;
-    }
-    else if (this.currentUser.roleId == roles["Tele Caller"]) {
-      this.allocateCreateByTxt = "Allocated To";
-      this.onChangeFilterDateOption(1);
-      this.fillLeadListCreatedBy();
-      this.fillOutCome();
+    else
       this.fillRManagerList();
-      this.isTeleCaller = true;
-    }
   }
 
   async fillLeadListCreatedBy() {
@@ -118,43 +96,10 @@ export class LeadListComponent implements OnInit {
 
   }
 
-  async fillLeadListByRM() {
-    this.filterOption.status = this.appoinStatusId;
-    this.filterOption.createdBy = this.filteruserId;
-    this.filterOption.dateFilterBy = this.filterDateById;
-    this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
-    this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
-    this.service.TABLE = [];
-    await this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
-      (leads) => {
-        this.service.xType = new LeadMaster();
-        leads.forEach((obj) => {
-          obj.isOverDue = obj.appointmentDateTime != null && new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false;
-          obj.isChecked = false;
-        });
-        this.service.TABLE = leads;
-        this.leadList = this.service.dataList$;
-        this.service.searchTerm = '';
-        //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
-        this.total$ = this.service.total$;
-      },
-      error => console.error(error)
-    );
-    setTimeout(() => { this.onSelectAllLeads(false); }, 300);
-  }
-
   fillOutCome() {
     this.leadRepo.loadOutcomeList().subscribe(
       outCome => {
         this.outcomeList = outCome;
-      }, error => console.error(error)
-    );
-  }
-
-  fillAppoinStatus() {
-    this.leadRepo.loadAppoinmentStatusList().subscribe(
-      aStatus => {
-        this.appoinStatusList = aStatus;
       }, error => console.error(error)
     );
   }
@@ -193,25 +138,11 @@ export class LeadListComponent implements OnInit {
     this.router.navigate(['/lead-create']);
   }
 
-  followUp(callId: string) {
-    //localStorage.removeItem("callIdFollowUp");
-    //localStorage.setItem("callIdFollowUp", callId.toString());
-    this.router.navigate(['/lead-followup/' + callId]);
-  }
-
   onOpenLeadModal(callId: number) {
     const modalRef = this.modalService.open(LeadCreateComponent, { size: 'lg' });
     modalRef.componentInstance.callId = callId;
     modalRef.result.then((result) => {
       this.fillLeadListCreatedBy();
-    });
-  }
-
-  onOpenFollowupModal(callId: number) {
-    const modalRef = this.modalService.open(LeadFollowUpComponent, { size: 'lg' });
-    modalRef.componentInstance.callId = callId;
-    modalRef.result.then((result) => {
-      this.fillLeadListByRM();
     });
   }
 
@@ -231,31 +162,17 @@ export class LeadListComponent implements OnInit {
   }
 
   onFilterSearch() {
-    if (this.isManager)
-      this.fillLeadListByRM();
-    else if (this.isTeleCaller)
-      this.fillLeadListCreatedBy();
+    this.fillLeadListCreatedBy();
   }
 
   async viewHistory(id: number, firstName: string, lastName: string) {
-    if (this.isTeleCaller) {
-      this.modalTitle = "Call History: " + firstName + " " + lastName;
-      await this.leadRepo.loadCallTransById(id).then(
-        (history) => {
-          this.callHistory = history;
-        },
-        error => console.error(error)
-      );
-    }
-    else if (this.isManager) {
-      this.modalTitle = "Followup History: " + firstName + " " + lastName;
-      await this.leadRepo.loadFollowupHistoryById(id).then(
-        (history) => {
-          this.followupHistory = history;
-        },
-        error => console.error(error)
-      );
-    }
+    this.modalTitle = "Call History: " + firstName + " " + lastName;
+    await this.leadRepo.loadCallTransById(id).then(
+      (history) => {
+        this.callHistory = history;
+      },
+      error => console.error(error)
+    );
   }
 
   exportAsXLSX(): void {
@@ -267,18 +184,11 @@ export class LeadListComponent implements OnInit {
     //  return true;
     //});
     let ExportleadArray: any[];
-    if (this.isTeleCaller == true) {
-      ExportleadArray = leadArray.map(obj => ({
-        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
-        'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
-      }));
-    }
-    else if (this.isManager == true) {
-      ExportleadArray = leadArray.map(obj => ({
-        'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
-        'Status': obj.outComeText, 'Created By': obj.createdByName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
-      }));
-    }
+    ExportleadArray = leadArray.map(obj => ({
+      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"),
+      'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Remarks': obj.remark
+    }));
+
     this.excelService.exportAsExcelFile(ExportleadArray, 'LeadDetail');
   }
 
@@ -307,24 +217,6 @@ export class LeadListComponent implements OnInit {
     }
     else
       this.checkedList = [];
-  }
-
-  onDismissAll() {
-
-    this.leadRepo.dismissLeads(this.checkedList).subscribe({
-      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
-      error: error => (console.error('Error!', error), this.fillLeadListByRM())
-    });
-  }
-
-  onRemindLater() {
-    let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, 0, 0, 0, 0);
-    let strDate = date.toDateString();
-    this.leadRepo.remindMelater(this.checkedList, strDate).subscribe({
-      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
-      error: error => (console.error('Error!', error), this.fillLeadListByRM())
-    });
-
   }
 
   showHideDismissButton(lead: LeadMaster, event: any) {
