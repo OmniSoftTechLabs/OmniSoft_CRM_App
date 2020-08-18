@@ -34,6 +34,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     LeadFollowUpComponent,
     DashboardTelecallerComponent,
     AdminSettingComponent,
-    DashboardManagerComponent
+    DashboardManagerComponent,
+    LeadListRmComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -82,6 +84,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'lead-create', component: LeadCreateComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'lead-list', component: LeadListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller', 'Relationship Manager'] } },
+      { path: 'lead-list-rm', component: LeadListRmComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'lead-followup/:callId', component: LeadFollowUpComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dash-tele', component: DashboardTelecallerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'dash-manager', component: DashboardManagerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
