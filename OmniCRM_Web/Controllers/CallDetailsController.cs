@@ -815,5 +815,41 @@ namespace OmniCRM_Web.Controllers
             }
 
         }
+
+        [HttpPost("GetAdminDashboard")]
+        public async Task<ActionResult<AdminDashboard>> GetAdminDashboard(FilterOptions filterOption)
+        {
+            try
+            {
+                //int currentYear = DateTime.Now.Year;
+                //int currentMonth = DateTime.Now.Month;
+                //int lastMonth = DateTime.Now.AddMonths(-1).Month;
+                filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
+                filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
+                AdminDashboard objAdminDash = new AdminDashboard();
+
+                var teleUserLeads = await _context.UserMaster.Include(p => p.CallDetail).Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync();
+
+                objAdminDash.CollAdminChartData = teleUserLeads.Select(p => new AdminChartData()
+                {
+                    Telecaller = p.FirstName,
+                    NoResponse = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                    NotInterested = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                    AppoinmentTaken = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                    CallLater = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.CallLater && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                    WrongNumber = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.WrongNumber && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                    None = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.None && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminDashboard: -get admin dashboard");
+                return objAdminDash;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetAdminDashboard: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
     }
 }

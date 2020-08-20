@@ -5,6 +5,7 @@ import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
 import { TeleDash } from '../models/tele-dash';
 import { ManagerDash } from '../models/manager-dash';
+import { AdminDash } from '../models/admin-dash';
 
 @Injectable({
   providedIn: 'root'
@@ -120,4 +121,8 @@ export class LeadRepositoryService {
     return response;
   }
 
+  async loadAdminDash(filterOption: FilterOptions) {
+    let response = await this.http.post<AdminDash>(this.baseUrl + 'api/CallDetails/GetAdminDashboard/', filterOption).toPromise();
+    return response;
+  }
 }

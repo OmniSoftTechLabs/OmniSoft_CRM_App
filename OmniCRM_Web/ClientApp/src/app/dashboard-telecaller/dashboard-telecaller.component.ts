@@ -70,7 +70,7 @@ export class DashboardTelecallerComponent implements OnInit {
     );
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     var salesChartCanvas = this.canvas.nativeElement.getContext('2d');
 
     var salesChartData = {
@@ -117,6 +117,6 @@ export class DashboardTelecallerComponent implements OnInit {
         data: salesChartData,
         options: salesChartOptions
       });
-    }, 300);
+    }, 500);
   }
 }
