@@ -46,8 +46,7 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fillUserList()
-    this.service.searchTerm = '';
+    this.fillUserList();
   }
 
   fillUserList() {
@@ -59,14 +58,13 @@ export class UserListComponent implements OnInit {
         this.service.xType = new UserMaster();
         this.service.TABLE = users;
         this.userList = this.service.dataList$;
+        this.service.searchTerm = '';
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
       },
       error => console.error(error)
     );
   }
-
-
 
   onSort({ column, direction }: SortEvent) {
     // resetting other headers

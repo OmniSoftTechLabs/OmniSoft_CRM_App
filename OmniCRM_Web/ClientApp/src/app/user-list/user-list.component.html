@@ -33,16 +33,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of userList | async; index as i">
+          <tr *ngFor="let users of userList | async; index as i">
             <th scope="row">{{service.pageSize * (service.page - 1) + i + 1  }}</th>
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
-            <td> <ngb-highlight [result]="user.employeeCode"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.firstName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.lastName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.email"></ngb-highlight></td>
-            <td> <ngb-highlight [result]="user.role.roleName" [term]="service.searchTerm"></ngb-highlight></td>
-            <td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'"></ngb-highlight></td>
-            <td> <button type="button" placement="top" ngbTooltip="Edit User" class="btn btn-sm btn-outline-warning rounded-circle" (click)="edituser(user.userId)"><i class="fas fa-edit"></i></button></td>
+            <td> <ngb-highlight [result]="users.employeeCode"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="users.firstName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="users.lastName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="users.email"></ngb-highlight></td>
+            <td> <ngb-highlight [result]="users.role.roleName" [term]="service.searchTerm"></ngb-highlight></td>
+            <td> <ngb-highlight [class]="users.status ? 'badge badge-success' : 'badge badge-danger' " [result]="users.status ? 'Active' : 'Inactive'"></ngb-highlight></td>
+            <td> <button type="button" placement="top" ngbTooltip="Edit User" class="btn btn-sm btn-outline-warning rounded-circle" (click)="edituser(users.userId)"><i class="fas fa-edit"></i></button></td>
           </tr>
         </tbody>
       </table>
@@ -52,9 +52,9 @@
         </ngb-pagination>
         <strong>Total Users : {{total$ | async}}</strong>
         <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
-          <option [ngValue]="5">5 items per page</option>
-          <option [ngValue]="10">10 items per page</option>
-          <option [ngValue]="20">20 items per page</option>
+          <option [ngValue]="50">50 items per page</option>
+          <option [ngValue]="100">100 items per page</option>
+          <option [ngValue]="200">200 items per page</option>
         </select>
       </div>
 
