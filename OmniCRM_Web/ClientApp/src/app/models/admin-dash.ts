@@ -1,5 +1,6 @@
 export class AdminDash {
   collTeleChartData: TeleCallerChartData[] = [];
+  collMangerChartData: ManagerChartData[] = [];
 }
 
 export class TeleCallerChartData {
@@ -10,4 +11,15 @@ export class TeleCallerChartData {
   callLater: number;
   wrongNumber: number;
   none: number;
+}
+
+export class ManagerChartData {
+  manager: string;
+  firstMeeting: number;
+  secondMeeting: number;
+  sold: number;
+  dropped: number;
+  hold: number;
+  notInterested: number;
+  pending: number;
 }

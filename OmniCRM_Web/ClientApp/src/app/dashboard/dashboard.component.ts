@@ -43,8 +43,10 @@ const colors: any = {
 })
 export class DashboardComponent implements OnInit {
 
-  @ViewChild('canvas') canvas: ElementRef;
-  chart: any;
+  @ViewChild('canvasTele') canvasTele: ElementRef;
+  @ViewChild('canvasManger') canvasManger: ElementRef;
+  telechart: any;
+  managerchart: any;
   adminDashboard: AdminDash = new AdminDash();
   teleCallers: string[] = [];
   noResponse: number[] = [];
@@ -53,6 +55,17 @@ export class DashboardComponent implements OnInit {
   callLater: number[] = [];
   wrongNumber: number[] = [];
   none: number[] = [];
+
+  managers: string[] = [];
+  firstMeeting: number[] = [];
+  secondMeeting: number[] = [];
+  sold: number[] = [];
+  dropped: number[] = [];
+  hold: number[] = [];
+  notInterestedM: number[] = [];
+  pending: number[] = [];
+
+
   filterOption: FilterOptions = new FilterOptions();
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
@@ -84,17 +97,31 @@ export class DashboardComponent implements OnInit {
           this.wrongNumber.push(item.wrongNumber);
           this.none.push(item.none);
         });
+
+
+        this.adminDashboard.collMangerChartData.forEach((item) => {
+          this.managers.push(item.manager);
+          this.firstMeeting.push(item.firstMeeting);
+          this.secondMeeting.push(item.secondMeeting);
+          this.sold.push(item.sold);
+          this.dropped.push(item.dropped);
+          this.hold.push(item.hold);
+          this.notInterestedM.push(item.notInterested);
+          this.pending.push(item.pending);
+        });
+
       },
       error => console.error(error)
     );
   }
 
   ngAfterViewInit(): void {
-    this.loadChart();
+    this.loadTeleChart();
+    this.loadManagerChart();
   }
 
-  loadChart() {
-    var stackedBarChartCanvas = this.canvas.nativeElement.getContext('2d');
+  loadTeleChart() {
+    var stackedBarChartCanvas = this.canvasTele.nativeElement.getContext('2d');
     var stackedBarChartData = {
       labels: this.teleCallers,
       datasets: [
@@ -179,7 +206,80 @@ export class DashboardComponent implements OnInit {
     //}
 
     setTimeout(() => {
-      this.chart = new Chart(stackedBarChartCanvas, {
+      this.telechart = new Chart(stackedBarChartCanvas, {
+        type: 'bar',
+        data: stackedBarChartData,
+        options: stackedBarChartOptions
+      });
+    }, 500);
+  }
+
+  loadManagerChart() {
+    var stackedBarChartCanvas = this.canvasManger.nativeElement.getContext('2d');
+    var stackedBarChartData = {
+      labels: this.managers,
+      datasets: [
+        {
+          label: 'First Meeting',
+          backgroundColor: colors.yellow.secondary, //'rgba(88, 214, 141, 0.2)',
+          borderColor: colors.yellow.primary,//'rgba(88, 214, 141, 1)',
+          data: this.firstMeeting
+        },
+        {
+          label: 'Second Meeting',
+          backgroundColor: colors.blue.secondary, //'rgba(88, 214, 141, 0.2)',
+          borderColor: colors.blue.primary,//'rgba(88, 214, 141, 1)',
+          data: this.secondMeeting
+        },
+        {
+          label: 'Sold',
+          backgroundColor: colors.green.secondary,
+          borderColor: colors.green.primary,
+          data: this.sold
+        },
+        {
+          label: 'Dropped',
+          backgroundColor: colors.khaki.secondary,
+          borderColor: colors.khaki.primary,
+          data: this.dropped
+        },
+        {
+          label: 'Hold',
+          backgroundColor: colors.purple.secondary,
+          borderColor: colors.purple.primary,
+          data: this.hold
+        },
+        {
+          label: 'Not Interested',
+          backgroundColor: colors.orange.secondary,
+          borderColor: colors.orange.primary,
+          data: this.notInterestedM
+        },
+        {
+          label: 'Pending',
+          backgroundColor: colors.silver.secondary,
+          borderColor: colors.silver.primary,
+          data: this.pending
+        },
+      ]
+    };
+
+    var stackedBarChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+          stacked: true,
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+      }
+    }
+
+
+    setTimeout(() => {
+      this.managerchart = new Chart(stackedBarChartCanvas, {
         type: 'bar',
         data: stackedBarChartData,
         options: stackedBarChartOptions
@@ -195,9 +295,21 @@ export class DashboardComponent implements OnInit {
     this.callLater = [];
     this.wrongNumber = [];
     this.none = [];
-    this.chart.destroy();
+    this.telechart.destroy();
+
+    this.managers = [];
+    this.firstMeeting = [];
+    this.secondMeeting = [];
+    this.sold = [];
+    this.dropped = [];
+    this.hold = [];
+    this.notInterestedM = [];
+    this.pending = [];
+    this.managerchart.destroy();
 
     this.loadData();
-    this.loadChart();
+    this.loadTeleChart();
+    this.loadManagerChart();
+
   }
 }

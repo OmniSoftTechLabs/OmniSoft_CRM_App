@@ -3,7 +3,6 @@
 
     <div class="row">
       <div class="col-md-12">
-
         <div class="card">
           <div class="card-header">
 
@@ -39,7 +38,52 @@
           <div class="card-body">
 
             <div class="chart">
-              <canvas #canvas style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;">{{chart}}</canvas>
+              <canvas #canvasTele style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;">{{telechart}}</canvas>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+
+            <div class="form-row">
+              <div class="col-md form-inline">
+
+                <h5 class="card-title mb-0">Relationship Manager wise lead details:</h5>
+                <!--&nbsp; &nbsp;
+                <div class="card-title input-group mb-0">
+                  <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="fromDate" name="fDate" placeholder="From Date" (ngModelChange)="onDateChange()" style="width:180px" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
+                  </div>
+                </div>
+                <div class="card-title input-group mb-0">
+                  <input ngbDatepicker class="form-control mb-0" #tDate="ngbDatepicker" [(ngModel)]="toDate" name="tDate" placeholder="To Date" (ngModelChange)="onDateChange()" style="width:180px" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="tDate.toggle()" type="button"></button>
+                  </div>
+                </div>-->
+              </div>
+
+              <div class="col-md">
+                <div class="card-tools float-right">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-body">
+
+            <div class="chart">
+              <canvas #canvasManger style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;">{{managerchart}}</canvas>
             </div>
 
           </div>
