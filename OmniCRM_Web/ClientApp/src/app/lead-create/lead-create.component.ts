@@ -10,6 +10,7 @@ import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 import { AdminSetting } from '../models/admin-setting';
 import { Observable, concat, of, Subject } from 'rxjs';
 import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-lead-create',
@@ -51,12 +52,24 @@ export class LeadCreateComponent implements OnInit {
   selectedState: StateMaster;
   selectedCity: CityMaster;
   loading: boolean;
+  dateTimeStr: string;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
 
     if (!value) {
       return null;
+    }
+
+    let datep: NgbDateStruct;
+    if (this.appointmentDate != null)
+      datep = this.appointmentDate
+    if (this.nextCallDateNg != null)
+      datep = this.nextCallDateNg
+
+    if (datep != null) {
+      let datetime = new Date(datep.year, datep.month, datep.day, value.hour, value.minute, 0, 0);
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
     }
 
     if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
@@ -75,10 +88,21 @@ export class LeadCreateComponent implements OnInit {
     if (!value) {
       return null;
     }
+
+    let timep: NgbTimeStruct;
+    if (this.appointmentTime != null)
+      timep = this.appointmentTime
+    if (this.nextCallTimeNg != null)
+      timep = this.nextCallTimeNg
+
+    if (timep != null) {
+      let datetime = new Date(value.year, value.month, value.day, timep.hour, timep.minute, 0, 0);
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
+    }
   });
 
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, public activeModal: NgbActiveModal) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, public activeModal: NgbActiveModal, private datePipe: DatePipe) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));

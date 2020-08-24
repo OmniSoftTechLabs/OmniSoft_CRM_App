@@ -829,8 +829,15 @@ namespace OmniCRM_Web.Controllers
                 AdminDashboard objAdminDash = new AdminDashboard();
 
                 var teleUserLeads = await _context.UserMaster.Include(p => p.CallDetail).Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync();
+                var managerUsers = await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
 
-                objAdminDash.CollAdminChartData = teleUserLeads.Select(p => new AdminChartData()
+                var managerLeads = from user in managerUsers
+                                   join leads in _context.AppointmentDetail.Include(p => p.Call) on user.UserId equals leads.RelationshipManagerId into usrled
+                                   from mngrld in usrled.DefaultIfEmpty()
+                                   select new { user.FirstName, usrled, mngrld };
+
+
+                objAdminDash.CollTeleChartData = teleUserLeads.Select(p => new TeleCallerChartData()
                 {
                     Telecaller = p.FirstName,
                     NoResponse = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
@@ -839,6 +846,19 @@ namespace OmniCRM_Web.Controllers
                     CallLater = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.CallLater && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
                     WrongNumber = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.WrongNumber && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
                     None = p.CallDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.None && Convert.ToDateTime(r.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.LastChangedDate).Date <= filterOption.Todate.Date && r.IsDeleted != true),
+                }).ToList();
+
+
+                objAdminDash.CollMangerChartData = managerLeads.GroupBy(p => new { firstname = p.FirstName }).Select(p => new ManagerChartData()
+                {
+                    Manager = p.Key.firstname,
+                    FirstMeeting = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.FirstMeeting && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    SecondMeeting = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.SecondMeeting && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    Sold = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.Sold && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    Dropped = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.Dropped && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    Hold = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.Hold && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    NotInterested = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.NotInterested && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
+                    Pending = p.Count(r => r.mngrld != null && r.mngrld.AppintmentId == (int)Enums.AppoinmentStatus.Pending && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(r.mngrld.Call.LastChangedDate).Date <= filterOption.Todate.Date),
                 }).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminDashboard: -get admin dashboard");

@@ -48,12 +48,18 @@ export class LeadFollowUpComponent implements OnInit {
   selectedState: StateMaster;
   selectedCity: CityMaster;
   loading: boolean;
+  dateTimeStr: string;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
 
     if (!value) {
       return null;
+    }
+
+    if (this.appointmentDate != null) {
+      let datetime = new Date(this.appointmentDate.year, this.appointmentDate.month, this.appointmentDate.day, value.hour, value.minute, 0, 0);
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
     }
 
     if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
@@ -72,7 +78,10 @@ export class LeadFollowUpComponent implements OnInit {
     if (!value) {
       return null;
     }
-
+    if (this.appointmentTime != null) {
+      let datetime = new Date(value.year, value.month, value.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
+    }
     return null;
   });
 
@@ -242,6 +251,7 @@ export class LeadFollowUpComponent implements OnInit {
 
       }
     }
+
     this.isOnDatePickerLoad = false;
   }
 }

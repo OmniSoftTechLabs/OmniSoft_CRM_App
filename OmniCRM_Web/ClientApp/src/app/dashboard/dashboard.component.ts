@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit {
       data => {
         this.adminDashboard = data;
 
-        this.adminDashboard.collAdminChartData.forEach((item) => {
+        this.adminDashboard.collTeleChartData.forEach((item) => {
           this.teleCallers.push(item.telecaller);
           this.noResponse.push(item.noResponse);
           this.notInterested.push(item.notInterested);

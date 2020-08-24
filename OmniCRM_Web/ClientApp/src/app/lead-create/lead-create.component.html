@@ -55,7 +55,7 @@
           Next Call Date Time<strong class="text-danger"> *</strong>
           <div class="input-group">
             <input ngbDatepicker required #nextCallDate="ngbDatepicker" name="nextCallDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
-                   class="form-control" [(ngModel)]="nextCallDateNg" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
+                   class="form-control" [value]="dateTimeStr" [(ngModel)]="nextCallDateNg" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
                    [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
 
             <div class="input-group-append">
@@ -79,7 +79,7 @@
             Appointment Date Time<strong class="text-danger"> *</strong>
             <div class="input-group">
               <input ngbDatepicker required #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [formControl]="dateCtrl" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched"
-                     class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
+                     class="form-control" [value]="dateTimeStr" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
                      [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" />
 
               <div class="input-group-append">

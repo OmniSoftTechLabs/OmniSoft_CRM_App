@@ -1,8 +1,8 @@
 export class AdminDash {
-  collAdminChartData: AdminChartData[] = [];
+  collTeleChartData: TeleCallerChartData[] = [];
 }
 
-export class AdminChartData {
+export class TeleCallerChartData {
   telecaller: string;
   noResponse: number;
   notInterested: number;
