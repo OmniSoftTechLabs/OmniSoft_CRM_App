@@ -20,7 +20,7 @@
       <div class="form-row">
         <div class="col-sm form-group form-inline">
           Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:75%" placeholder="Search by First Name, Last Name or Mobile Number" />
-          <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="service.loading$ | async"></span>
+          <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="isLoading || (service.loading$ | async)"></span>
         </div>
         <div class="col-sm form-group">
           <div class="float-right">

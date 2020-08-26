@@ -48,6 +48,7 @@ export class LeadListRmComponent implements OnInit {
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
   nextFollowupDate: NgbDateStruct;
+  isLoading: boolean = false;
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
@@ -62,7 +63,7 @@ export class LeadListRmComponent implements OnInit {
       this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
-    let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
+    let getFromDate = new Date(new Date().getTime() - (2 * 24 * 60 * 60 * 1000));
     this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
@@ -93,6 +94,7 @@ export class LeadListRmComponent implements OnInit {
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
     this.service.TABLE = [];
+    this.isLoading = true;
     await this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
@@ -105,8 +107,9 @@ export class LeadListRmComponent implements OnInit {
         this.service.searchTerm = '';
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
+        this.isLoading = false;
       },
-      error => console.error(error)
+      error => { console.error(error); this.isLoading = false; }
     );
     setTimeout(() => { this.onSelectAllLeads(false); }, 300);
   }

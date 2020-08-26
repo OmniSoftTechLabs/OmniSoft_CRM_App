@@ -68,8 +68,8 @@ export class LeadCreateComponent implements OnInit {
       datep = this.nextCallDateNg
 
     if (datep != null) {
-      let datetime = new Date(datep.year, datep.month, datep.day, value.hour, value.minute, 0, 0);
-      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
+      let datetime = new Date(datep.year, datep.month - 1, datep.day, value.hour, value.minute, 0, 0);
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd/MM/yyyy hh:mm a");
     }
 
     if (value.hour < 9 || ((value.minute < 30 && value.hour <= 9))) {
@@ -96,7 +96,7 @@ export class LeadCreateComponent implements OnInit {
       timep = this.nextCallTimeNg
 
     if (timep != null) {
-      let datetime = new Date(value.year, value.month, value.day, timep.hour, timep.minute, 0, 0);
+      let datetime = new Date(value.year, value.month - 1, value.day, timep.hour, timep.minute, 0, 0);
       this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
     }
   });

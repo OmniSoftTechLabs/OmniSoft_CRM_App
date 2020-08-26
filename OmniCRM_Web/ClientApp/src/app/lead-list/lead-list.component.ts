@@ -46,6 +46,7 @@ export class LeadListComponent implements OnInit {
   isAdmin: boolean;
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
+  isLoading: boolean = false;
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
@@ -60,7 +61,7 @@ export class LeadListComponent implements OnInit {
       this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
-    let getFromDate = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000));
+    let getFromDate = new Date(new Date().getTime() - (2 * 24 * 60 * 60 * 1000));
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
   }
@@ -91,6 +92,7 @@ export class LeadListComponent implements OnInit {
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
     this.service.TABLE = [];
     this.checkedList = [];
+    this.isLoading = true;
     await this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
@@ -100,8 +102,9 @@ export class LeadListComponent implements OnInit {
         this.service.searchTerm = '';
         //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
         this.total$ = this.service.total$;
+        this.isLoading = false;
       },
-      error => console.error(error)
+      error => { console.error(error); this.isLoading = false; }
     );
     setTimeout(() => { this.onSelectAllLeads(false); }, 300);
 
