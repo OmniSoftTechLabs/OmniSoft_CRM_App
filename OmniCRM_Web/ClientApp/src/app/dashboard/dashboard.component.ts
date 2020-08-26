@@ -211,7 +211,7 @@ export class DashboardComponent implements OnInit {
         data: stackedBarChartData,
         options: stackedBarChartOptions
       });
-    }, 500);
+    }, 1000);
   }
 
   loadManagerChart() {
@@ -284,7 +284,7 @@ export class DashboardComponent implements OnInit {
         data: stackedBarChartData,
         options: stackedBarChartOptions
       });
-    }, 500);
+    }, 1000);
   }
 
   onDateChange() {
