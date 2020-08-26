@@ -80,7 +80,7 @@ export class LeadFollowUpComponent implements OnInit {
     }
     if (this.appointmentTime != null) {
       let datetime = new Date(value.year, value.month - 1, value.day, this.appointmentTime.hour, this.appointmentTime.minute, 0, 0);
-      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd/MM/yyyy hh:mm a");
     }
     return null;
   });

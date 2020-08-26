@@ -97,7 +97,7 @@ export class LeadCreateComponent implements OnInit {
 
     if (timep != null) {
       let datetime = new Date(value.year, value.month - 1, value.day, timep.hour, timep.minute, 0, 0);
-      this.dateTimeStr = this.datePipe.transform(datetime, "dd-MM-yyyy hh:mm a");
+      this.dateTimeStr = this.datePipe.transform(datetime, "dd/MM/yyyy hh:mm a");
     }
   });
 
