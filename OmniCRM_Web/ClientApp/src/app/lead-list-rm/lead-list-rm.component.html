@@ -245,7 +245,7 @@
 
 <!--Modal Remind Later-->
 <div class="modal fade" id="modelRemindLater" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLabel">Select next follow-up date</h5>
@@ -256,11 +256,19 @@
       <div class="modal-body">
         <div class="input-group">
           <input ngbDatepicker required #remindDate="ngbDatepicker" name="remindDate" [formControl]="dateCtrl" class="form-control"
-                 placeholder="dd/mm/yyyy" [(ngModel)]="nextFollowupDate" [minDate]="minDate" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" />
+                 placeholder="dd/mm/yyyy" [value]="dateTimeStr" [(ngModel)]="nextFollowupDate" [minDate]="minDate" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" [footerTemplate]="footerTemplate" (ngModelChange)="onDateChange()"/>
           <div class="input-group-append">
             <button #buttonEl class="btn btn-outline-secondary calendar" (click)="remindDate.toggle()" type="button"></button>
           </div>
         </div>
+        <ng-template #footerTemplate>
+          <ngb-timepicker #followupTime name="followupTime" [(ngModel)]="nextFollowupTime" [meridian]="true" [minuteStep]="minuteStep" [formControl]="timeCtrl" style="margin-left:10px; display:inline-block" (ngModelChange)="onDateChange()"></ngb-timepicker>
+          <br />
+          <!--<small class="text-danger ml-3" *ngIf="timeCtrl.errors?.required && timeCtrl.touched">* Appointment time is required</small>-->
+          <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
+          <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
+        </ng-template>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onRemindLater()" [disabled]="nextFollowupDate == null || dateCtrl.invalid">Ok</button>

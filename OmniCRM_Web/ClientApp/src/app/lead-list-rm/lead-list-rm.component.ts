@@ -6,7 +6,7 @@ import { DataTableService } from '../services/data-table.service';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
-import { NgbModalConfig, NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalConfig, NgbModal, NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { ExcelExportService } from '../services/excel-export.service';
 import { AdminSetting } from '../models/admin-setting';
@@ -48,13 +48,17 @@ export class LeadListRmComponent implements OnInit {
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
   nextFollowupDate: NgbDateStruct;
+  nextFollowupTime: NgbTimeStruct;
   isLoading: boolean = false;
+  dateTimeStr: string;
+
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
   @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
 
   dateCtrl = new FormControl('', Validators.required);
+  timeCtrl = new FormControl('', Validators.required);
 
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
@@ -65,6 +69,7 @@ export class LeadListRmComponent implements OnInit {
     modalConfig.keyboard = false;
     let getFromDate = new Date(new Date().getTime() - (2 * 24 * 60 * 60 * 1000));
     this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
+    this.nextFollowupTime = { hour: 9, minute: 30, second: 0 };
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
@@ -230,8 +235,8 @@ export class LeadListRmComponent implements OnInit {
   }
 
   onRemindLater() {
-    let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, 0, 0, 0, 0);
-    let strDate = date.toDateString();
+    let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, this.nextFollowupTime.hour, this.nextFollowupTime.minute, 0, 0);
+    let strDate = this.datePipe.transform(date, "dd-MM-yyyy HH:mm a")
     this.leadRepo.remindMelater(this.checkedList, strDate).subscribe({
       next: data => (console.log('Success!', data), this.fillLeadListByRM()),
       error: error => (console.error('Error!', error), this.fillLeadListByRM())
@@ -264,4 +269,8 @@ export class LeadListRmComponent implements OnInit {
       this.router.navigate(['/dash-manager']);
   }
 
+  onDateChange() {
+    let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, this.nextFollowupTime.hour, this.nextFollowupTime.minute, 0, 0);
+    this.dateTimeStr = this.datePipe.transform(date, "dd/MM/yyyy hh:mm a");
+  }
 }

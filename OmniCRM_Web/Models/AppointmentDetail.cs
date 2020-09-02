@@ -6,7 +6,7 @@ namespace OmniCRM_Web.Models
     public partial class AppointmentDetail
     {
         public int AppintmentId { get; set; }
-        public int? CallId { get; set; }
+        public int CallId { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid CreatedBy { get; set; }
         public DateTime? AppointmentDateTime { get; set; }
