@@ -213,7 +213,7 @@ export class DashboardManagerComponent implements OnInit {
         data: salesChartData,
         options: salesChartOptions
       });
-    }, 500);
+    }, 1000);
 
 
     // Donut Chart
@@ -247,7 +247,7 @@ export class DashboardManagerComponent implements OnInit {
         data: pieData,
         options: pieOptions
       });
-    }, 500);
+    }, 1000);
 
   }
 }

@@ -95,7 +95,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Call)
                     .WithMany(p => p.AppointmentDetail)
                     .HasForeignKey(d => d.CallId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AppointmentDetail_CallDetail");
 
                 entity.HasOne(d => d.CreatedByNavigation)
