@@ -51,6 +51,7 @@ export class LeadListRmComponent implements OnInit {
   nextFollowupTime: NgbTimeStruct;
   isLoading: boolean = false;
   dateTimeStr: string;
+  minuteStep: number = 15;
 
 
   @ViewChild('labelImport') labelImport: ElementRef;
@@ -73,6 +74,7 @@ export class LeadListRmComponent implements OnInit {
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.minuteStep = this.adminSetting.appoinTimeInterval;
     this.overDueDays = this.adminSetting.overDueDaysRm;
   }
 
