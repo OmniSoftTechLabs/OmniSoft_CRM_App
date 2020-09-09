@@ -368,22 +368,20 @@ namespace OmniCRM_Web.Controllers
                 {
                     DateTime date = DateTime.Parse(strDate);
 
-
                     foreach (var lead in collCallDetail)
                     {
                         var objLead = await GetCallDetail(lead.CallId);
                         var objAppointment = objLead.Value.AppointmentDetail.LastOrDefault();
                         objAppointment.Remarks = "Remind Me Later";
+                        objAppointment.AppointmentDateTime = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0).ToUniversalTime();
 
                         FollowupHistory objFollowup = new FollowupHistory();
                         objFollowup.CallId = objLead.Value.CallId;
                         objFollowup.CreatedByRmanagerId = objAppointment.RelationshipManagerId;
                         objFollowup.FollowupType = string.Empty;
-                        objFollowup.AppoinDate = Convert.ToDateTime(objAppointment.AppointmentDateTime);
+                        objFollowup.AppoinDate = Convert.ToDateTime(TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(objAppointment.AppointmentDateTime), GenericMethods.Indian_Zone));
                         objFollowup.AppoinStatusId = objAppointment.AppoinStatusId;
                         objFollowup.Remarks = "Remind Me Later";
-                        //objAppointment.AppointmentDateTime = new DateTime(date.Year, date.Month, date.Day, objAppointment.AppointmentDateTime.Value.Hour, objAppointment.AppointmentDateTime.Value.Minute, 0).ToUniversalTime();
-                        objAppointment.AppointmentDateTime = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0).ToUniversalTime();
 
                         objLead.Value.FollowupHistory.Add(objFollowup);
                         await PutFollowupDetail(lead.CallId, objLead.Value);
