@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory, StateMaster, CityMaster } from '../models/lead-master';
+import { OutcomeMaster, LeadMaster, AppoinmentStatusMaster, CallTransactionDetail, FollowupHistory, StateMaster, CityMaster, AppointmentDetail } from '../models/lead-master';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
 import { TeleDash } from '../models/tele-dash';
@@ -124,5 +124,9 @@ export class LeadRepositoryService {
   async loadAdminDash(filterOption: FilterOptions) {
     let response = await this.http.post<AdminDash>(this.baseUrl + 'api/CallDetails/GetAdminDashboard/', filterOption).toPromise();
     return response;
+  }
+
+  reallocatedToRM(appointmentDetail: AppointmentDetail) {
+    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateRM/', appointmentDetail, { responseType: 'text' }).pipe();
   }
 }

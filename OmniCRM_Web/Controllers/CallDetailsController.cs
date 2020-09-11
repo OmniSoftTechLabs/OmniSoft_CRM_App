@@ -231,11 +231,11 @@ namespace OmniCRM_Web.Controllers
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                         && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
-                    if (CollAppointments.Count > 0)
-                    {
-                        if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
-                            return BadRequest("Appointment time is already allocated on this day!");
-                    }
+                    //if (CollAppointments.Count > 0)
+                    //{
+                    //    if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
+                    //        return BadRequest("Appointment time is already allocated on this day!");
+                    //}
                 }
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
@@ -295,11 +295,11 @@ namespace OmniCRM_Web.Controllers
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                         && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
-                    if (CollAppointments.Count > 0)
-                    {
-                        if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
-                            return BadRequest("Appointment time is already allocated on this day!");
-                    }
+                    //if (CollAppointments.Count > 0)
+                    //{
+                    //    if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
+                    //        return BadRequest("Appointment time is already allocated on this day!");
+                    //}
                 }
 
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
@@ -426,11 +426,11 @@ namespace OmniCRM_Web.Controllers
                         CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                             && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
 
-                        if (CollAppointments.Count > 0)
-                        {
-                            if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
-                                return BadRequest("Appointment time is already allocated on this day!");
-                        }
+                        //if (CollAppointments.Count > 0)
+                        //{
+                        //    if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
+                        //        return BadRequest("Appointment time is already allocated on this day!");
+                        //}
                     }
 
 
@@ -880,6 +880,26 @@ namespace OmniCRM_Web.Controllers
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "GetAdminDashboard: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
+
+        [HttpPost("PostReAllocateRM")]
+        public async Task<IActionResult> PostReAllocateRM(AppointmentDetail appointmentDetail)
+        {
+            try
+            {
+                appointmentDetail.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(appointmentDetail.AppointmentDateTime), GenericMethods.Indian_Zone);
+                _context.AppointmentDetail.Add(appointmentDetail);
+                await _context.SaveChangesAsync();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateRM: -RM Re-allocated successfully");
+                return Ok("Lead re-allocated successfully!");
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostReAllocateRM: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 

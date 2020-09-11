@@ -149,6 +149,8 @@
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenFollowupModal(lead.callId)"><i class="fas fa-phone-square-alt"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
+              &nbsp;
+              <button *ngIf="isAdmin" type="button" placement="top" ngbTooltip="Re-Allocate" class="btn btn-sm btn-outline-secondary rounded-circle" data-toggle="modal" data-target="#modelReAllocate" (click)="setCallIdtoReallocate(lead.callId, lead.allocatedToName)"><i class="fas fa-random"></i></button>
             </td>
 
           </tr>
@@ -256,7 +258,7 @@
       <div class="modal-body">
         <div class="input-group">
           <input ngbDatepicker required #remindDate="ngbDatepicker" name="remindDate" [formControl]="dateCtrl" class="form-control"
-                 placeholder="dd/mm/yyyy" [value]="dateTimeStr" [(ngModel)]="nextFollowupDate" [minDate]="minDate" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" [footerTemplate]="footerTemplate" (ngModelChange)="onDateChange()"/>
+                 placeholder="dd/mm/yyyy" [value]="dateTimeStr" [(ngModel)]="nextFollowupDate" [minDate]="minDate" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" [footerTemplate]="footerTemplate" (ngModelChange)="onDateChange()" />
           <div class="input-group-append">
             <button #buttonEl class="btn btn-outline-secondary calendar" (click)="remindDate.toggle()" type="button"></button>
           </div>
@@ -272,6 +274,32 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onRemindLater()" [disabled]="nextFollowupDate == null || dateCtrl.invalid">Ok</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <!--<button type="button" class="btn btn-primary">Understood</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal Re Allocate -->
+<div class="modal fade" id="modelReAllocate" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Lead Re-Allocation to RM</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        Select another RM: <select class="form-control custom-select" [(ngModel)]="reallocatedRmId" name="reallocatedRmId">
+          <option [disabled]="currentAllocatedToRM == user.firstName" *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
+        </select>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onReAllocationLead()" [disabled]="reallocatedRmId == null">Ok</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <!--<button type="button" class="btn btn-primary">Understood</button>-->
       </div>

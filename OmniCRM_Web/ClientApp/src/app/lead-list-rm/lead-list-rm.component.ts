@@ -10,12 +10,12 @@ import { NgbModalConfig, NgbModal, NgbDateStruct, NgbTimeStruct } from '@ng-boot
 import { DatePipe } from '@angular/common';
 import { ExcelExportService } from '../services/excel-export.service';
 import { AdminSetting } from '../models/admin-setting';
-import { LeadMaster, AppoinmentStatusMaster, FollowupHistory } from '../models/lead-master';
+import { LeadMaster, AppoinmentStatusMaster, FollowupHistory, AppointmentDetail } from '../models/lead-master';
 import { LeadFollowUpComponent } from '../lead-follow-up/lead-follow-up.component';
 import { Observable } from 'rxjs';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { FilterOptions } from '../models/filter-options';
-import { roles } from '../services/generic-enums';
+import { roles, AppoinmentStatus } from '../services/generic-enums';
 
 @Component({
   selector: 'app-lead-list-rm',
@@ -33,6 +33,7 @@ export class LeadListRmComponent implements OnInit {
   filter = new FormControl('');
   appoinStatusId: number[] = [];
   filteruserId: string = "0";
+  reallocatedRmId: string;
   filterDateOption: string = "Created Date";
   filterDateById: number;
   fromDate: NgbDateStruct;
@@ -274,5 +275,26 @@ export class LeadListRmComponent implements OnInit {
   onDateChange() {
     let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, this.nextFollowupTime.hour, this.nextFollowupTime.minute, 0, 0);
     this.dateTimeStr = this.datePipe.transform(date, "dd/MM/yyyy hh:mm a");
+  }
+
+  reallocateCallId: number;
+  currentAllocatedToRM: string;
+  setCallIdtoReallocate(callId: number, allocatedToName: string) {
+    this.reallocateCallId = callId;
+    this.currentAllocatedToRM = allocatedToName;
+  }
+  onReAllocationLead() {
+    let objAppointment = new AppointmentDetail();
+    objAppointment.relationshipManagerId = this.reallocatedRmId;
+    objAppointment.callId = this.reallocateCallId;
+    objAppointment.createdBy = this.currentUser.userId;
+    objAppointment.appointmentDateTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours() + 1, 0, 0, 0);
+    objAppointment.appoinStatusId = AppoinmentStatus.Pending;
+    objAppointment.remarks = "Lead re-allocated"
+
+    this.leadRepo.reallocatedToRM(objAppointment).subscribe({
+      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
+      error: error => (console.error('Error!', error), this.fillLeadListByRM())
+    });
   }
 }
