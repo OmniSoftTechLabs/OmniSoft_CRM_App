@@ -219,15 +219,17 @@ namespace OmniCRM_Web.Controllers
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
-                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
 
                 if (callDetail.NextCallDate != null)
                     callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
 
-                /*
+
                 var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
-                if (ObjAppointment != null)
+                if (ObjAppointment != null && ObjAppointment.AppointmentDateTime != null)
                 {
+                    callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
+
+                    /*
                     List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                         && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
@@ -237,8 +239,9 @@ namespace OmniCRM_Web.Controllers
                         if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
                             return BadRequest("Appointment time is already allocated on this day!");
                     }
+                     */
                 }
-                */
+
 
                 var lastTrans = await _context.CallTransactionDetail.OrderBy(p => p.CallTransactionId).LastOrDefaultAsync(p => p.CallId == callDetail.CallId);
                 if (callDetail.OutComeId != lastTrans.OutComeId || callDetail.NextCallDate != null)
@@ -288,13 +291,14 @@ namespace OmniCRM_Web.Controllers
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                 callDetail.LastChangedDate = indianTime;
-                callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
 
-                /*
+
                 var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
                 if (ObjAppointment != null && ObjAppointment.AppointmentDateTime != null)
                 {
+                    callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
 
+                    /*
                     List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                     CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                         && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
@@ -304,8 +308,9 @@ namespace OmniCRM_Web.Controllers
                         if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
                             return BadRequest("Appointment time is already allocated on this day!");
                     }
+                    */
                 }
-                */
+
 
                 _context.AppointmentDetail.UpdateRange(callDetail.AppointmentDetail);
                 _context.FollowupHistory.AddRange(callDetail.FollowupHistory);
@@ -419,15 +424,17 @@ namespace OmniCRM_Web.Controllers
                     DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
                     callDetail.LastChangedDate = indianTime;
-                    callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
 
                     if (callDetail.NextCallDate != null)
                         callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
 
-                    /*
+
                     var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
-                    if (ObjAppointment != null)
+                    if (ObjAppointment != null && ObjAppointment.AppointmentDateTime != null)
                     {
+                        callDetail.AppointmentDetail.ToList().ForEach(p => p.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(p.AppointmentDateTime), GenericMethods.Indian_Zone));
+
+                        /*
                         List<AppointmentDetail> CollAppointments = new List<AppointmentDetail>();
                         CollAppointments = await _context.AppointmentDetail.Where(p => p.RelationshipManagerId == ObjAppointment.RelationshipManagerId
                             && p.AppointmentDateTime.Value.Date == ObjAppointment.AppointmentDateTime.Value.Date).AsNoTracking().ToListAsync();
@@ -437,8 +444,9 @@ namespace OmniCRM_Web.Controllers
                             if (CollAppointments.Count(p => p.AppointmentDateTime.Value.AddMinutes(15) > ObjAppointment.AppointmentDateTime && p.AppointmentDateTime.Value.AddMinutes(-15) < ObjAppointment.AppointmentDateTime) > 0)
                                 return BadRequest("Appointment time is already allocated on this day!");
                         }
+                        */
                     }
-                    */
+
 
                     callDetail.CallTransactionDetail.Add(new CallTransactionDetail()
                     {
