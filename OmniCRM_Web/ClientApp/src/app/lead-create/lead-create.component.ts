@@ -242,7 +242,7 @@ export class LeadCreateComponent implements OnInit {
     }
     else {
 
-      this.leadModel.createdBy = this.currentUser.userId;
+      this.leadModel.createdById = this.currentUser.userId;
       this.leadRepo.createLead(this.leadModel).subscribe({
         next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
         error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())

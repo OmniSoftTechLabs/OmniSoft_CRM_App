@@ -918,5 +918,26 @@ namespace OmniCRM_Web.Controllers
             }
 
         }
+
+        [HttpPost("PostReAllocateTC")]
+        public async Task<IActionResult> PostReAllocateTC(CallDetailViewModel callDetail)
+        {
+            try
+            {
+                var objLead = await GetCallDetail(callDetail.CallId);
+                _context.Entry(objLead.Value).State = EntityState.Modified;
+                objLead.Value.CreatedBy = callDetail.CreatedById;
+                await _context.SaveChangesAsync();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateTC: -TC Re-allocated successfully");
+                return Ok("Lead re-allocated successfully!");
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostReAllocateTC: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
     }
 }

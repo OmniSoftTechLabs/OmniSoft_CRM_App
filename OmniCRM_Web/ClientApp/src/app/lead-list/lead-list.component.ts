@@ -33,6 +33,7 @@ export class LeadListComponent implements OnInit {
   filter = new FormControl('');
   isUploadSucc: boolean = undefined;
   outComeId: number[] = [];
+  reallocatedTcId: string;
   filteruserId: string = "0";
   filterDateOption: string = "Created Date";
   filterDateById: number;
@@ -275,4 +276,20 @@ export class LeadListComponent implements OnInit {
       });
     }
   }
+
+  reallocateLead: LeadMaster;
+  currentAllocatedToTC: string;
+  setCallIdtoReallocate(lead: LeadMaster) {
+    this.reallocateLead = lead;
+    this.currentAllocatedToTC = lead.createdById;
+  }
+
+  onReAllocationLead() {
+    this.reallocateLead.createdById = this.reallocatedTcId;
+    this.leadRepo.reallocatedToTC(this.reallocateLead).subscribe({
+      next: data => (console.log('Success!', data), this.fillLeadListCreatedBy()),
+      error: error => (console.error('Error!', error), this.fillLeadListCreatedBy())
+    });
+  }
+
 }

@@ -129,4 +129,8 @@ export class LeadRepositoryService {
   reallocatedToRM(appointmentDetail: AppointmentDetail) {
     return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateRM/', appointmentDetail, { responseType: 'text' }).pipe();
   }
+
+  reallocatedToTC(leadDetail: LeadMaster) {
+    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateTC/', leadDetail, { responseType: 'text' }).pipe();
+  }
 }
