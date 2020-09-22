@@ -5,6 +5,7 @@ import { UserMaster } from '../models/user-master';
 import { CreatePwd } from '../models/create-pwd'
 import { ChangePwd } from '../models/change-pwd';
 import { AdminSetting } from '../models/admin-setting';
+import { ProductMaster } from '../models/product-master';
 
 @Injectable({
   providedIn: 'root'
@@ -70,5 +71,9 @@ export class GeneralRepositoryService {
   postAdminSetting(settingModel: AdminSetting) {
     return this.http.post(this.baseUrl + 'api/AdminSettings', settingModel, { responseType: 'text' }).pipe();
 
+  }
+
+  getProductMaster() {
+    return this.http.get<ProductMaster[]>(this.baseUrl + 'api/ProductMasters').pipe();
   }
 }

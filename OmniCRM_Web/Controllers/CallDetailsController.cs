@@ -920,13 +920,13 @@ namespace OmniCRM_Web.Controllers
         }
 
         [HttpPost("PostReAllocateTC")]
-        public async Task<IActionResult> PostReAllocateTC(CallDetailViewModel callDetail)
+        public async Task<IActionResult> PostReAllocateTC(CallDetail callDetail)
         {
             try
             {
                 var objLead = await GetCallDetail(callDetail.CallId);
                 _context.Entry(objLead.Value).State = EntityState.Modified;
-                objLead.Value.CreatedBy = callDetail.CreatedById;
+                objLead.Value.CreatedBy = callDetail.CreatedBy;
                 await _context.SaveChangesAsync();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateTC: -TC Re-allocated successfully");

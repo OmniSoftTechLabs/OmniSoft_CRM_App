@@ -4,6 +4,7 @@ import { RmanagerMaster } from "./rmanager-master";
 export class LeadMaster {
   callId: number = 0;
   createdDate: Date;
+  createdBy: string;
   createdById: string;
   firstName: string;
   lastName: string;
@@ -16,6 +17,7 @@ export class LeadMaster {
   cityId: number;
   lastChangedDate: Date;
   outComeId: number = 0;
+  productId: number;
   nextCallDate: Date;
   remark: string;
   outCome: OutcomeMaster;

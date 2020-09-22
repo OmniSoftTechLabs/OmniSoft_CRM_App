@@ -109,6 +109,17 @@
         </div>
 
         <div class="row">
+          <div class="form-group col-sm-12">
+            Product
+            <select class="form-control custom-select" #productId="ngModel" [(ngModel)]="leadModel.productId" name="productId" [class.is-invalid]="productId.invalid && productId.touched">
+              <!--<option selected disabled value="0">Choose...</option>-->
+              <option *ngFor="let product of productList" value="{{product.productId}}"> {{product.productName}}</option>
+            </select>
+            <!--<small class="text-danger" [class.d-none]="outComeId.valid || outComeId.untouched">* Status is required</small>-->
+          </div>
+        </div>
+
+        <div class="row">
           <div class="form-group col-sm-6">
             State
             <ng-select [items]="stateMaster | async" #stateId="ngModel" [(ngModel)]="selectedState" name="stateId" (change)="onStateChange($event)"

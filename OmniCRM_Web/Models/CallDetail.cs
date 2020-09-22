@@ -19,6 +19,7 @@ namespace OmniCRM_Web.Models
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string FirmName { get; set; }
+        public int? ProductId { get; set; }
         public string Address { get; set; }
         public int? StateId { get; set; }
         public int? CityId { get; set; }
@@ -31,6 +32,7 @@ namespace OmniCRM_Web.Models
         public virtual CityMaster City { get; set; }
         public virtual UserMaster CreatedByNavigation { get; set; }
         public virtual CallOutcomeMaster OutCome { get; set; }
+        public virtual ProductMaster Product { get; set; }
         public virtual StateMaster State { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetail { get; set; }
         public virtual ICollection<CallTransactionDetail> CallTransactionDetail { get; set; }

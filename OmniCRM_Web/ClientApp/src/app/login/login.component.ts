@@ -54,6 +54,11 @@ export class LoginComponent implements OnInit {
           error => (console.error('Error!', error))
         );
 
+        this.generalRepository.getProductMaster().subscribe(
+          data => (localStorage.setItem('productMasters', JSON.stringify(data))),
+          error => (console.error('Error!', error))
+        );
+
         setTimeout(() => {
           this.auth.currentUser.subscribe(x => this.userMaster = x);
           if (this.userMaster.roleId == roles["Tele Caller"])

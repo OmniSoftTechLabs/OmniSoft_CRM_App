@@ -23,6 +23,7 @@ namespace OmniCRM_Web.Models
         public virtual DbSet<CallTransactionDetail> CallTransactionDetail { get; set; }
         public virtual DbSet<CityMaster> CityMaster { get; set; }
         public virtual DbSet<FollowupHistory> FollowupHistory { get; set; }
+        public virtual DbSet<ProductMaster> ProductMaster { get; set; }
         public virtual DbSet<RoleMaster> RoleMaster { get; set; }
         public virtual DbSet<StateMaster> StateMaster { get; set; }
         public virtual DbSet<UserMaster> UserMaster { get; set; }
@@ -146,7 +147,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CreatedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_UserMaster");
 
                 entity.HasOne(d => d.OutCome)
@@ -154,6 +154,11 @@ namespace OmniCRM_Web.Models
                     .HasForeignKey(d => d.OutComeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_CallOutcomeMaster");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK_CallDetail_ProductMaster");
 
                 entity.HasOne(d => d.State)
                     .WithMany(p => p.CallDetail)
@@ -263,6 +268,13 @@ namespace OmniCRM_Web.Models
                     .HasForeignKey(d => d.CreatedByRmanagerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FollowupHistory_UserMaster");
+            });
+
+            modelBuilder.Entity<ProductMaster>(entity =>
+            {
+                entity.HasKey(e => e.ProductId);
+
+                entity.Property(e => e.ProductName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<RoleMaster>(entity =>

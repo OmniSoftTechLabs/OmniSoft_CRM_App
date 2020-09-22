@@ -11,6 +11,7 @@ import { AdminSetting } from '../models/admin-setting';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Observable, concat, of } from 'rxjs';
 import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
+import { ProductMaster } from '../models/product-master';
 
 @Component({
   selector: 'app-lead-follow-up',
@@ -47,6 +48,7 @@ export class LeadFollowUpComponent implements OnInit {
   cityMaster: Observable<CityMaster[]>;
   selectedState: StateMaster;
   selectedCity: CityMaster;
+  productList: ProductMaster[];
   loading: boolean;
   dateTimeStr: string;
 
@@ -89,6 +91,7 @@ export class LeadFollowUpComponent implements OnInit {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.productList = <ProductMaster[]>JSON.parse(localStorage.getItem('productMasters'));
     this.minuteStep = this.adminSetting.appoinTimeInterval;
   }
 

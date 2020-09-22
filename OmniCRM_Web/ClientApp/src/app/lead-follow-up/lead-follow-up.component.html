@@ -64,12 +64,12 @@
         <div class="form-group col-sm-6">
           Next Followup Date
           <!--<div class="input-group">
-            <input ngbDatepicker #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
-                   class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
-            </div>
-          </div>-->
+        <input ngbDatepicker #appoinDate="ngbDatepicker" name="appoinDate" placeholder="dd/mm/yyyy" [class.is-invalid]="appoinDate.invalid && appoinDate.touched"
+               class="form-control" [(ngModel)]="appointmentDate" [minDate]="minDate"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+        </div>
+      </div>-->
           <div class="input-group">
             <input ngbDatepicker [required]="appointmentDetailObj.appoinStatusId != 3 && appointmentDetailObj.appoinStatusId != 4 && appointmentDetailObj.appoinStatusId != 6 && appointmentDetailObj.appoinStatusId != 8" #appoinDate="ngbDatepicker" name="appoinDate"
                    placeholder="dd/mm/yyyy" [formControl]="dateCtrl" class="form-control" [value]="dateTimeStr" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
@@ -87,6 +87,17 @@
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooLate && timeCtrl.touched">* Oh no, it's way too late</small>
             <small class="text-danger ml-3" *ngIf="timeCtrl.errors?.tooEarly && timeCtrl.touched">* It's a bit too early</small>
           </ng-template>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-12">
+          Product
+          <select class="form-control custom-select" #productId="ngModel" [(ngModel)]="leadModel.productId" name="productId" [class.is-invalid]="productId.invalid && productId.touched">
+            <!--<option selected disabled value="0">Choose...</option>-->
+            <option *ngFor="let product of productList" value="{{product.productId}}"> {{product.productName}}</option>
+          </select>
+          <!--<small class="text-danger" [class.d-none]="outComeId.valid || outComeId.untouched">* Status is required</small>-->
         </div>
       </div>
 

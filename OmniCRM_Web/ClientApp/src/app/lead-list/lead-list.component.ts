@@ -285,7 +285,7 @@ export class LeadListComponent implements OnInit {
   }
 
   onReAllocationLead() {
-    this.reallocateLead.createdById = this.reallocatedTcId;
+    this.reallocateLead.createdBy = this.reallocatedTcId;
     this.leadRepo.reallocatedToTC(this.reallocateLead).subscribe({
       next: data => (console.log('Success!', data), this.fillLeadListCreatedBy()),
       error: error => (console.error('Error!', error), this.fillLeadListCreatedBy())

@@ -11,6 +11,7 @@ import { AdminSetting } from '../models/admin-setting';
 import { Observable, concat, of, Subject } from 'rxjs';
 import { distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
+import { ProductMaster } from '../models/product-master';
 
 @Component({
   selector: 'app-lead-create',
@@ -51,6 +52,7 @@ export class LeadCreateComponent implements OnInit {
   cityMaster: Observable<CityMaster[]>;
   selectedState: StateMaster;
   selectedCity: CityMaster;
+  productList: ProductMaster[];
   loading: boolean;
   dateTimeStr: string;
 
@@ -106,6 +108,7 @@ export class LeadCreateComponent implements OnInit {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
+    this.productList = <ProductMaster[]>JSON.parse(localStorage.getItem('productMasters'));
     this.minuteStep = this.adminSetting.appoinTimeInterval;
   }
 
@@ -242,7 +245,7 @@ export class LeadCreateComponent implements OnInit {
     }
     else {
 
-      this.leadModel.createdById = this.currentUser.userId;
+      this.leadModel.createdBy = this.currentUser.userId;
       this.leadRepo.createLead(this.leadModel).subscribe({
         next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
         error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
