@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
   secondMeeting: number[] = [];
   sold: number[] = [];
   dropped: number[] = [];
-  hold: number[] = [];
+  workInProg: number[] = [];
   notInterestedM: number[] = [];
   pending: number[] = [];
 
@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit {
           this.secondMeeting.push(item.secondMeeting);
           this.sold.push(item.sold);
           this.dropped.push(item.dropped);
-          this.hold.push(item.hold);
+          this.workInProg.push(item.hold);
           this.notInterestedM.push(item.notInterested);
           this.pending.push(item.pending);
         });
@@ -244,10 +244,10 @@ export class DashboardComponent implements OnInit {
           data: this.dropped
         },
         {
-          label: 'Hold',
+          label: 'Work In Progress',
           backgroundColor: colors.purple.secondary,
           borderColor: colors.purple.primary,
-          data: this.hold
+          data: this.workInProg
         },
         {
           label: 'Not Interested',
@@ -302,7 +302,7 @@ export class DashboardComponent implements OnInit {
     this.secondMeeting = [];
     this.sold = [];
     this.dropped = [];
-    this.hold = [];
+    this.workInProg = [];
     this.notInterestedM = [];
     this.pending = [];
     this.managerchart.destroy();
