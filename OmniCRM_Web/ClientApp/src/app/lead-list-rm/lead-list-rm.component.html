@@ -83,6 +83,7 @@
           <div *ngIf="isCheckedBox">
             <button type="button" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
             <button type="button" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
+            <button *ngIf="isAdmin" type="button" class="btn btn-outline-secondary float-right mr-2" placement="top" ngbTooltip="Re-Allocate" data-toggle="modal" data-target="#modelReAllocate"><i class="fas fa-random"></i></button>
           </div>
         </div>
 
@@ -149,9 +150,7 @@
               <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenFollowupModal(lead.callId)"><i class="fas fa-phone-square-alt"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
-              &nbsp;
-              <button *ngIf="isAdmin" type="button" placement="top" ngbTooltip="Re-Allocate" class="btn btn-sm btn-outline-secondary rounded-circle" data-toggle="modal" data-target="#modelReAllocate" (click)="setCallIdtoReallocate(lead.callId, lead.allocatedToName)"><i class="fas fa-random"></i></button>
-            </td>
+             </td>
 
           </tr>
         </tbody>

@@ -277,22 +277,24 @@ export class LeadListRmComponent implements OnInit {
     this.dateTimeStr = this.datePipe.transform(date, "dd/MM/yyyy hh:mm a");
   }
 
-  reallocateCallId: number;
-  currentAllocatedToRM: string;
-  setCallIdtoReallocate(callId: number, allocatedToName: string) {
-    this.reallocateCallId = callId;
-    this.currentAllocatedToRM = allocatedToName;
-  }
-  onReAllocationLead() {
-    let objAppointment = new AppointmentDetail();
-    objAppointment.relationshipManagerId = this.reallocatedRmId;
-    objAppointment.callId = this.reallocateCallId;
-    objAppointment.createdBy = this.currentUser.userId;
-    objAppointment.appointmentDateTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours() + 1, 0, 0, 0);
-    objAppointment.appoinStatusId = AppoinmentStatus.Pending;
-    objAppointment.remarks = "Lead re-allocated"
 
-    this.leadRepo.reallocatedToRM(objAppointment).subscribe({
+  collAppointDetail: AppointmentDetail[] = [];
+  onReAllocationLead() {
+    this.checkedList.forEach((obj) => {
+      let objAppointment = new AppointmentDetail();
+      objAppointment.relationshipManagerId = this.reallocatedRmId;
+      objAppointment.callId = obj.callId;
+      objAppointment.createdBy = this.currentUser.userId;
+      objAppointment.appointmentDateTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), (Math.round(new Date().getMinutes() / 15) * 15) + 15, 0, 0);
+      objAppointment.appoinStatusId = AppoinmentStatus.Pending;
+      objAppointment.remarks = "Lead re-allocated";
+
+      this.collAppointDetail.push(objAppointment);
+    });
+
+
+
+    this.leadRepo.reallocatedToRM(this.collAppointDetail).subscribe({
       next: data => (console.log('Success!', data), this.fillLeadListByRM()),
       error: error => (console.error('Error!', error), this.fillLeadListByRM())
     });

@@ -698,9 +698,9 @@ namespace OmniCRM_Web.Controllers
                                 {
                                     new CallTransactionDetail()
                                     {
-                                        CreatedBy=id,
-                                        OutComeId=(int)CallOutcome.NoResponse,
-                                        Remarks=Convert.ToString(workSheet.Cells[i, remarks].Value)
+                                        CreatedBy = id,
+                                        OutComeId = (int)CallOutcome.NoResponse,
+                                        Remarks = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null
                                     }
                                 }
                             });
@@ -900,16 +900,32 @@ namespace OmniCRM_Web.Controllers
         }
 
         [HttpPost("PostReAllocateRM")]
-        public async Task<IActionResult> PostReAllocateRM(AppointmentDetail appointmentDetail)
+        public async Task<IActionResult> PostReAllocateRM(List<AppointmentDetail> collAppointmentDetail)
         {
             try
             {
-                appointmentDetail.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(appointmentDetail.AppointmentDateTime), GenericMethods.Indian_Zone);
-                _context.AppointmentDetail.Add(appointmentDetail);
-                await _context.SaveChangesAsync();
+                if (collAppointmentDetail.Count > 0)
+                {
+                    foreach (var item in collAppointmentDetail)
+                    {
+                        var objLead = await GetCallDetail(item.CallId);
+                        _context.Entry(objLead.Value).State = EntityState.Modified;
 
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateRM: -RM Re-allocated successfully");
-                return Ok("Lead re-allocated successfully!");
+                        DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+                        objLead.Value.LastChangedDate = indianTime;
+                        item.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(item.AppointmentDateTime), GenericMethods.Indian_Zone);
+                        objLead.Value.AppointmentDetail.Add(item);
+                        
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateRM: " + item.CallId + " -RM Re-allocated successfully");
+                    }
+                    await _context.SaveChangesAsync();
+                    return Ok("Lead re-allocated successfully!");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PostReAllocateRM: -lead not exist");
+                    return NotFound("Leads not found!");
+                }
             }
             catch (Exception ex)
             {
@@ -920,17 +936,31 @@ namespace OmniCRM_Web.Controllers
         }
 
         [HttpPost("PostReAllocateTC")]
-        public async Task<IActionResult> PostReAllocateTC(CallDetail callDetail)
+        public async Task<IActionResult> PostReAllocateTC(List<CallDetail> collCallDetail)
         {
             try
             {
-                var objLead = await GetCallDetail(callDetail.CallId);
-                _context.Entry(objLead.Value).State = EntityState.Modified;
-                objLead.Value.CreatedBy = callDetail.CreatedBy;
-                await _context.SaveChangesAsync();
+                if (collCallDetail.Count > 0)
+                {
+                    foreach (var lead in collCallDetail)
+                    {
+                        var objLead = await GetCallDetail(lead.CallId);
+                        DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateTC: -TC Re-allocated successfully");
-                return Ok("Lead re-allocated successfully!");
+                        _context.Entry(objLead.Value).State = EntityState.Modified;
+                        objLead.Value.CreatedBy = lead.CreatedBy;
+                        objLead.Value.LastChangedDate = indianTime;
+
+                        GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateTC: " + objLead.Value.CallId + " -TC Re-allocated successfully");
+                    }
+                    await _context.SaveChangesAsync();
+                    return Ok("Lead re-allocated successfully!");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PostReAllocateTC: -lead not exist");
+                    return NotFound("Leads not found!");
+                }
             }
             catch (Exception ex)
             {

@@ -222,7 +222,7 @@ export class DashboardManagerComponent implements OnInit {
       labels: [
         'Dropped Leads',
         'Sold Leads',
-        'Hold Leads',
+        'WIP Leads',
       ],
       datasets: [
         {

@@ -277,16 +277,13 @@ export class LeadListComponent implements OnInit {
     }
   }
 
-  reallocateLead: LeadMaster;
-  currentAllocatedToTC: string;
-  setCallIdtoReallocate(lead: LeadMaster) {
-    this.reallocateLead = lead;
-    this.currentAllocatedToTC = lead.createdById;
-  }
 
   onReAllocationLead() {
-    this.reallocateLead.createdBy = this.reallocatedTcId;
-    this.leadRepo.reallocatedToTC(this.reallocateLead).subscribe({
+    this.checkedList.forEach((obj) => {
+      obj.createdBy = this.reallocatedTcId;
+    });
+
+    this.leadRepo.reallocatedToTC(this.checkedList).subscribe({
       next: data => (console.log('Success!', data), this.fillLeadListCreatedBy()),
       error: error => (console.error('Error!', error), this.fillLeadListCreatedBy())
     });

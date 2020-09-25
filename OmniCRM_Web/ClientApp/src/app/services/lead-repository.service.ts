@@ -126,11 +126,11 @@ export class LeadRepositoryService {
     return response;
   }
 
-  reallocatedToRM(appointmentDetail: AppointmentDetail) {
-    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateRM/', appointmentDetail, { responseType: 'text' }).pipe();
+  reallocatedToRM(collAppointmentDetail: AppointmentDetail[]) {
+    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateRM/', collAppointmentDetail, { responseType: 'text' }).pipe();
   }
 
-  reallocatedToTC(leadDetail: LeadMaster) {
-    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateTC/', leadDetail, { responseType: 'text' }).pipe();
+  reallocatedToTC(collLeads: LeadMaster[]) {
+    return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateTC/', collLeads, { responseType: 'text' }).pipe();
   }
 }

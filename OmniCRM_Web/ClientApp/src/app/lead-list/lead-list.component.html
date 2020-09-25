@@ -23,11 +23,12 @@
           <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="isLoading || (service.loading$ | async)"></span>
         </div>
         <div class="col-sm form-group">
-          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)" *ngIf="!isAdmin"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
+          <button type="button" class="btn btn-outline-primary float-right" style="width:120px;" (click)="onOpenLeadModal(0)"> <i class="fas fa-plus mr-2"></i> Add</button> <!--[routerLink]="['/lead-create']"-->
 
-          <div [ngClass]="{'btn-group mr-4': !isAdmin}" class="float-right">
+          <div class="float-right btn-group mr-4">
+            <!--[ngClass]="{'btn-group mr-4': !isAdmin}"-->
             <button type="button" class="btn btn-outline-success" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
-            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" *ngIf="!isAdmin">
+            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -89,7 +90,9 @@
           </div>
 
           <div *ngIf="isCheckedBox">
-            <button type="button" class="btn btn-outline-danger float-right" placement="top" ngbTooltip="Delete Leads" data-toggle="modal" data-target="#modelDeleteConfirm"><i class="fas fa-trash-alt"></i></button>
+            <button *ngIf="isAdmin" type="button" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Delete Leads" data-toggle="modal" data-target="#modelDeleteConfirm"><i class="fas fa-trash-alt"></i></button>
+            <button *ngIf="isAdmin" type="button" class="btn btn-outline-secondary float-right" placement="top" ngbTooltip="Re-Allocate" data-toggle="modal" data-target="#modelReAllocate"><i class="fas fa-random"></i></button>
+
           </div>
         </div>
 
@@ -105,7 +108,7 @@
           <tr>
             <th scope="col">
               <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="selectAll" (click)="onSelectAllLeads($event.currentTarget.checked)">
+                <input *ngIf="isAdmin" type="checkbox" class="custom-control-input" id="selectAll" (click)="onSelectAllLeads($event.currentTarget.checked)">
                 <label class="custom-control-label" for="selectAll">#</label>
               </div>
             </th>
@@ -132,10 +135,12 @@
           <tr *ngFor="let lead of leadList | async; index as i" [ngClass]="{'text-danger': lead.isOverDue == true}">
             <th scope="row">
               <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="customCheck{{i+1}}" [checked]="lead.isChecked" (change)="showHideDismissButton(lead , $event)">
+                <input *ngIf="isAdmin" type="checkbox" class="custom-control-input" id="customCheck{{i+1}}" [checked]="lead.isChecked" (change)="showHideDismissButton(lead , $event)">
                 <label class="custom-control-label" for="customCheck{{i+1}}">{{service.pageSize * (service.page - 1) + i + 1  }}</label>
               </div>
             </th>
+
+
 
             <!--<th scope="row" *ngIf="isTeleCaller">{{service.pageSize * (service.page - 1) + i + 1  }}</th>-->
             <!--<td> <ngb-highlight [result]="user.firstName" [term]="filter.value"></ngb-highlight></td>-->
@@ -159,8 +164,6 @@
               <button type="button" placement="top" ngbTooltip="Edit Lead" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenLeadModal(lead.callId)"><i class="fas fa-edit"></i></button>
               &nbsp;
               <button type="button" placement="top" ngbTooltip="History" class="btn btn-sm btn-outline-info rounded-circle" data-toggle="modal" data-target="#modelViewHistory" (click)="viewHistory(lead.callId,lead.firstName,lead.lastName)"><i class="fas fa-history"></i></button>
-              &nbsp;
-              <button *ngIf="isAdmin" type="button" placement="top" ngbTooltip="Re-Allocate" class="btn btn-sm btn-outline-secondary rounded-circle" data-toggle="modal" data-target="#modelReAllocate" (click)="setCallIdtoReallocate(lead)"><i class="fas fa-random"></i></button>
             </td>
 
           </tr>
