@@ -73,6 +73,15 @@ namespace OmniCRM_Web.Models
             {
                 entity.HasKey(e => e.AppintmentId);
 
+                entity.HasIndex(e => e.AppoinStatusId)
+                    .HasName("IX_AppointmentDetail_AppointStatusID");
+
+                entity.HasIndex(e => e.AppointmentDateTime)
+                    .HasName("IX_AppointmentDetail_AppointDateTime");
+
+                entity.HasIndex(e => e.RelationshipManagerId)
+                    .HasName("IX_AppointmentDetail_RelationShipMngrID");
+
                 entity.Property(e => e.AppintmentId).HasColumnName("AppintmentID");
 
                 entity.Property(e => e.AppoinStatusId).HasColumnName("AppoinStatusID");
@@ -108,6 +117,12 @@ namespace OmniCRM_Web.Models
             modelBuilder.Entity<CallDetail>(entity =>
             {
                 entity.HasKey(e => e.CallId);
+
+                entity.HasIndex(e => e.CreatedBy);
+
+                entity.HasIndex(e => e.LastChangedDate);
+
+                entity.HasIndex(e => e.OutComeId);
 
                 entity.Property(e => e.CallId).HasColumnName("CallID");
 
