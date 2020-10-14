@@ -13,7 +13,9 @@ using OfficeOpenXml;
 using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 using OmniCRM_Web.ViewModels;
+using SQLitePCL;
 using static OmniCRM_Web.GenericClasses.Enums;
+using static OmniCRM_Web.ViewModels.TeleCallerStatusReport;
 
 namespace OmniCRM_Web.Controllers
 {
@@ -915,7 +917,7 @@ namespace OmniCRM_Web.Controllers
                         objLead.Value.LastChangedDate = indianTime;
                         item.AppointmentDateTime = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(item.AppointmentDateTime), GenericMethods.Indian_Zone);
                         objLead.Value.AppointmentDetail.Add(item);
-                        
+
                         GenericMethods.Log(LogType.ActivityLog.ToString(), "PostReAllocateRM: " + item.CallId + " -RM Re-allocated successfully");
                     }
                     await _context.SaveChangesAsync();
@@ -965,6 +967,56 @@ namespace OmniCRM_Web.Controllers
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "PostReAllocateTC: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
+
+        [HttpPost("GetAdminTCSummaryReport")]
+        public async Task<ActionResult<TeleCallerStatusReport>> GetAdminTCSummaryReport(FilterOptions filterOption)
+        {
+            try
+            {
+                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport();
+                TCStatusReport.Header.Add("Tele Caller");
+                foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
+                {
+                    TCStatusReport.Header.Add(item.OutCome);
+                }
+
+                //foreach (var user in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync())
+                //{
+                //    TCStatusReport.TCRowsData.Add(new TeleCallerStatusReport.RowsData()
+                //    {
+                //        TCName = user.FirstName + " " + user.LastName,
+                //        AppoinmentTaken = 
+                //    });
+                //}
+
+                var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
+                                      join Leads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
+                                      from TeleLeads in UserLead.DefaultIfEmpty()
+                                      select new { Teleuser.FirstName, UserLead, TeleLeads };
+
+
+                TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsData()
+                {
+                    TCName = r.Key.createdBy,
+                    NoResponse = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    NotInterested = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
+                    AppoinmentTaken = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    CallLater = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
+                    WrongNumber = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
+                    None = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
+
+                }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminTCSummaryReport: -get tele caller summary report in admin");
+                return TCStatusReport;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetAdminTCSummaryReport: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
