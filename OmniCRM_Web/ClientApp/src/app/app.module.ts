@@ -35,6 +35,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
+import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-summary.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,9 @@ import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
     DashboardTelecallerComponent,
     AdminSettingComponent,
     DashboardManagerComponent,
-    LeadListRmComponent
+    LeadListRmComponent,
+    TeleCallerSummaryComponent,
+    AdminReportComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
