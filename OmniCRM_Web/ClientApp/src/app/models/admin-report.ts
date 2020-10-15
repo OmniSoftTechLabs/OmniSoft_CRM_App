@@ -5,7 +5,7 @@ export class AdminReport {
 export class TeleCallerStatusReport {
 
   header: [] = [];
-  tCRowsData: RowsData[] = [];
+  tcRowsData: RowsData[] = [];
 }
 
 export class RowsData {
@@ -16,4 +16,5 @@ export class RowsData {
   callLater: number;
   wrongNumber: number;
   none: number;
+  total: number;
 }

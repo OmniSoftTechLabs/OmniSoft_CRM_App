@@ -977,12 +977,13 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport();
+                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<RowsData>() };
                 TCStatusReport.Header.Add("Tele Caller");
                 foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
                 {
                     TCStatusReport.Header.Add(item.OutCome);
                 }
+                TCStatusReport.Header.Add("Total");
 
                 //foreach (var user in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync())
                 //{
@@ -1008,8 +1009,22 @@ namespace OmniCRM_Web.Controllers
                     CallLater = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
                     WrongNumber = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
                     None = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
-
+                    Total = r.Count(q => q.TeleLeads != null)
                 }).ToList();
+
+                var totalRow = new RowsData()
+                {
+                    TCName = "Total",
+                    NoResponse = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    NotInterested = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
+                    AppoinmentTaken = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    CallLater = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
+                    WrongNumber = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
+                    None = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
+                    Total = TeleCallerLeads.Count(q => q.TeleLeads != null)
+                };
+
+                TCStatusReport.TCRowsData.Add(totalRow);
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminTCSummaryReport: -get tele caller summary report in admin");
                 return TCStatusReport;

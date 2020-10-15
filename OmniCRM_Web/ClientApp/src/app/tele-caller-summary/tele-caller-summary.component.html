@@ -4,12 +4,12 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
+          <div class="card-header no-print">
 
             <div class="form-row">
               <div class="col-md form-inline">
 
-                <h5 class="card-title mb-0">Telecaller/Status wise lead summary:</h5>
+                <h5 class="card-title mb-0">Select From Date:</h5>
                 &nbsp; &nbsp;
                 <div class="card-title input-group mb-0">
                   <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="fromDate" name="fDate" placeholder="From Date" (ngModelChange)="onDateChange()" style="width:180px" />
@@ -17,6 +17,9 @@
                     <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
                   </div>
                 </div>
+                &nbsp; &nbsp;
+                <h5 class="card-title mb-0">To Date:</h5>
+                &nbsp; &nbsp;
                 <div class="card-title input-group mb-0">
                   <input ngbDatepicker class="form-control mb-0" #tDate="ngbDatepicker" [(ngModel)]="toDate" name="tDate" placeholder="To Date" (ngModelChange)="onDateChange()" style="width:180px" />
                   <div class="input-group-append">
@@ -27,29 +30,42 @@
 
               <div class="col-md">
                 <div class="card-tools float-right">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <button class="btn btn-outline-primary" (click)="onPrint()"><i class="fas fa-print"></i> Print</button>
+                  <!--<button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
-                  </button>
+                  </button>-->
                 </div>
               </div>
             </div>
           </div>
           <!-- /.card-body -->
           <div class="card-body">
-
-            <table>
-              <tr>
-                <th *ngFor="let column of tcHeaders">
-                  {{column}}
-                </th>
-              </tr>
-
-              <tr *ngFor="let row of rows">
-                <td *ngFor="let column of tcHeaders">
-                  {{row[column]}}
-                </td>
-              </tr>
-
+            <div>
+              <h4 class="d-flex justify-content-center"><b>Telecaller/Status wise lead summary</b></h4>
+              <h5 class="d-flex justify-content-center">From : {{strFromDate}} - To : {{strToDate}}</h5>
+              <p class="d-flex justify-content-end">Date : {{strPrintDate | date}}</p>
+            </div>
+            <br />
+            <table class='table table-sm' aria-labelledby="tableLabel" style="border:1px solid">
+              <thead>
+                <tr>
+                  <th scope="col" *ngFor="let column of tcStatusReport.header" style="text-align: center;border: 1px solid;background-color:lightgray">
+                    {{column}}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of tcStatusReport.tcRowsData; let i = index;
+                  let last = last"
+                      [ngClass]="{last: last }">
+                  <td *ngFor="let column of tcStatusReport.header; let i = index;
+                  let first = first;
+                  let last = last"
+                      [ngClass]="{ first: first, last: last }" style="text-align: center; border: 1px solid">
+                    {{row[column]}}
+                  </td>
+                </tr>
+              </tbody>
             </table>
 
           </div>

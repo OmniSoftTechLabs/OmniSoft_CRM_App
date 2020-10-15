@@ -60,7 +60,6 @@ import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-su
     DashboardManagerComponent,
     LeadListRmComponent,
     TeleCallerSummaryComponent,
-    AdminReportComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -92,6 +91,7 @@ import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-su
       { path: 'dash-tele', component: DashboardTelecallerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Tele Caller'] } },
       { path: 'dash-manager', component: DashboardManagerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'tele-caller-summary-rpt', component: TeleCallerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
       //{ path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthGuard] },

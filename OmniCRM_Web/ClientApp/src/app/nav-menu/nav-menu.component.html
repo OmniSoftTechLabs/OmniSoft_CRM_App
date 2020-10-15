@@ -44,6 +44,19 @@
             <a class="nav-link underlineHover active" [routerLink]="['/lead-list-rm']">RM Lead Details</a>
           </li>
 
+          <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="nav-link  underlineHover active" href="#" id="navbarDropdownReport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Reports
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownReport">
+              <a class="dropdown-item" [routerLink]="['/tele-caller-summary-rpt']">Summary Report</a>
+              <!--<a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a>-->
+            </div>
+          </li>
+
+
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
             <a class="nav-link underlineHover active" [routerLink]="['/setting']">Settings</a>
           </li>
