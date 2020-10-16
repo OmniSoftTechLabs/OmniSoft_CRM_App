@@ -36,6 +36,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
 import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-summary.component';
+import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager-summary.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-su
     DashboardManagerComponent,
     LeadListRmComponent,
     TeleCallerSummaryComponent,
+    ReleManagerSummaryComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -92,6 +94,7 @@ import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-su
       { path: 'dash-manager', component: DashboardManagerComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Relationship Manager'] } },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'tele-caller-summary-rpt', component: TeleCallerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'rele-manager-summary-rpt', component: ReleManagerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
       //{ path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthGuard] },

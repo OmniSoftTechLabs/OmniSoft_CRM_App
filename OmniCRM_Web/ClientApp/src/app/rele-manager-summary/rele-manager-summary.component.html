@@ -41,7 +41,7 @@
           <!-- /.card-body -->
           <div class="card-body">
             <div>
-              <h4 class="d-flex justify-content-center"><b>Telecaller wise status summary report</b></h4>
+              <h4 class="d-flex justify-content-center"><b>Relationship Manager wise status summary report</b></h4>
               <h5 class="d-flex justify-content-center">From : {{strFromDate}} - To : {{strToDate}}</h5>
               <p class="d-flex justify-content-end">Date : {{strPrintDate | date}}</p>
             </div>
@@ -49,16 +49,16 @@
             <table class='table table-sm' aria-labelledby="tableLabel" style="border:1px solid">
               <thead>
                 <tr>
-                  <th scope="col" *ngFor="let column of tcStatusReport.header" style="text-align: center;border: 1px solid;background-color:lightgray">
+                  <th scope="col" *ngFor="let column of rmStatusReport.header" style="text-align: center;border: 1px solid;background-color:lightgray">
                     {{column}}
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tcStatusReport.tcRowsData; let i = index;
+                <tr *ngFor="let row of rmStatusReport.rmRowsData; let i = index;
                   let last = last"
                     [ngClass]="{last: last }">
-                  <td *ngFor="let column of tcStatusReport.header; let i = index;
+                  <td *ngFor="let column of rmStatusReport.header; let i = index;
                   let first = first;
                   let last = last"
                       [ngClass]="{ first: first, last: last }" style="text-align: center; border: 1px solid">

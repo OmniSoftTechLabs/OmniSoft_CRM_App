@@ -1,5 +1,6 @@
 export class AdminReport {
   telecallerSummaryReport: TeleCallerStatusReport;
+  releManagerSummaryReport: RelaManagerStatusReport;
 }
 
 export class TeleCallerStatusReport {
@@ -16,5 +17,23 @@ export class RowsData {
   callLater: number;
   wrongNumber: number;
   none: number;
+  total: number;
+}
+
+export class RelaManagerStatusReport {
+
+  header: [] = [];
+  rmRowsData: RowsDataRM[] = [];
+}
+
+export class RowsDataRM {
+  rMName: string;
+  firstMeeting: number;
+  secondMeeting: number;
+  sold: number;
+  dropped: number;
+  hold: number;
+  notInterested: number;
+  pending: number;
   total: number;
 }

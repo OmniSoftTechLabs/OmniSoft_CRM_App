@@ -44,18 +44,26 @@
             <a class="nav-link underlineHover active" [routerLink]="['/lead-list-rm']">RM Lead Details</a>
           </li>
 
-          <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link  underlineHover active" href="#" id="navbarDropdownReport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Reports
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownReport">
-              <a class="dropdown-item" [routerLink]="['/tele-caller-summary-rpt']">Summary Report</a>
-              <!--<a class="dropdown-item" href="#">Another action</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>-->
-            </div>
+          <!------------------------------------->
+
+          <li class="nav-item dropdown">
+            <a id="dropdownSubMenuReport" href="#" data-toggle="dropdown" aria-haspopup="true" class="nav-link underlineHover active">Reports</a>
+            <ul aria-labelledby="dropdownSubMenuReport" class="dropdown-menu">
+              <!-- Level two dropdown-->
+              <li class="dropdown-submenu dropdown-hover">
+                <a id="dropdownSubMenuSummary" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" class="dropdown-item dropdown-toggle" style="padding-left: 10px;padding-right: 10px;">Summary Report</a>
+                <ul aria-labelledby="dropdownSubMenuSummary" class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" [routerLink]="['/tele-caller-summary-rpt']">Telecaller Report</a>
+                    <a class="dropdown-item" [routerLink]="['/rele-manager-summary-rpt']">Manager Report</a>
+                  </li>
+                </ul>
+              </li>
+              <!-- End Level two -->
+            </ul>
           </li>
 
+          <!------------------------------------->
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
             <a class="nav-link underlineHover active" [routerLink]="['/setting']">Settings</a>

@@ -31,6 +31,7 @@ namespace OmniCRM_Web.GenericClasses
             Hold = 5,
             NotInterested = 6,
             Pending = 7,
+            Dismissed = 8,
         }
 
         public enum CallOutcome

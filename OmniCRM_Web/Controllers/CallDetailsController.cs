@@ -15,6 +15,7 @@ using OmniCRM_Web.Models;
 using OmniCRM_Web.ViewModels;
 using SQLitePCL;
 using static OmniCRM_Web.GenericClasses.Enums;
+using static OmniCRM_Web.ViewModels.RelaManagerStatusReport;
 using static OmniCRM_Web.ViewModels.TeleCallerStatusReport;
 
 namespace OmniCRM_Web.Controllers
@@ -1032,6 +1033,73 @@ namespace OmniCRM_Web.Controllers
             catch (Exception ex)
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "GetAdminTCSummaryReport: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
+
+        [HttpPost("GetAdminRMSummaryReport")]
+        public async Task<ActionResult<RelaManagerStatusReport>> GetAdminRMSummaryReport(FilterOptions filterOption)
+        {
+            try
+            {
+                RelaManagerStatusReport RMStatusReport = new RelaManagerStatusReport() { Header = new List<string>(), RMRowsData = new List<RowsDataRM>() };
+                RMStatusReport.Header.Add("Relationship Manager");
+                foreach (var item in await _context.AppoinmentStatusMaster.Where(p => p.AppoinStatusId != (int)AppoinmentStatus.Dismissed).ToListAsync())
+                {
+                    RMStatusReport.Header.Add(item.Status);
+                }
+                RMStatusReport.Header.Add("Total");
+
+                //foreach (var user in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync())
+                //{
+                //    TCStatusReport.TCRowsData.Add(new TeleCallerStatusReport.RowsData()
+                //    {
+                //        TCName = user.FirstName + " " + user.LastName,
+                //        AppoinmentTaken = 
+                //    });
+                //}
+
+                var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToListAsync()
+                                       join Leads in _context.AppointmentDetail.AsEnumerable().Where(q => q.AppoinStatusId != (int)AppoinmentStatus.Dismissed && Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.RelationshipManagerId into UserLead
+                                       from ReleLeads in UserLead.DefaultIfEmpty()
+                                       select new { Relauser.FirstName, UserLead, ReleLeads };
+
+
+                RMStatusReport.RMRowsData = RelaManagerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsDataRM()
+                {
+                    RMName = r.Key.createdBy,
+                    FirstMeeting = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.FirstMeeting),
+                    SecondMeeting = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.SecondMeeting),
+                    Sold = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    Dropped = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                    Hold = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    NotInterested = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.NotInterested),
+                    Pending = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Pending),
+                    Total = r.Count(q => q.ReleLeads != null)
+                }).ToList();
+
+                var totalRow = new RowsDataRM()
+                {
+                    RMName = "Total",
+                    FirstMeeting = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.FirstMeeting),
+                    SecondMeeting = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.SecondMeeting),
+                    Sold = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    Dropped = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                    Hold = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    NotInterested = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.NotInterested),
+                    Pending = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Pending),
+                    Total = RelaManagerLeads.Count(q => q.ReleLeads != null)
+                };
+
+                RMStatusReport.RMRowsData.Add(totalRow);
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminRMSummaryReport: -get relationship manager summary report in admin");
+                return RMStatusReport;
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetAdminRMSummaryReport: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 

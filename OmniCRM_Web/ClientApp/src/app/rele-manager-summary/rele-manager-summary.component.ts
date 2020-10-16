@@ -1,21 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { RowsData, TeleCallerStatusReport } from '../models/admin-report';
+import { RelaManagerStatusReport } from '../models/admin-report';
 import { FilterOptions } from '../models/filter-options';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-tele-caller-summary',
-  templateUrl: './tele-caller-summary.component.html',
-  styleUrls: ['./tele-caller-summary.component.css']
+  selector: 'app-rele-manager-summary',
+  templateUrl: './rele-manager-summary.component.html',
+  styleUrls: ['./rele-manager-summary.component.css']
 })
+export class ReleManagerSummaryComponent implements OnInit {
 
-
-
-export class TeleCallerSummaryComponent implements OnInit {
-
-  tcStatusReport: TeleCallerStatusReport = new TeleCallerStatusReport();
+  rmStatusReport: RelaManagerStatusReport = new RelaManagerStatusReport();
   filterOption: FilterOptions = new FilterOptions();
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
@@ -32,7 +29,6 @@ export class TeleCallerSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-
   }
 
   async loadData() {
@@ -42,19 +38,20 @@ export class TeleCallerSummaryComponent implements OnInit {
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
 
-    await this.leadRepo.getTCSummaryReport(this.filterOption).then(
+    await this.leadRepo.getRMSummaryReport(this.filterOption).then(
       data => {
-        data.tcRowsData.forEach(obj => {
-          this.renameKey(obj, "appoinmentTaken", "Appoinment Taken"),
-            this.renameKey(obj, "callLater", "Call Later"),
-            this.renameKey(obj, "none", "None"),
-            this.renameKey(obj, "noResponse", "No Response"),
+        data.rmRowsData.forEach(obj => {
+          this.renameKey(obj, "firstMeeting", "First Meeting"),
+            this.renameKey(obj, "secondMeeting", "Second Meeting"),
+            this.renameKey(obj, "sold", "Sold"),
+            this.renameKey(obj, "dropped", "Dropped"),
+            this.renameKey(obj, "hold", "Work In Progress"),
             this.renameKey(obj, "notInterested", "Not Interested"),
-            this.renameKey(obj, "tcName", "Tele Caller"),
-            this.renameKey(obj, "wrongNumber", "Wrong Number")
+            this.renameKey(obj, "rmName", "Relationship Manager"),
+            this.renameKey(obj, "pending", "Pending")
           this.renameKey(obj, "total", "Total")
         });
-        this.tcStatusReport = data;
+        this.rmStatusReport = data;
 
         //this.tcHeaders = this.tcStatusReport.header;
         //this.tcRows = this.tcStatusReport.tcRowsData;
@@ -75,4 +72,5 @@ export class TeleCallerSummaryComponent implements OnInit {
   onPrint() {
     window.print();
   }
+
 }

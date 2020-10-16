@@ -31,4 +31,25 @@ namespace OmniCRM_Web.ViewModels
 
         }
     }
+
+    public class RelaManagerStatusReport
+    {
+
+        public List<string> Header { get; set; }
+        public List<RowsDataRM> RMRowsData { get; set; }
+
+        public class RowsDataRM
+        {
+            public string RMName { get; set; }
+            public int FirstMeeting { get; set; }
+            public int SecondMeeting { get; set; }
+            public int Sold { get; set; }
+            public int Dropped { get; set; }
+            public int Hold { get; set; }
+            public int NotInterested { get; set; }
+            public int Pending { get; set; }
+            public int Total { get; set; }
+
+        }
+    }
 }

@@ -6,7 +6,7 @@ import { FilterOptions } from '../models/filter-options';
 import { TeleDash } from '../models/tele-dash';
 import { ManagerDash } from '../models/manager-dash';
 import { AdminDash } from '../models/admin-dash';
-import { TeleCallerStatusReport } from '../models/admin-report';
+import { TeleCallerStatusReport, RelaManagerStatusReport } from '../models/admin-report';
 
 @Injectable({
   providedIn: 'root'
@@ -135,8 +135,13 @@ export class LeadRepositoryService {
     return this.http.post(this.baseUrl + 'api/CallDetails/PostReAllocateTC/', collLeads, { responseType: 'text' }).pipe();
   }
 
-  async getLeadSummaryReport(filterOption: FilterOptions) {
+  async getTCSummaryReport(filterOption: FilterOptions) {
     let response = await this.http.post<TeleCallerStatusReport>(this.baseUrl + 'api/CallDetails/GetAdminTCSummaryReport/', filterOption).toPromise();
+    return response;
+  }
+
+  async getRMSummaryReport(filterOption: FilterOptions) {
+    let response = await this.http.post<RelaManagerStatusReport>(this.baseUrl + 'api/CallDetails/GetAdminRMSummaryReport/', filterOption).toPromise();
     return response;
   }
 }
