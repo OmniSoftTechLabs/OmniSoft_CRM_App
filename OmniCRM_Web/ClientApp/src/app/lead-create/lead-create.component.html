@@ -109,7 +109,14 @@
         </div>
 
         <div class="row">
-          <div class="form-group col-sm-12">
+          <div class="form-group col-sm-6">
+            Firm Name
+            <input type="text" #firmName="ngModel" name="firmName" [class.is-invalid]="firmName.invalid && firmName.touched"
+                   class="form-control" [(ngModel)]="leadModel.firmName" placeholder="i.e Mapple wood enterprise" maxlength="128" />
+            <!--<small class="text-danger" [class.d-none]="firmName.valid || firmName.untouched">* Status is required</small>-->
+          </div>
+
+          <div class="form-group col-sm-6">
             Product
             <select class="form-control custom-select" #productId="ngModel" [(ngModel)]="leadModel.productId" name="productId" [class.is-invalid]="productId.invalid && productId.touched">
               <!--<option selected disabled value="0">Choose...</option>-->
