@@ -126,8 +126,6 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.CallId).HasColumnName("CallID");
 
-                entity.Property(e => e.Address).HasMaxLength(512);
-
                 entity.Property(e => e.CityId).HasColumnName("CityID");
 
                 entity.Property(e => e.CreatedDate)
@@ -136,13 +134,9 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.FirmName).HasMaxLength(128);
 
-                entity.Property(e => e.FirstName)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.FirstName).IsRequired();
 
                 entity.Property(e => e.LastChangedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.MobileNumber)
                     .IsRequired()
