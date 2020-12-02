@@ -13,6 +13,7 @@ namespace OmniCRM_Web.ViewModels
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string FirmName { get; set; }
+        public string EmailId { get; set; }
         public string Address { get; set; }
         public string CityName { get; set; }
         public string StateName { get; set; }

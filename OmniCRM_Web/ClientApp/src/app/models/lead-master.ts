@@ -10,6 +10,7 @@ export class LeadMaster {
   lastName: string;
   mobileNumber: string;
   firmName: string;
+  emailId: string;
   address: string;
   stateName: string;
   cityName: string;

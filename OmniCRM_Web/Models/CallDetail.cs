@@ -19,6 +19,7 @@ namespace OmniCRM_Web.Models
         public string LastName { get; set; }
         public string MobileNumber { get; set; }
         public string FirmName { get; set; }
+        public string EmailId { get; set; }
         public int? ProductId { get; set; }
         public string Address { get; set; }
         public int? StateId { get; set; }

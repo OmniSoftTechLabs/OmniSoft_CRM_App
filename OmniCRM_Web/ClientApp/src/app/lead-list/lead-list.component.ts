@@ -202,7 +202,7 @@ export class LeadListComponent implements OnInit {
     //});
     let ExportleadArray: any[];
     ExportleadArray = leadArray.map(obj => ({
-      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
+      'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Email Id': obj.emailId, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
       'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"), 'Status': obj.outComeText, 'NextCall DateTime': this.datePipe.transform(obj.nextCallDate, "dd-MM-yyyy HH:mm a"),
       'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Last Changed Date': this.datePipe.transform(obj.lastChangedDate, "dd-MM-yyyy"), 'Remarks': obj.remark
     }));

@@ -46,7 +46,7 @@
 
           <!------------------------------------->
 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown" *ngIf="isSuperUser || isAdminRole">
             <a id="dropdownSubMenuReport" href="#" data-toggle="dropdown" aria-haspopup="true" class="nav-link underlineHover active">Reports</a>
             <ul aria-labelledby="dropdownSubMenuReport" class="dropdown-menu">
               <!-- Level two dropdown-->

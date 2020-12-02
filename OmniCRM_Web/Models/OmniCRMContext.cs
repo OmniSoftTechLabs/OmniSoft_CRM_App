@@ -132,6 +132,10 @@ namespace OmniCRM_Web.Models
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.EmailId)
+                    .HasColumnName("EmailID")
+                    .HasMaxLength(256);
+
                 entity.Property(e => e.FirmName).HasMaxLength(128);
 
                 entity.Property(e => e.FirstName).IsRequired();
