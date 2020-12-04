@@ -96,7 +96,7 @@ namespace OmniCRM_Web.Controllers
                     listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.OutComeId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get all Lead by created user");
-                return await Task.FromResult(listCallDetail);
+                return await Task.FromResult(listCallDetail.Skip(filterOption.ToSkip).Take(filterOption.ToTake).ToList());
 
             }
             catch (Exception ex)

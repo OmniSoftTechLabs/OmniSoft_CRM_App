@@ -37,6 +37,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
 import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-summary.component';
 import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager-summary.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
+    InfiniteScrollModule,
     NgSelectModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot({

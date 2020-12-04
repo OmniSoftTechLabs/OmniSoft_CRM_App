@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild, ElementRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { forkJoin, merge, observable, Observable } from 'rxjs';
 import { LeadMaster, OutcomeMaster, CallTransactionDetail } from '../models/lead-master';
 import { FormControl, Validators } from '@angular/forms';
 import { NgbdSortableHeader, SortEvent } from '../services/sortable.directive';
@@ -14,7 +14,7 @@ import { DatePipe } from '@angular/common';
 import { RmanagerMaster } from '../models/rmanager-master';
 import { NgbDateStruct, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FilterOptions } from '../models/filter-options';
-import { delay } from 'rxjs/operators';
+import { concat, delay } from 'rxjs/operators';
 import { LeadCreateComponent } from '../lead-create/lead-create.component';
 
 @Component({
@@ -91,6 +91,8 @@ export class LeadListComponent implements OnInit {
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.filterOption.toSkip = 0;
+    this.filterOption.toTake = 30;
     this.service.TABLE = [];
     this.checkedList = [];
     this.isLoading = true;
@@ -289,4 +291,25 @@ export class LeadListComponent implements OnInit {
     });
   }
 
+  //nextLeads: LeadMaster[] = [];
+  onScroll() {
+    this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
+    this.isLoading = true;
+    this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
+      (leads) => {
+        this.service.xType = new LeadMaster();
+        this.service.TABLE = this.service.TABLE.concat(leads);
+        this.leadList = this.service.dataList$;
+        this.service.searchTerm = '';
+
+        //this.leadList.subscribe(p => p.forEach((obj) => { this.showHideDismissButton(obj, obj.isChecked) }));
+
+
+        this.total$ = this.service.total$;
+        this.isLoading = false;
+      },
+      error => { console.error(error); this.isLoading = false; }
+    );
+
+  }
 }

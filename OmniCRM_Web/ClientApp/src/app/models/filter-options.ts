@@ -5,4 +5,6 @@ export class FilterOptions {
   dateFilterBy: number;
   fromDate: Date;
   todate: Date;
+  toSkip: number = 0;
+  toTake: number = 30;
 }

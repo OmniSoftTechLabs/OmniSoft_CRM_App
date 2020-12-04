@@ -13,5 +13,7 @@ namespace OmniCRM_Web.GenericClasses
         public int DateFilterBy { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime Todate { get; set; }
+        public int ToSkip { get; set; }
+        public int ToTake { get; set; }
     }
 }

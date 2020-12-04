@@ -70,7 +70,7 @@ export class DataTableService {
   public xType: UserMaster | LeadMaster;
   private _state: State = {
     page: 1,
-    pageSize: 100,
+    pageSize: 1000,
     searchTerm: '',
     sortColumn: '',
     sortDirection: ''
