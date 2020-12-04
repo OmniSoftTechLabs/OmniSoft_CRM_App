@@ -163,7 +163,7 @@ namespace OmniCRM_Web.Controllers
                     listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.AppoinStatusId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
-                return await Task.FromResult(listCallDetail);
+                return await Task.FromResult(listCallDetail.Skip(filterOption.ToSkip).Take(filterOption.ToTake).ToList());
 
             }
             catch (Exception ex)

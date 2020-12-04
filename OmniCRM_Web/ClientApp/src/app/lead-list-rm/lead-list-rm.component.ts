@@ -101,6 +101,8 @@ export class LeadListRmComponent implements OnInit {
     this.filterOption.dateFilterBy = this.filterDateById;
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.filterOption.toSkip = 0;
+    this.filterOption.toTake = 30;
     this.service.TABLE = [];
     this.isLoading = true;
     await this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
@@ -298,5 +300,27 @@ export class LeadListRmComponent implements OnInit {
       next: data => (console.log('Success!', data), this.fillLeadListByRM()),
       error: error => (console.error('Error!', error), this.fillLeadListByRM())
     });
+  }
+
+  onScroll() {
+    this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
+    this.isLoading = true;
+    this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
+      (leads) => {
+        this.service.xType = new LeadMaster();
+        leads.forEach((obj) => {
+          obj.isOverDue = obj.appointmentDateTime != null && new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false;
+          obj.isChecked = false;
+        });
+        this.service.TABLE = this.service.TABLE.concat(leads);
+        this.leadList = this.service.dataList$;
+        this.service.searchTerm = '';
+        //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
+        this.total$ = this.service.total$;
+        this.isLoading = false;
+      },
+      error => { console.error(error); this.isLoading = false; }
+    );
+
   }
 }

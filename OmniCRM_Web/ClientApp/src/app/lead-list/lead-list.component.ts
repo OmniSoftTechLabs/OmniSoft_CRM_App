@@ -298,13 +298,10 @@ export class LeadListComponent implements OnInit {
     this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
       (leads) => {
         this.service.xType = new LeadMaster();
+        leads.forEach((obj) => { obj.isChecked = false; });
         this.service.TABLE = this.service.TABLE.concat(leads);
         this.leadList = this.service.dataList$;
         this.service.searchTerm = '';
-
-        //this.leadList.subscribe(p => p.forEach((obj) => { this.showHideDismissButton(obj, obj.isChecked) }));
-
-
         this.total$ = this.service.total$;
         this.isLoading = false;
       },
