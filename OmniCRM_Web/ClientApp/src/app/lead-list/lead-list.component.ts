@@ -17,6 +17,8 @@ import { FilterOptions } from '../models/filter-options';
 import { concat, delay } from 'rxjs/operators';
 import { LeadCreateComponent } from '../lead-create/lead-create.component';
 
+declare var $: any;
+
 @Component({
   selector: 'app-lead-list',
   templateUrl: './lead-list.component.html',
@@ -28,6 +30,7 @@ export class LeadListComponent implements OnInit {
   outcomeList: OutcomeMaster[] = [];
   filterUserList: RmanagerMaster[] = [];
   leadList: Observable<LeadMaster[]>;
+  leadListArray: LeadMaster[];
   callHistory: CallTransactionDetail[] = [];
   total$: Observable<number>;
   filter = new FormControl('');
@@ -57,6 +60,7 @@ export class LeadListComponent implements OnInit {
 
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
+    this.service.dataList$.subscribe(leads => this.leadListArray = leads);
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser.roleId == roles["Admin"])
       this.isAdmin = true;
@@ -195,15 +199,15 @@ export class LeadListComponent implements OnInit {
   }
 
   exportAsXLSX(): void {
-    let leadArray: LeadMaster[];
-    this.leadList.subscribe(data => leadArray = data);
+    //let leadArray: LeadMaster[];
+    //this.leadList.subscribe(data => leadArray = data);
     //leadArray = leadArray.filter(function (props) {
     //  delete props.callId;
     //  delete props.followupHistory;
     //  return true;
     //});
     let ExportleadArray: any[];
-    ExportleadArray = leadArray.map(obj => ({
+    ExportleadArray = this.leadListArray.map(obj => ({
       'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Email Id': obj.emailId, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
       'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"), 'Status': obj.outComeText, 'NextCall DateTime': this.datePipe.transform(obj.nextCallDate, "dd-MM-yyyy HH:mm a"),
       'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"), 'Last Changed Date': this.datePipe.transform(obj.lastChangedDate, "dd-MM-yyyy"), 'Remarks': obj.remark
@@ -227,16 +231,26 @@ export class LeadListComponent implements OnInit {
 
   onSelectAllLeads(isChecked: boolean) {
     this.isCheckedBox = isChecked;
-    this.leadList.subscribe(p => p.forEach((obj) => {
-      obj.isChecked = this.isCheckedBox;
-    }));
+    this.leadListArray.forEach((obj) => { obj.isChecked = this.isCheckedBox; });
+    //this.leadList.subscribe(p => p.forEach((obj) => {
+    //  obj.isChecked = this.isCheckedBox;
+    //}));
+
     if (this.isCheckedBox) {
-      this.leadList.subscribe(p => p.forEach((obj) => {
-        this.checkedList.push(obj);
-      }));
+      this.leadListArray.forEach((obj) => { this.checkedList.push(obj); });
+      //for (var i = 1; i <= this.leadListArray.length; i++) {
+      //  $('#customCheck' + i).prop('checked', true);
+      //}
+      //this.leadList.subscribe(p => p.forEach((obj) => {
+      //  this.checkedList.push(obj);
+      //}));
     }
-    else
+    else {
       this.checkedList = [];
+      //for (var i = 1; i <= this.leadListArray.length; i++) {
+      //  $('#customCheck' + i).prop('checked', false);
+      //}
+    }
   }
 
   showHideDismissButton(lead: LeadMaster, event: any) {
@@ -291,7 +305,6 @@ export class LeadListComponent implements OnInit {
     });
   }
 
-  //nextLeads: LeadMaster[] = [];
   onScroll() {
     this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
     this.isLoading = true;

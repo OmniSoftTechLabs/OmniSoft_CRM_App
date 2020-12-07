@@ -28,6 +28,7 @@ export class LeadListRmComponent implements OnInit {
   appoinStatusList: AppoinmentStatusMaster[] = [];
   filterUserList: RmanagerMaster[] = [];
   leadList: Observable<LeadMaster[]>;
+  leadListArray: LeadMaster[];
   followupHistory: FollowupHistory[] = [];
   total$: Observable<number>;
   filter = new FormControl('');
@@ -64,6 +65,7 @@ export class LeadListRmComponent implements OnInit {
 
   constructor(public service: DataTableService, private leadRepo: LeadRepositoryService, private router: Router, private auth: AuthenticationService,
     private excelService: ExcelExportService, private datePipe: DatePipe, private modalService: NgbModal, private modalConfig: NgbModalConfig) {
+    this.service.dataList$.subscribe(leads => this.leadListArray = leads);
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser.roleId == roles["Admin"])
       this.isAdmin = true;
@@ -206,10 +208,10 @@ export class LeadListRmComponent implements OnInit {
   }
 
   exportAsXLSX(): void {
-    let leadArray: LeadMaster[];
-    this.leadList.subscribe(data => leadArray = data);
+    //let leadArray: LeadMaster[];
+    //this.leadList.subscribe(data => leadArray = data);
     let ExportleadArray: any[];
-    ExportleadArray = leadArray.map(obj => ({
+    ExportleadArray = this.leadListArray.map(obj => ({
       'First Name': obj.firstName, 'Last Name': obj.lastName, 'Mobile Number': obj.mobileNumber, 'Address': obj.address, 'City': obj.cityName, 'State': obj.stateName, 'Created By': obj.createdByName,
       'Created Date': this.datePipe.transform(obj.createdDate, "dd-MM-yyyy"), 'Status': obj.outComeText, 'Allocated To': obj.allocatedToName, 'Appoinment DateTime': this.datePipe.transform(obj.appointmentDateTime, "dd-MM-yyyy HH:mm a"),
       'Last Changed Date': this.datePipe.transform(obj.lastChangedDate, "dd-MM-yyyy"), 'Remarks': obj.remark
@@ -219,13 +221,15 @@ export class LeadListRmComponent implements OnInit {
 
   onSelectAllLeads(isChecked: boolean) {
     this.isCheckedBox = isChecked;
-    this.leadList.subscribe(p => p.forEach((obj) => {
-      obj.isChecked = this.isCheckedBox;
-    }));
+    this.leadListArray.forEach((obj) => { obj.isChecked = this.isCheckedBox; });
+    //this.leadList.subscribe(p => p.forEach((obj) => {
+    //  obj.isChecked = this.isCheckedBox;
+    //}));
     if (this.isCheckedBox) {
-      this.leadList.subscribe(p => p.forEach((obj) => {
-        this.checkedList.push(obj);
-      }));
+      this.leadListArray.forEach((obj) => { this.checkedList.push(obj); });
+      //this.leadList.subscribe(p => p.forEach((obj) => {
+      //  this.checkedList.push(obj);
+      //}));
     }
     else
       this.checkedList = [];
