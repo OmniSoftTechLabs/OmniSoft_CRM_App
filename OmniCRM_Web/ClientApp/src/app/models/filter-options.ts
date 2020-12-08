@@ -6,5 +6,5 @@ export class FilterOptions {
   fromDate: Date;
   todate: Date;
   toSkip: number = 0;
-  toTake: number = 30;
+  toTake: number = 200;
 }

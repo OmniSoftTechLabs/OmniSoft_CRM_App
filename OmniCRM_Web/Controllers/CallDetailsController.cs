@@ -50,53 +50,113 @@ namespace OmniCRM_Web.Controllers
                 //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
 
-                var listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => isAdmin == false ? p.CreatedBy == id : true).ToListAsync()
-                                      select lead).Select(p => new CallDetailViewModel()
-                                      {
-                                          CallId = p.CallId,
-                                          CreatedDate = p.CreatedDate,
-                                          FirstName = p.FirstName,
-                                          LastName = p.LastName,
-                                          MobileNumber = p.MobileNumber,
-                                          FirmName = p.FirmName,
-                                          EmailId = p.EmailId,
-                                          Address = p.Address,
-                                          StateName = p.StateId != null ? _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName : "",
-                                          CityName = p.CityId != null ? _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName : "",
-                                          LastChangedDate = p.LastChangedDate,
-                                          OutComeId = p.OutComeId,
-                                          NextCallDate = p.NextCallDate,
-                                          Remark = p.Remark,
-                                          CreatedById = p.CreatedBy,
-                                          CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
-                                          OutComeText = p.OutCome.OutCome,
-                                          AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
-                                          AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
-                                          AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
-                                          IsDeleted = p.IsDeleted,
-                                      }).ToList();
-
-                listCallDetail = listCallDetail.Where(p => p.IsDeleted != true).ToList();
+                var leadlist = from lead in _context.CallDetail.Include(p => p.OutCome).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true)
+                               join appoint in _context.AppointmentDetail on lead.CallId equals appoint.CallId into ledapp
+                               from appoint in ledapp.DefaultIfEmpty()
+                               join state in _context.StateMaster on lead.StateId equals state.StateId into ledState
+                               from state in ledState.DefaultIfEmpty()
+                               join city in _context.CityMaster on lead.CityId equals city.CityId into ledCity
+                               from city in ledCity.DefaultIfEmpty()
+                               join createdby in _context.UserMaster on lead.CreatedBy equals createdby.UserId into ledCreatedby
+                               from createdby in ledCreatedby.DefaultIfEmpty()
+                               join allocateto in _context.UserMaster on appoint.RelationshipManagerId equals allocateto.UserId into ledAllocateTo
+                               from allocateto in ledAllocateTo.DefaultIfEmpty()
+                               select new { LeadDetail = lead, AppontDetail = appoint, StateMast = state, CityMast = city, UserMast = createdby, AllocateUserMst = allocateto };
 
                 if (filterOption.DateFilterBy == 1)
-                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date
-                        || (p.OutComeId == (int)CallOutcome.CallLater && Convert.ToDateTime(p.NextCallDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.NextCallDate).Date <= filterOption.Todate.Date)).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.CreatedDate.Date >= filterOption.FromDate.Date && p.LeadDetail.CreatedDate.Date <= filterOption.Todate.Date
+                        || (p.LeadDetail.OutComeId == (int)CallOutcome.CallLater && p.LeadDetail.NextCallDate != null && p.LeadDetail.NextCallDate.Value.Date >= filterOption.FromDate.Date && p.LeadDetail.NextCallDate.Value.Date <= filterOption.Todate.Date));
                 else if (filterOption.DateFilterBy == 2)
-                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                    leadlist = leadlist.Where(p => p.AppontDetail.AppointmentDateTime != null && p.AppontDetail.AppointmentDateTime.Value.Date >= filterOption.FromDate.Date && p.AppontDetail.AppointmentDateTime.Value.Date <= filterOption.Todate.Date);
+
                 else if (filterOption.DateFilterBy == 3)
-                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.LastChangedDate.Date >= filterOption.FromDate.Date && p.LeadDetail.LastChangedDate.Date <= filterOption.Todate.Date);
 
                 if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
-                    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+                    leadlist = leadlist.Where(p => p.AppontDetail.RelationshipManagerId.ToString() == filterOption.AllocatedTo);
 
                 if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
-                    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.CreatedBy.ToString() == filterOption.CreatedBy);
 
                 if (filterOption.Status.Count > 0)
-                    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.OutComeId)).ToList();
+                    leadlist = leadlist.Where(p => filterOption.Status.Any(r => r == p.LeadDetail.OutComeId));
+
+                leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
+
+
+                var listCallDetail = leadlist.Select(p => new CallDetailViewModel()
+                {
+                    CallId = p.LeadDetail.CallId,
+                    CreatedDate = p.LeadDetail.CreatedDate,
+                    FirstName = p.LeadDetail.FirstName,
+                    LastName = p.LeadDetail.LastName,
+                    MobileNumber = p.LeadDetail.MobileNumber,
+                    FirmName = p.LeadDetail.FirmName,
+                    EmailId = p.LeadDetail.EmailId,
+                    Address = p.LeadDetail.Address,
+                    StateName = p.StateMast.StateName,
+                    CityName = p.CityMast.CityName,
+                    LastChangedDate = p.LeadDetail.LastChangedDate,
+                    OutComeId = p.LeadDetail.OutComeId,
+                    NextCallDate = p.LeadDetail.NextCallDate,
+                    Remark = p.LeadDetail.Remark,
+                    CreatedById = p.LeadDetail.CreatedBy,
+                    CreatedByName = p.UserMast.FirstName,
+                    OutComeText = p.LeadDetail.OutCome.OutCome,
+                    AllocatedToId = p.AppontDetail != null ? p.AppontDetail.RelationshipManagerId : Guid.Empty,
+                    AllocatedToName = p.AllocateUserMst.FirstName,
+                    AppointmentDateTime = p.AppontDetail != null ? p.AppontDetail.AppointmentDateTime : (DateTime?)null,
+                    IsDeleted = p.LeadDetail.IsDeleted,
+                });
+
+
+                //var listCallDetail = (from lead in await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true).ToListAsync()
+                //                      select lead).Select(p => new CallDetailViewModel()
+                //                      {
+                //                          CallId = p.CallId,
+                //                          CreatedDate = p.CreatedDate,
+                //                          FirstName = p.FirstName,
+                //                          LastName = p.LastName,
+                //                          MobileNumber = p.MobileNumber,
+                //                          FirmName = p.FirmName,
+                //                          EmailId = p.EmailId,
+                //                          Address = p.Address,
+                //                          StateName = p.StateId != null ? _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName : "",
+                //                          CityName = p.CityId != null ? _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName : "",
+                //                          LastChangedDate = p.LastChangedDate,
+                //                          OutComeId = p.OutComeId,
+                //                          NextCallDate = p.NextCallDate,
+                //                          Remark = p.Remark,
+                //                          CreatedById = p.CreatedBy,
+                //                          CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                //                          OutComeText = p.OutCome.OutCome,
+                //                          AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
+                //                          AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+                //                          AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
+                //                          IsDeleted = p.IsDeleted,
+                //                      }).ToList();
+
+                //listCallDetail = listCallDetail.Where(p => p.IsDeleted != true).ToList();
+
+                //if (filterOption.DateFilterBy == 1)
+                //    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date
+                //        || (p.OutComeId == (int)CallOutcome.CallLater && Convert.ToDateTime(p.NextCallDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.NextCallDate).Date <= filterOption.Todate.Date)).ToList();
+                //else if (filterOption.DateFilterBy == 2)
+                //    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                //else if (filterOption.DateFilterBy == 3)
+                //    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
+
+                //if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
+                //    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+
+                //if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
+                //    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
+
+                //if (filterOption.Status.Count > 0)
+                //    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.OutComeId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetail: " + id + "-get all Lead by created user");
-                return await Task.FromResult(listCallDetail.Skip(filterOption.ToSkip).Take(filterOption.ToTake).ToList());
+                return await Task.FromResult(listCallDetail.ToList());
 
             }
             catch (Exception ex)
@@ -114,56 +174,113 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
 
-                List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
+                //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
 
-                var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
+                //var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
 
                 //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
 
-                listCallDetail = (from lead in callDetail.Where(p => p.AppointmentDetail.Count > 0 && (isAdmin == false ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id : p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId != null))
-                                  select lead).Select(p => new CallDetailViewModel()
-                                  {
-                                      CallId = p.CallId,
-                                      CreatedDate = p.CreatedDate,
-                                      FirstName = p.FirstName,
-                                      LastName = p.LastName,
-                                      MobileNumber = p.MobileNumber,
-                                      FirmName = p.FirmName,
-                                      EmailId = p.EmailId,
-                                      Address = p.Address,
-                                      StateName = p.StateId != null ? _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName : "",
-                                      CityName = p.CityId != null ? _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName : "",
-                                      LastChangedDate = p.LastChangedDate,
-                                      OutComeId = p.OutComeId,
-                                      Remark = p.Remark,
-                                      CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
-                                      CreatedById = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).UserId,
-                                      AppoinStatusId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatusId : (int?)null,
-                                      OutComeText = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatus.Status : "",
-                                      AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
-                                      AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
-                                      AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
-                                  }).ToList();
+                var leadlist = from lead in _context.CallDetail.Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true)
+                               join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus) on lead.CallId equals appoint.CallId
+                               where isAdmin == false ? appoint.RelationshipManagerId == id : true
+                               join state in _context.StateMaster on lead.StateId equals state.StateId into ledState
+                               from state in ledState.DefaultIfEmpty()
+                               join city in _context.CityMaster on lead.CityId equals city.CityId into ledCity
+                               from city in ledCity.DefaultIfEmpty()
+                               join createdby in _context.UserMaster on lead.CreatedBy equals createdby.UserId into ledCreatedby
+                               from createdby in ledCreatedby.DefaultIfEmpty()
+                               join allocateto in _context.UserMaster on appoint.RelationshipManagerId equals allocateto.UserId into ledAllocateTo
+                               from allocateto in ledAllocateTo.DefaultIfEmpty()
+                               select new { LeadDetail = lead, AppontDetail = appoint, StateMast = state, CityMast = city, UserMast = createdby, AllocateUserMst = allocateto };
 
                 if (filterOption.DateFilterBy == 1)
-                    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.CreatedDate.Date >= filterOption.FromDate.Date && p.LeadDetail.CreatedDate.Date <= filterOption.Todate.Date);
                 else if (filterOption.DateFilterBy == 2)
-                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                    leadlist = leadlist.Where(p => p.AppontDetail.AppointmentDateTime.Value.Date >= filterOption.FromDate.Date && p.AppontDetail.AppointmentDateTime.Value.Date <= filterOption.Todate.Date);
                 else if (filterOption.DateFilterBy == 3)
-                    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.LastChangedDate.Date >= filterOption.FromDate.Date && p.LeadDetail.LastChangedDate.Date <= filterOption.Todate.Date);
 
                 if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
-                    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+                    leadlist = leadlist.Where(p => p.AppontDetail.RelationshipManagerId.ToString() == filterOption.AllocatedTo);
 
                 if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
-                    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
+                    leadlist = leadlist.Where(p => p.LeadDetail.CreatedBy.ToString() == filterOption.CreatedBy);
 
                 if (filterOption.Status.Count > 0)
-                    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.AppoinStatusId)).ToList();
+                    leadlist = leadlist.Where(p => filterOption.Status.Any(r => r == p.AppontDetail.AppoinStatusId));
+
+                leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
+
+                var listCallDetail = leadlist.Select(p => new CallDetailViewModel()
+                {
+                    CallId = p.LeadDetail.CallId,
+                    CreatedDate = p.LeadDetail.CreatedDate,
+                    FirstName = p.LeadDetail.FirstName,
+                    LastName = p.LeadDetail.LastName,
+                    MobileNumber = p.LeadDetail.MobileNumber,
+                    FirmName = p.LeadDetail.FirmName,
+                    EmailId = p.LeadDetail.EmailId,
+                    Address = p.LeadDetail.Address,
+                    StateName = p.StateMast.StateName,
+                    CityName = p.CityMast.CityName,
+                    LastChangedDate = p.LeadDetail.LastChangedDate,
+                    OutComeId = p.LeadDetail.OutComeId,
+                    Remark = p.LeadDetail.Remark,
+                    CreatedByName = p.UserMast.FirstName,
+                    CreatedById = p.LeadDetail.CreatedBy,
+                    AppoinStatusId = p.AppontDetail.AppoinStatusId,
+                    OutComeText = p.AppontDetail.AppoinStatus.Status,
+                    AllocatedToId = p.AppontDetail.RelationshipManagerId,
+                    AllocatedToName = p.AllocateUserMst.FirstName,
+                    AppointmentDateTime = p.AppontDetail.AppointmentDateTime,
+                });
+
+
+
+                //listCallDetail = (from lead in callDetail.Where(p => p.AppointmentDetail.Count > 0 && (isAdmin == false ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id : p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId != null))
+                //                  select lead).Select(p => new CallDetailViewModel()
+                //                  {
+                //                      CallId = p.CallId,
+                //                      CreatedDate = p.CreatedDate,
+                //                      FirstName = p.FirstName,
+                //                      LastName = p.LastName,
+                //                      MobileNumber = p.MobileNumber,
+                //                      FirmName = p.FirmName,
+                //                      EmailId = p.EmailId,
+                //                      Address = p.Address,
+                //                      StateName = p.StateId != null ? _context.StateMaster.FirstOrDefault(r => r.StateId == p.StateId).StateName : "",
+                //                      CityName = p.CityId != null ? _context.CityMaster.FirstOrDefault(r => r.CityId == p.CityId).CityName : "",
+                //                      LastChangedDate = p.LastChangedDate,
+                //                      OutComeId = p.OutComeId,
+                //                      Remark = p.Remark,
+                //                      CreatedByName = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).FirstName,
+                //                      CreatedById = _context.UserMaster.FirstOrDefault(r => r.UserId == p.CreatedBy).UserId,
+                //                      AppoinStatusId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatusId : (int?)null,
+                //                      OutComeText = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppoinStatus.Status : "",
+                //                      AllocatedToId = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId : Guid.Empty,
+                //                      AllocatedToName = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? _context.UserMaster.AsEnumerable().FirstOrDefault(r => r.UserId == p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId).FirstName : "",
+                //                      AppointmentDateTime = p.AppointmentDetail != null && p.AppointmentDetail.Count > 0 ? p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().AppointmentDateTime : (DateTime?)null,
+                //                  }).ToList();
+
+                //if (filterOption.DateFilterBy == 1)
+                //    listCallDetail = listCallDetail.Where(p => p.CreatedDate.Date >= filterOption.FromDate.Date && p.CreatedDate.Date <= filterOption.Todate.Date).ToList();
+                //else if (filterOption.DateFilterBy == 2)
+                //    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.AppointmentDateTime).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.AppointmentDateTime).Date <= filterOption.Todate.Date).ToList();
+                //else if (filterOption.DateFilterBy == 3)
+                //    listCallDetail = listCallDetail.Where(p => Convert.ToDateTime(p.LastChangedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(p.LastChangedDate).Date <= filterOption.Todate.Date).ToList();
+
+                //if (filterOption.AllocatedTo != "0" && filterOption.AllocatedTo != null)
+                //    listCallDetail = listCallDetail.Where(p => p.AllocatedToId.ToString() == filterOption.AllocatedTo).ToList();
+
+                //if (filterOption.CreatedBy != "0" && filterOption.CreatedBy != null)
+                //    listCallDetail = listCallDetail.Where(p => p.CreatedById.ToString() == filterOption.CreatedBy).ToList();
+
+                //if (filterOption.Status.Count > 0)
+                //    listCallDetail = listCallDetail.Where(p => filterOption.Status.Any(r => r == p.AppoinStatusId)).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCallDetailByRM: " + id + "-get all Lead by RM");
-                return await Task.FromResult(listCallDetail.Skip(filterOption.ToSkip).Take(filterOption.ToTake).ToList());
+                return await Task.FromResult(listCallDetail.ToList());
 
             }
             catch (Exception ex)

@@ -104,7 +104,7 @@ export class LeadListRmComponent implements OnInit {
     this.filterOption.fromDate = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
     this.filterOption.todate = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
     this.filterOption.toSkip = 0;
-    this.filterOption.toTake = 30;
+    this.filterOption.toTake = 200;
     this.service.TABLE = [];
     this.isLoading = true;
     await this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
