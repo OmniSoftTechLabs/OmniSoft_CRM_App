@@ -162,14 +162,15 @@
         <!--<ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
         </ngb-pagination>-->
         <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
-        <div>
+        <strong>Total Leads : {{total$ | async}}</strong>
+        <!--<div>
           <strong>Total Leads : {{total$ | async}}</strong>
           <span class="spinner-border text-primary ml-3" style="margin-bottom:-5px" role="status" aria-hidden="true" *ngIf="isLoading || (service.loading$ | async)"></span>
-        </div>
+        </div>-->
         <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+          <option [ngValue]="100">100 items per page</option>
+          <option [ngValue]="200">200 items per page</option>
           <option [ngValue]="500">500 items per page</option>
-          <option [ngValue]="1000">1000 items per page</option>
-          <option [ngValue]="2000">2000 items per page</option>
         </select>
       </div>
 

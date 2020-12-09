@@ -50,17 +50,20 @@ namespace OmniCRM_Web.Controllers
                 //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
 
-                var leadlist = from lead in _context.CallDetail.Include(p => p.OutCome).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true)
-                               join appoint in _context.AppointmentDetail on lead.CallId equals appoint.CallId into ledapp
-                               from appoint in ledapp.DefaultIfEmpty()
+                var MaxAppointData = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault()).ToList();
+
+                var leadlist = from lead in _context.CallDetail.Include(p => p.OutCome).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true).ToList()
+                               join appoint in MaxAppointData on lead.CallId equals appoint.CallId into ledapp
+                               from appoint in ledapp.DefaultIfEmpty(new AppointmentDetail())
+                                   //where MaxAppointIDs.Contains(appoint.AppintmentId)
                                join state in _context.StateMaster on lead.StateId equals state.StateId into ledState
-                               from state in ledState.DefaultIfEmpty()
+                               from state in ledState.DefaultIfEmpty(new StateMaster())
                                join city in _context.CityMaster on lead.CityId equals city.CityId into ledCity
-                               from city in ledCity.DefaultIfEmpty()
+                               from city in ledCity.DefaultIfEmpty(new CityMaster())
                                join createdby in _context.UserMaster on lead.CreatedBy equals createdby.UserId into ledCreatedby
-                               from createdby in ledCreatedby.DefaultIfEmpty()
+                               from createdby in ledCreatedby.DefaultIfEmpty(new UserMaster())
                                join allocateto in _context.UserMaster on appoint.RelationshipManagerId equals allocateto.UserId into ledAllocateTo
-                               from allocateto in ledAllocateTo.DefaultIfEmpty()
+                               from allocateto in ledAllocateTo.DefaultIfEmpty(new UserMaster())
                                select new { LeadDetail = lead, AppontDetail = appoint, StateMast = state, CityMast = city, UserMast = createdby, AllocateUserMst = allocateto };
 
                 if (filterOption.DateFilterBy == 1)
@@ -81,7 +84,7 @@ namespace OmniCRM_Web.Controllers
                 if (filterOption.Status.Count > 0)
                     leadlist = leadlist.Where(p => filterOption.Status.Any(r => r == p.LeadDetail.OutComeId));
 
-                leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
+                //leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
 
 
                 var listCallDetail = leadlist.Select(p => new CallDetailViewModel()
@@ -104,7 +107,7 @@ namespace OmniCRM_Web.Controllers
                     CreatedByName = p.UserMast.FirstName,
                     OutComeText = p.LeadDetail.OutCome.OutCome,
                     AllocatedToId = p.AppontDetail != null ? p.AppontDetail.RelationshipManagerId : Guid.Empty,
-                    AllocatedToName = p.AllocateUserMst.FirstName,
+                    AllocatedToName = p.AllocateUserMst != null ? p.AllocateUserMst.FirstName : "",
                     AppointmentDateTime = p.AppontDetail != null ? p.AppontDetail.AppointmentDateTime : (DateTime?)null,
                     IsDeleted = p.LeadDetail.IsDeleted,
                 });
@@ -181,9 +184,10 @@ namespace OmniCRM_Web.Controllers
 
                 //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
 
-                var leadlist = from lead in _context.CallDetail.Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true)
-                               join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus) on lead.CallId equals appoint.CallId
-                               where isAdmin == false ? appoint.RelationshipManagerId == id : true
+                var MaxAppointIDs = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault().AppintmentId);
+
+                var leadlist = from lead in _context.CallDetail.Where(p => p.IsDeleted != true)
+                               join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus).Where(p => isAdmin == false ? p.RelationshipManagerId == id : true) on lead.CallId equals appoint.CallId
                                join state in _context.StateMaster on lead.StateId equals state.StateId into ledState
                                from state in ledState.DefaultIfEmpty()
                                join city in _context.CityMaster on lead.CityId equals city.CityId into ledCity
@@ -192,6 +196,7 @@ namespace OmniCRM_Web.Controllers
                                from createdby in ledCreatedby.DefaultIfEmpty()
                                join allocateto in _context.UserMaster on appoint.RelationshipManagerId equals allocateto.UserId into ledAllocateTo
                                from allocateto in ledAllocateTo.DefaultIfEmpty()
+                               where MaxAppointIDs.Contains(appoint.AppintmentId)
                                select new { LeadDetail = lead, AppontDetail = appoint, StateMast = state, CityMast = city, UserMast = createdby, AllocateUserMst = allocateto };
 
                 if (filterOption.DateFilterBy == 1)
@@ -210,7 +215,7 @@ namespace OmniCRM_Web.Controllers
                 if (filterOption.Status.Count > 0)
                     leadlist = leadlist.Where(p => filterOption.Status.Any(r => r == p.AppontDetail.AppoinStatusId));
 
-                leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
+                //leadlist = leadlist.Skip(filterOption.ToSkip).Take(filterOption.ToTake);
 
                 var listCallDetail = leadlist.Select(p => new CallDetailViewModel()
                 {
@@ -883,8 +888,6 @@ namespace OmniCRM_Web.Controllers
 
                     }).ToList();
 
-
-
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerDashboard: " + id + "-get telecaller dashboard");
                 return objTeleDash;
             }
@@ -896,52 +899,93 @@ namespace OmniCRM_Web.Controllers
 
         }
 
-
         [HttpGet("{id}")]
         [Route("GetRManagerDashboard/{id}")]
         public async Task<ActionResult<RManagerDashboard>> GetRManagerDashboard(Guid id)
         {
             try
             {
-                var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).Include(p => p.FollowupHistory).Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id).ToListAsync();
+                //var callDetail = await _context.CallDetail.Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).Include(p => p.FollowupHistory).Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).LastOrDefault().RelationshipManagerId == id).ToListAsync();
                 int currentYear = DateTime.Now.Year;
                 int currentMonth = DateTime.Now.Month;
                 int lastMonth = DateTime.Now.AddMonths(-1).Month;
+
+                var MaxAppointIDs = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault().AppintmentId);
+                var LastFollowup = _context.FollowupHistory.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.FollowupId).LastOrDefault()).ToList();
+
+                var callDetail = from lead in _context.CallDetail.Where(p => p.IsDeleted != true).ToList()
+                                 join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus).Where(p => p.RelationshipManagerId == id) on lead.CallId equals appoint.CallId
+                                 join followup in LastFollowup on lead.CallId equals followup.CallId into leadFollow
+                                 from followup in leadFollow.DefaultIfEmpty(new FollowupHistory())
+                                 where MaxAppointIDs.Contains(appoint.AppintmentId)
+                                 select new { LeadDetail = lead, AppontDetail = appoint, FollowupHistory = followup };
 
 
                 RManagerDashboard objManagerDash = new RManagerDashboard()
                 {
                     TotalAllocatedLeads = callDetail.Count(),
-                    SoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
-                    HoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
-                    DroppedLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                    SoldLeads = callDetail.Count(r => r.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    HoldLeads = callDetail.Count(r => r.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    DroppedLeads = callDetail.Count(r => r.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
 
-                    MonthlySold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
-                    MonthlyHold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
-                    MonthlyDropped = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                    MonthlySold = callDetail.Count(p => p.FollowupHistory.CreatedDate.Month == currentMonth && p.FollowupHistory.CreatedDate.Year == currentYear && p.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                    MonthlyHold = callDetail.Count(p => p.FollowupHistory.CreatedDate.Month == currentMonth && p.FollowupHistory.CreatedDate.Year == currentYear && p.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                    MonthlyDropped = callDetail.Count(p => p.FollowupHistory.CreatedDate.Month == currentMonth && p.FollowupHistory.CreatedDate.Year == currentYear && p.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
                 };
 
 
-                objManagerDash.CollChartData = callDetail.Where(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear)
-                    .GroupBy(p => new { p.FollowupHistory.LastOrDefault().CreatedDate.Month }).Select(p => new ChartDataMnager()
+                objManagerDash.CollChartData = callDetail.Where(p => p.FollowupHistory.CreatedDate.Year == currentYear)
+                    .GroupBy(p => new { p.FollowupHistory.CreatedDate.Month }).Select(p => new ChartDataMnager()
                     {
                         MonthNumber = p.Key.Month,
                         Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(p.Key.Month).Substring(0, 3),
-                        Sold = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
-                        Dropped = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                        Sold = p.Count(p => p.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                        Dropped = p.Count(p => p.AppontDetail.AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
                     }).OrderBy(p => p.MonthNumber).ToList();
 
-                objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppointmentDetail.LastOrDefault().AppointmentDateTime != null) select call).Select(p => new EventCalendar()
+                objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppontDetail.AppointmentDateTime != null) select call).Select(p => new EventCalendar()
                 {
-                    CallId = p.CallId,
-                    AppointmentTime = Convert.ToDateTime(p.AppointmentDetail.LastOrDefault().AppointmentDateTime),
-                    AppointStatus = p.AppointmentDetail.LastOrDefault().AppoinStatus.Status,
-                    ClientName = p.FirstName + " " + p.LastName,
-                    AppointStatusId = p.AppointmentDetail.LastOrDefault().AppoinStatusId
+                    CallId = p.AppontDetail.CallId,
+                    AppointmentTime = Convert.ToDateTime(p.AppontDetail.AppointmentDateTime),
+                    AppointStatus = p.AppontDetail.AppoinStatus.Status,
+                    ClientName = p.LeadDetail.FirstName + " " + p.LeadDetail.LastName,
+                    AppointStatusId = p.AppontDetail.AppoinStatusId
                 }).ToList();
 
+
+                //RManagerDashboard objManagerDash = new RManagerDashboard()
+                //{
+                //    TotalAllocatedLeads = callDetail.Count(),
+                //    SoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                //    HoldLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                //    DroppedLeads = callDetail.Count(r => r.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+
+                //    MonthlySold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                //    MonthlyHold = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
+                //    MonthlyDropped = callDetail.Count(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Month == currentMonth && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear && p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                //};
+
+
+                //objManagerDash.CollChartData = callDetail.Where(p => p.FollowupHistory.Count > 0 && p.FollowupHistory.LastOrDefault().CreatedDate.Year == currentYear)
+                //    .GroupBy(p => new { p.FollowupHistory.LastOrDefault().CreatedDate.Month }).Select(p => new ChartDataMnager()
+                //    {
+                //        MonthNumber = p.Key.Month,
+                //        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(p.Key.Month).Substring(0, 3),
+                //        Sold = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Sold),
+                //        Dropped = p.Count(p => p.AppointmentDetail.LastOrDefault().AppoinStatusId == (int)Enums.AppoinmentStatus.Dropped),
+                //    }).OrderBy(p => p.MonthNumber).ToList();
+
+                //objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppointmentDetail.LastOrDefault().AppointmentDateTime != null) select call).Select(p => new EventCalendar()
+                //{
+                //    CallId = p.CallId,
+                //    AppointmentTime = Convert.ToDateTime(p.AppointmentDetail.LastOrDefault().AppointmentDateTime),
+                //    AppointStatus = p.AppointmentDetail.LastOrDefault().AppoinStatus.Status,
+                //    ClientName = p.FirstName + " " + p.LastName,
+                //    AppointStatusId = p.AppointmentDetail.LastOrDefault().AppoinStatusId
+                //}).ToList();
+
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRManagerDashboard: " + id + "-get manager dashboard");
-                return objManagerDash;
+                return await Task.FromResult(objManagerDash);
             }
             catch (Exception ex)
             {
@@ -963,11 +1007,10 @@ namespace OmniCRM_Web.Controllers
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
                 AdminDashboard objAdminDash = new AdminDashboard();
 
-                var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
+                var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToList()
                                       join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
                                       from TeleLeads in UserLead.DefaultIfEmpty()
                                       select new { Teleuser.FirstName, UserLead, TeleLeads };
-
 
                 objAdminDash.CollTeleChartData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new TeleCallerChartData()
                 {
@@ -982,11 +1025,10 @@ namespace OmniCRM_Web.Controllers
                 }).ToList();
 
 
-                var ManagerLeads = from Manauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToListAsync()
+                var ManagerLeads = from Manauser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToList()
                                    join Leads in _context.FollowupHistory.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Manauser.UserId equals Leads.CreatedByRmanagerId into UserLead
                                    from ManaLeads in UserLead.DefaultIfEmpty()
                                    select new { Manauser.FirstName, UserLead, ManaLeads };
-
 
                 objAdminDash.CollMangerChartData = ManagerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new ManagerChartData()
                 {
@@ -1011,7 +1053,7 @@ namespace OmniCRM_Web.Controllers
                 //                   select new { user.FirstName, usrled, mngrld };
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminDashboard: -get admin dashboard");
-                return objAdminDash;
+                return await Task.FromResult(objAdminDash);
             }
             catch (Exception ex)
             {
