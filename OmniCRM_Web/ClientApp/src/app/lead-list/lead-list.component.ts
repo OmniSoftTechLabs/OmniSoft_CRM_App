@@ -306,20 +306,21 @@ export class LeadListComponent implements OnInit {
   }
 
   onScroll() {
-    this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
-    this.isLoading = true;
-    this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
-      (leads) => {
-        this.service.xType = new LeadMaster();
-        leads.forEach((obj) => { obj.isChecked = false; });
-        this.service.TABLE = this.service.TABLE.concat(leads);
-        this.leadList = this.service.dataList$;
-        this.service.searchTerm = '';
-        this.total$ = this.service.total$;
-        this.isLoading = false;
-      },
-      error => { console.error(error); this.isLoading = false; }
-    );
+    //this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
+    //this.filterOption.toTake = 100;
+    //this.isLoading = true;
+    //this.leadRepo.loadLeadListByCreatedBy(this.currentUser.userId, this.filterOption).then(
+    //  (leads) => {
+    //    this.service.xType = new LeadMaster();
+    //    leads.forEach((obj) => { obj.isChecked = false; });
+    //    this.service.TABLE = this.service.TABLE.concat(leads);
+    //    this.leadList = this.service.dataList$;
+    //    this.service.searchTerm = '';
+    //    this.total$ = this.service.total$;
+    //    this.isLoading = false;
+    //  },
+    //  error => { console.error(error); this.isLoading = false; }
+    //);
 
   }
 }

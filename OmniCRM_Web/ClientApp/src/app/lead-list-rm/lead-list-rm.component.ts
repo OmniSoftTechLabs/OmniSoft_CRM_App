@@ -307,24 +307,25 @@ export class LeadListRmComponent implements OnInit {
   }
 
   onScroll() {
-    this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
-    this.isLoading = true;
-    this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
-      (leads) => {
-        this.service.xType = new LeadMaster();
-        leads.forEach((obj) => {
-          obj.isOverDue = obj.appointmentDateTime != null && new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false;
-          obj.isChecked = false;
-        });
-        this.service.TABLE = this.service.TABLE.concat(leads);
-        this.leadList = this.service.dataList$;
-        this.service.searchTerm = '';
-        //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
-        this.total$ = this.service.total$;
-        this.isLoading = false;
-      },
-      error => { console.error(error); this.isLoading = false; }
-    );
+    //this.filterOption.toSkip = this.filterOption.toSkip + this.filterOption.toTake;
+    //this.filterOption.toTake = 100;
+    //this.isLoading = true;
+    //this.leadRepo.loadLeadListByRM(this.currentUser.userId, this.filterOption).then(
+    //  (leads) => {
+    //    this.service.xType = new LeadMaster();
+    //    leads.forEach((obj) => {
+    //      obj.isOverDue = obj.appointmentDateTime != null && new Date(obj.appointmentDateTime).getTime() < (new Date().getTime() - (this.overDueDays * 24 * 60 * 60 * 1000)) ? true : false;
+    //      obj.isChecked = false;
+    //    });
+    //    this.service.TABLE = this.service.TABLE.concat(leads);
+    //    this.leadList = this.service.dataList$;
+    //    this.service.searchTerm = '';
+    //    //this.filteredUserList = this.filter.valueChanges.pipe(startWith(''), map(text => search(users, text, this.pipe)));
+    //    this.total$ = this.service.total$;
+    //    this.isLoading = false;
+    //  },
+    //  error => { console.error(error); this.isLoading = false; }
+    //);
 
   }
 }
