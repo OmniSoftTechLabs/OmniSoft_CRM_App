@@ -800,6 +800,16 @@ namespace OmniCRM_Web.Controllers
                         if (addressCell != null)
                             address = addressCell.Start.Column;
 
+                        var emailIdCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Email Id");
+                        int emailId = 0;
+                        if (emailIdCell != null)
+                            emailId = emailIdCell.Start.Column;
+
+                        var createdByCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Created By");
+                        int createdBy = 0;
+                        if (createdByCell != null)
+                            createdBy = createdByCell.Start.Column;
+
                         var remarksCell = workSheet.Cells["1:1"].FirstOrDefault(c => c.Value.ToString() == "Remarks");
                         int remarks = 0;
                         if (remarksCell != null)
@@ -808,16 +818,27 @@ namespace OmniCRM_Web.Controllers
                         int totalRows = workSheet.Dimension.Rows;
 
                         List<CallDetail> callDetail = new List<CallDetail>();
+                        List<UserMaster> userMasters = _context.UserMaster.ToList();
 
                         for (int i = 2; i <= totalRows; i++)
                         {
+                            Guid createdbyuserid = id;
+                            if (createdBy > 0 && workSheet.Cells[i, createdBy].Value != null)
+                            {
+                                var user = userMasters.FirstOrDefault(p => p.FirstName.ToLower() == Convert.ToString(workSheet.Cells[i, createdBy].Value).ToLower().Split(' ')[0]
+                                              && p.LastName.ToLower() == Convert.ToString(workSheet.Cells[i, createdBy].Value).ToLower().Split(' ')[1]);
+                                if (user != null)
+                                    createdbyuserid = user.UserId;
+                            }
+
                             callDetail.Add(new CallDetail()
                             {
-                                CreatedBy = id,
+                                CreatedBy = createdbyuserid,
                                 FirstName = workSheet.Cells[i, firstName].Value.ToString(),
                                 MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
                                 LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
                                 Address = address > 0 ? Convert.ToString(workSheet.Cells[i, address].Value) : null,
+                                EmailId = emailId > 0 ? Convert.ToString(workSheet.Cells[i, emailId].Value) : null,
                                 LastChangedDate = DateTime.Now,
                                 OutComeId = (int)CallOutcome.None,
                                 Remark = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null,
