@@ -19,6 +19,7 @@ namespace OmniCRM_Web.Models
         public virtual DbSet<AppoinmentStatusMaster> AppoinmentStatusMaster { get; set; }
         public virtual DbSet<AppointmentDetail> AppointmentDetail { get; set; }
         public virtual DbSet<CallDetail> CallDetail { get; set; }
+        public virtual DbSet<CallDetailArchive> CallDetailArchive { get; set; }
         public virtual DbSet<CallOutcomeMaster> CallOutcomeMaster { get; set; }
         public virtual DbSet<CallTransactionDetail> CallTransactionDetail { get; set; }
         public virtual DbSet<CityMaster> CityMaster { get; set; }
@@ -179,6 +180,39 @@ namespace OmniCRM_Web.Models
                     .HasConstraintName("FK_CallDetail_StateMaster");
             });
 
+            modelBuilder.Entity<CallDetailArchive>(entity =>
+            {
+                entity.HasKey(e => e.CallId);
+
+                entity.Property(e => e.CallId)
+                    .HasColumnName("CallID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CityId).HasColumnName("CityID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EmailId)
+                    .HasColumnName("EmailID")
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.FirmName).HasMaxLength(128);
+
+                entity.Property(e => e.FirstName).IsRequired();
+
+                entity.Property(e => e.LastChangedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.MobileNumber)
+                    .IsRequired()
+                    .HasMaxLength(12);
+
+                entity.Property(e => e.NextCallDate).HasColumnType("datetime");
+
+                entity.Property(e => e.OutComeId).HasColumnName("OutComeID");
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+            });
+
             modelBuilder.Entity<CallOutcomeMaster>(entity =>
             {
                 entity.HasKey(e => e.OutComeId);
@@ -207,7 +241,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Call)
                     .WithMany(p => p.CallTransactionDetail)
                     .HasForeignKey(d => d.CallId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallTransactionDetail_CallDetail");
 
                 entity.HasOne(d => d.CreatedByNavigation)
@@ -273,7 +306,6 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Call)
                     .WithMany(p => p.FollowupHistory)
                     .HasForeignKey(d => d.CallId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FollowupHistory_CallDetail");
 
                 entity.HasOne(d => d.CreatedByRmanager)

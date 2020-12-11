@@ -628,18 +628,20 @@ namespace OmniCRM_Web.Controllers
             {
                 if (collCallDetail.Count > 0)
                 {
-                    foreach (var lead in collCallDetail)
-                    {
-                        var objLead = await GetCallDetail(lead.CallId);
+                    //foreach (var lead in collCallDetail)
+                    //{
+                    //    var objLead = await GetCallDetail(lead.CallId);
 
-                        _context.Entry(objLead.Value).State = EntityState.Modified;
+                    //    _context.Entry(objLead.Value).State = EntityState.Modified;
 
-                        DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+                    //    DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
 
-                        objLead.Value.LastChangedDate = indianTime;
-                        objLead.Value.IsDeleted = true;
-                        GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + objLead.Value.CallId + "-Deleted successfully");
-                    }
+                    //    objLead.Value.LastChangedDate = indianTime;
+                    //    objLead.Value.IsDeleted = true;
+                    //    GenericMethods.Log(LogType.ActivityLog.ToString(), "DeleteCallDetail: " + objLead.Value.CallId + "-Deleted successfully");
+                    //}
+
+                    _context.CallDetail.RemoveRange(collCallDetail);
                     await _context.SaveChangesAsync();
                     return Ok("Lead deleted successfully!");
                 }
