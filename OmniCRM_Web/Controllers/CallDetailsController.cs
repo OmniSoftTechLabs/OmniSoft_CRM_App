@@ -820,7 +820,7 @@ namespace OmniCRM_Web.Controllers
                         int totalRows = workSheet.Dimension.Rows;
 
                         List<CallDetail> callDetail = new List<CallDetail>();
-                        List<UserMaster> userMasters = _context.UserMaster.ToList();
+                        List<UserMaster> userMasters = _context.UserMaster.Where(p => p.Status == true).ToList();
 
                         for (int i = 2; i <= totalRows; i++)
                         {
