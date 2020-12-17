@@ -883,12 +883,19 @@ namespace OmniCRM_Web.Controllers
                 int lastMonth = DateTime.Now.AddMonths(-1).Month;
 
 
+                //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => q.CreatedBy == id && Convert.ToDateTime(q.CreatedDate).Date == DateTime.Now.Date).ToList();
+
+
+                var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => q.CreatedBy == id && Convert.ToDateTime(q.CreatedDate).Date == DateTime.Now.Date).ToList()
+                    .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList();
+
+
                 TeleCallerDashboard objTeleDash = new TeleCallerDashboard()
                 {
-                    TotalLeads = callDetail.Count(),
-                    NoResponse = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse),
-                    AppoinmentTaken = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
-                    NotInterested = callDetail.Count(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested),
+                    TotalLeads = callDetail.Count(r => r.CreatedDate.Date == DateTime.Now.Date),
+                    NoResponse = TeleCallerLeads.Count(r => r.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    AppoinmentTaken = TeleCallerLeads.Count(r => r.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    NotInterested = TeleCallerLeads.Count(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested),
 
                     MonthlyTotalLeads = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear),
                     MonthlyNoResponse = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NoResponse),
@@ -1030,8 +1037,14 @@ namespace OmniCRM_Web.Controllers
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
                 AdminDashboard objAdminDash = new AdminDashboard();
 
+
+                //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => q.CreatedBy == id && Convert.ToDateTime(q.CreatedDate).Date == DateTime.Now.Date).ToList()
+                //    .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList();
+
+
                 var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToList()
-                                      join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
+                                      join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList()
+                                      .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
                                       from TeleLeads in UserLead.DefaultIfEmpty()
                                       select new { Teleuser.FirstName, UserLead, TeleLeads };
 
