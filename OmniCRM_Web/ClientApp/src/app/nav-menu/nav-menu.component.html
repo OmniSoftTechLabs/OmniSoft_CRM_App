@@ -1,5 +1,5 @@
 <header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-info border-bottom box-shadow mb-3">
     <div class="container-fluid">
       <a role="button" (click)="onBrandClick()" class="navbar-brand" style="cursor: pointer"><img src="../../assets/OmniCRM-Logo.png" height="40" /></a>
       <button class="navbar-toggler"
@@ -11,6 +11,7 @@
               aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      &nbsp; &nbsp; &nbsp;
       <div class="navbar-collapse collapse" id="navbarContent" *ngIf="isLoggedIn">
         <ul class="navbar-nav mr-auto">
           <!--<li class="nav-item"
@@ -25,29 +26,32 @@
             <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Fetch data</a>
           </li>-->
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isTeleCaller">
-            <a class="nav-link underlineHover active" [routerLink]="['/lead-list']">Lead Details</a>
+            <a class="btn btn-outline-light" [routerLink]="['/lead-list']">Lead Details</a>
+            <!--<a class="nav-link underlineHover active" [routerLink]="['/lead-list']">Lead Details</a>-->
           </li>
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isRManager">
-            <a class="nav-link underlineHover active" [routerLink]="['/lead-list-rm']">Lead Details</a>
+            <a class="btn btn-outline-light" [routerLink]="['/lead-list-rm']">Lead Details</a>
           </li>
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link underlineHover active" [routerLink]="['/user-list']">User Details</a>
+            <a class="btn btn-outline-light" [routerLink]="['/user-list']">User Details</a>
           </li>
+          &nbsp; &nbsp;
+          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="btn btn-outline-light" [routerLink]="['/lead-list']">Agent Leads</a>
+          </li>
+          &nbsp; &nbsp;
 
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link underlineHover active" [routerLink]="['/lead-list']">TC Lead Details</a>
+            <a class="btn btn-outline-light" [routerLink]="['/lead-list-rm']">Manager Leads</a>
           </li>
-
-          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link underlineHover active" [routerLink]="['/lead-list-rm']">RM Lead Details</a>
-          </li>
+          &nbsp; &nbsp;
 
           <!------------------------------------->
 
           <li class="nav-item dropdown" *ngIf="isSuperUser || isAdminRole">
-            <a id="dropdownSubMenuReport" href="#" data-toggle="dropdown" aria-haspopup="true" class="nav-link underlineHover active">Reports</a>
+            <a id="dropdownSubMenuReport" href="#" data-toggle="dropdown" aria-haspopup="true" class="btn btn-outline-light">Reports</a>
             <ul aria-labelledby="dropdownSubMenuReport" class="dropdown-menu">
               <!-- Level two dropdown-->
               <li class="dropdown-submenu dropdown-hover">
@@ -62,20 +66,19 @@
               <!-- End Level two -->
             </ul>
           </li>
-
+          <!--&nbsp; &nbsp;-->
           <!------------------------------------->
-
-          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
-            <a class="nav-link underlineHover active" [routerLink]="['/setting']">Settings</a>
-          </li>
+          <!--<li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="btn btn-outline-light" [routerLink]="['/setting']">Settings</a>
+          </li>-->
         </ul>
-        <span class="navbar-text">
+        <span class="navbar-text" style="color:white">
           Welcome {{userName}}
         </span>
         <ul class="navbar-nav">
 
           <li class="nav-item" ngbDropdown display="dynamic" placement="bottom-right">
-            <a class="nav-link" style="cursor: pointer" ngbDropdownToggle id="navbarDropdownUser" role="button">
+            <a class="nav-link" style="cursor: pointer; color:white" ngbDropdownToggle id="navbarDropdownUser" role="button">
               <i class="fas fa-user"></i>
             </a>
             <div ngbDropdownMenu aria-labelledby="navbarDropdownUser" class="dropdown-menu">
@@ -84,6 +87,10 @@
               <div class="dropdown-divider"></div>
               <button ngbDropdownItem (click)="logout()"><i class="fas fa-sign-out-alt mr-3"></i>Log out</button>
             </div>
+          </li>
+
+          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="nav-link" style="cursor: pointer; color:white" [routerLink]="['/setting']"><i class="fas fa-cog"></i></a>
           </li>
 
         </ul>
