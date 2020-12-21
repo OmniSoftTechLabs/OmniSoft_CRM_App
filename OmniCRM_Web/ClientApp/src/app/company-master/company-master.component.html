@@ -1,0 +1,53 @@
+<div class="card mr-auto ml-auto col-md-4 nopadding">
+  <div class="card-header"><h5>Company Detail</h5> </div>
+  <div class="card-body">
+    <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
+      <strong>Error!</strong> {{errorMsg}}
+    </div>
+    <div class="alert alert-success" id="success-alert" role="alert" *ngIf="IsSucess">
+      <button type="button" class="close" aria-label="Close" (click)="closeAlert()"><span aria-hidden="true">&times;</span></button>
+      <strong>Success!</strong> {{successMsg}}
+    </div>
+
+    <form #companyAdd="ngForm" (ngSubmit)="onSaveCompany()" novalidate>
+      <!--userAdd.reset()-->
+
+      <div class="form-group">
+        Company Name<strong class="text-danger"> *</strong>
+        <input type="text" required #companyName="ngModel" name="companyName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="companyName.invalid && companyName.touched || companyName.errors?.pattern"
+               class="form-control" [(ngModel)]="companyModel.companyName" placeholder="i.e. Mapple wood enterprise" maxlength="50" />
+        <small class="text-danger" *ngIf="companyName.errors?.required && companyName.touched">* Company Name is required</small>
+        <small class="text-danger" *ngIf="companyName.errors?.pattern">* Company Name is invalid</small>
+      </div>
+
+      <div class="form-group">
+        Admin Email Id<strong class="text-danger"> *</strong>
+        <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #emailId="ngModel" name="emailId"
+               [class.is-invalid]="emailId.invalid && emailId.touched || emailId.errors?.pattern" maxlength="150"
+               class="form-control" [(ngModel)]="companyModel.emailId" placeholder="i.e. email@example.com"/>
+        <small class="text-danger" *ngIf="emailId.errors?.required && emailId.touched">* Email is required</small>
+        <small class="text-danger" *ngIf="emailId.errors?.pattern">* Email is invalid</small>
+      </div>
+
+      <div class="form-group">
+        No. of User Subscription
+        <input type="text" #userSubscription="ngModel" name="userSubscription" pattern="^[0-9]*$" [class.is-invalid]="userSubscription.touched && userSubscription.errors?.pattern"
+               class="form-control" [(ngModel)]="companyModel.userSubscription" placeholder="i.e 10" maxlength="2" />
+        <small class="text-danger" *ngIf="userSubscription.errors?.pattern">* No. of user is invalid</small>
+      </div>
+
+      <div class="form-group form-row form-inline">
+        <div class=" col-md-12 ">
+          <button class="btn btn-primary" [disabled]="companyAdd.form.invalid || is_progress" type="submit" style="width:120px;">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+            Save
+          </button>
+          &nbsp; &nbsp;
+          <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/login']">Close</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
