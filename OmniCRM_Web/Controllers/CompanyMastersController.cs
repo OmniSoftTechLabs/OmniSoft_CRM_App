@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
-using OmniCRM_Web.ViewModels;
 using static OmniCRM_Web.GenericClasses.Enums;
 
 namespace OmniCRM_Web.Controllers
@@ -20,12 +21,14 @@ namespace OmniCRM_Web.Controllers
     public class CompanyMastersController : ControllerBase
     {
         private readonly OmniCRMContext _context;
-        private readonly IMapper _mapper;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
-        public CompanyMastersController(OmniCRMContext context, IMapper mapper)
+        public CompanyMastersController(OmniCRMContext context, IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _context = context;
-            _mapper = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
         // GET: api/CompanyMasters
@@ -85,17 +88,29 @@ namespace OmniCRM_Web.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult> PostCompanyMaster([FromBody] CompanyMasterViewModel companyMaster)
+        public async Task<ActionResult> PostCompanyMaster([FromBody] CompanyMaster companyMaster)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (!UserMasterExists(companyMaster.EmailId))
+                    if (!UserMasterExists(companyMaster.UserMaster.FirstOrDefault().Email))
                     {
-                        var objcompany = _mapper.Map<CompanyMaster>(companyMaster);
-                        _context.CompanyMaster.Add(objcompany);
+                        _context.CompanyMaster.Add(companyMaster);
                         await _context.SaveChangesAsync();
+
+                        #region Email Body for activation
+
+                        string FilePath = _hostingEnvironment.ContentRootPath + "//HTMLTemplate//CreateNewPwd.html";
+                        StreamReader str = new StreamReader(FilePath);
+                        string MailText = str.ReadToEnd();
+
+                        string domain = _configuration.GetSection("Domains").GetSection("CurrentDomain").Value;
+                        //string domain = _configuration.GetValue<string>("Domains:CurrentDomain");
+                        MailText = MailText.Replace("#CREATE_PWD_LINK", domain + "/new-pwd/" + companyMaster.UserMaster.FirstOrDefault().UserId);
+                        #endregion
+
+                        GenericMethods.SendEmailNotification(companyMaster.UserMaster.FirstOrDefault().Email, "OmniCRM User activation link", MailText);
 
                         GenericMethods.Log(LogType.ActivityLog.ToString(), "PostCompanyMaster: " + companyMaster.CompanyName + "-Company created successfully");
                         return Ok(StatusCodes.Status200OK);

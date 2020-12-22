@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CompanyMaster } from '../models/company-master';
+import { UserMaster } from '../models/user-master';
 import { GeneralRepositoryService } from '../services/general-repository.service';
+import { roles } from '../services/generic-enums';
 
 @Component({
   selector: 'app-company-master',
@@ -18,6 +20,7 @@ export class CompanyMasterComponent implements OnInit {
   successMsg: string;
   saveBtnTxt: string = "Save";
   companyModel: CompanyMaster = new CompanyMaster();
+  userModel: UserMaster = new UserMaster();
 
   constructor(private generalRepository: GeneralRepositoryService) { }
 
@@ -27,7 +30,8 @@ export class CompanyMasterComponent implements OnInit {
   onSaveCompany() {
     this.is_progress = true;
     this.saveBtnTxt = "Saving...";
-
+    this.userModel.roleId = roles.Admin;
+    this.companyModel.userMaster.push(this.userModel);
 
     this.generalRepository.createCompany(this.companyModel).subscribe({
       next: data => (this.successMsg = "Company Created Successfully..", this.IsSucess = true, this.onSaveCompleted()),

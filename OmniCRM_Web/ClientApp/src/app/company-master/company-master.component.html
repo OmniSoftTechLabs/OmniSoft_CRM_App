@@ -21,12 +21,35 @@
       </div>
 
       <div class="form-group">
+        First Name<strong class="text-danger"> *</strong>
+        <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
+               class="form-control" [(ngModel)]="userModel.firstName" placeholder="i.e. John" maxlength="50" />
+        <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
+        <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
+      </div>
+
+      <div class="form-group">
+        Last Name<strong class="text-danger"> *</strong>
+        <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
+               class="form-control" [(ngModel)]="userModel.lastName" placeholder="i.e Smith" maxlength="50" />
+        <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
+        <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
+      </div>
+
+      <div class="form-group">
         Admin Email Id<strong class="text-danger"> *</strong>
-        <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #emailId="ngModel" name="emailId"
-               [class.is-invalid]="emailId.invalid && emailId.touched || emailId.errors?.pattern" maxlength="150"
-               class="form-control" [(ngModel)]="companyModel.emailId" placeholder="i.e. email@example.com" />
-        <small class="text-danger" *ngIf="emailId.errors?.required && emailId.touched">* Email is required</small>
-        <small class="text-danger" *ngIf="emailId.errors?.pattern">* Email is invalid</small>
+        <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
+               [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="150"
+               class="form-control" [(ngModel)]="userModel.email" placeholder="i.e. email@example.com" />
+        <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
+        <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>
+      </div>
+
+      <div class="form-group">
+        Employee Code<strong class="text-danger"> *</strong>
+        <input type="text" required #employeeCode="ngModel" name="employeeCode" [class.is-invalid]="employeeCode.invalid && employeeCode.touched"
+               class="form-control" [(ngModel)]="userModel.employeeCode" placeholder="i.e. EMP101" maxlength="10"/>
+        <small class="text-danger" *ngIf="employeeCode.errors?.required && employeeCode.touched">* Employee Code is required</small>
       </div>
 
       <div class="form-group">
