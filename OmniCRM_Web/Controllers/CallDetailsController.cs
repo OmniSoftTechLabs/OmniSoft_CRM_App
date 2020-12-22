@@ -1175,6 +1175,10 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
+
+                filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
+                filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
+
                 TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<RowsData>() };
                 TCStatusReport.Header.Add("Tele Caller");
                 foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
@@ -1193,7 +1197,7 @@ namespace OmniCRM_Web.Controllers
                 //}
 
                 var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
-                                      join Leads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
+                                      join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
                                       from TeleLeads in UserLead.DefaultIfEmpty()
                                       select new { Teleuser.FirstName, UserLead, TeleLeads };
 
@@ -1240,6 +1244,9 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
+                filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
+                filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
+
                 RelaManagerStatusReport RMStatusReport = new RelaManagerStatusReport() { Header = new List<string>(), RMRowsData = new List<RowsDataRM>() };
                 RMStatusReport.Header.Add("Relationship Manager");
                 foreach (var item in await _context.AppoinmentStatusMaster.Where(p => p.AppoinStatusId != (int)AppoinmentStatus.Dismissed).ToListAsync())
