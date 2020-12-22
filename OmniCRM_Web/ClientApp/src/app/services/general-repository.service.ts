@@ -6,6 +6,7 @@ import { CreatePwd } from '../models/create-pwd'
 import { ChangePwd } from '../models/change-pwd';
 import { AdminSetting } from '../models/admin-setting';
 import { ProductMaster } from '../models/product-master';
+import { CompanyMaster } from '../models/company-master';
 
 @Injectable({
   providedIn: 'root'
@@ -75,5 +76,10 @@ export class GeneralRepositoryService {
 
   getProductMaster() {
     return this.http.get<ProductMaster[]>(this.baseUrl + 'api/ProductMasters').pipe();
+  }
+
+
+  createCompany(companyModel: CompanyMaster) {
+    return this.http.post<CompanyMaster>(this.baseUrl + 'api/CompanyMasters', companyModel).pipe();
   }
 }

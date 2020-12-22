@@ -24,7 +24,7 @@
         Admin Email Id<strong class="text-danger"> *</strong>
         <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #emailId="ngModel" name="emailId"
                [class.is-invalid]="emailId.invalid && emailId.touched || emailId.errors?.pattern" maxlength="150"
-               class="form-control" [(ngModel)]="companyModel.emailId" placeholder="i.e. email@example.com"/>
+               class="form-control" [(ngModel)]="companyModel.emailId" placeholder="i.e. email@example.com" />
         <small class="text-danger" *ngIf="emailId.errors?.required && emailId.touched">* Email is required</small>
         <small class="text-danger" *ngIf="emailId.errors?.pattern">* Email is invalid</small>
       </div>
@@ -40,7 +40,7 @@
         <div class=" col-md-12 ">
           <button class="btn btn-primary" [disabled]="companyAdd.form.invalid || is_progress" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
-            Save
+            {{saveBtnTxt}}
           </button>
           &nbsp; &nbsp;
           <button class="btn btn-outline-primary" style="width:120px;" type="reset" [routerLink]="['/login']">Close</button>
