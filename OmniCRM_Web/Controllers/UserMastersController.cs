@@ -31,6 +31,8 @@ namespace OmniCRM_Web.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+
+
         public UserMastersController(OmniCRMContext context, IHostingEnvironment hostingEnvironment, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
@@ -45,9 +47,10 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: " + "-get all user master");
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
-                return await _context.UserMaster.Include(p => p.Role).ToListAsync();
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: " + "-get all user master");
+                return await _context.UserMaster.Include(p => p.Role).Where(r => currentCompanyId != null ? r.CompanyId == currentCompanyId : true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -162,6 +165,8 @@ namespace OmniCRM_Web.Controllers
                     if (!UserMasterExists(userMaster.Email, userMaster.EmployeeCode))
                     {
                         userMaster.LinkExpiryDate = DateTime.Now.AddDays(1);
+                        userMaster.CompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+
                         _context.UserMaster.Add(userMaster);
                         await _context.SaveChangesAsync();
                         GenericMethods.Log(LogType.ActivityLog.ToString(), "PostUserMaster: " + userMaster.Email + "-User created successfully");
@@ -332,7 +337,10 @@ namespace OmniCRM_Web.Controllers
 
                                 GenericMethods.Log(LogType.ActivityLog.ToString(), "CheckLogin: " + authModel.Username + "-login successfull");
                                 var objViewUser = _mapper.Map<UserMasterViewModel>(userMaster);
+                                HttpContext.Session.SetString("#COMPANY_ID", userMaster.CompanyId.ToString());
+
                                 var key = _configuration.GetSection("TokenSettings").GetSection("JWT_Secret").Value;
+                                //var key = userMaster.CompanyId.ToString();
                                 var tokenDescriptor = new SecurityTokenDescriptor
                                 {
                                     Subject = new ClaimsIdentity(new Claim[]

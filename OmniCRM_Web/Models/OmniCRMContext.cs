@@ -159,6 +159,11 @@ namespace OmniCRM_Web.Models
                     .HasForeignKey(d => d.CityId)
                     .HasConstraintName("FK_CallDetail_CityMaster");
 
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_CallDetail_CompanyMaster");
+
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CreatedBy)
