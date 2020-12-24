@@ -337,6 +337,7 @@ namespace OmniCRM_Web.Controllers
 
                                 GenericMethods.Log(LogType.ActivityLog.ToString(), "CheckLogin: " + authModel.Username + "-login successfull");
                                 var objViewUser = _mapper.Map<UserMasterViewModel>(userMaster);
+                                objViewUser.LogoImage = _context.CompanyMaster.FirstOrDefault(p => p.CompanyId == userMaster.CompanyId).LogoBase64;
                                 HttpContext.Session.SetString("#COMPANY_ID", userMaster.CompanyId.ToString());
 
                                 var key = _configuration.GetSection("TokenSettings").GetSection("JWT_Secret").Value;

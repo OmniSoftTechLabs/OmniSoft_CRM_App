@@ -1,4 +1,4 @@
-<div class="card mr-auto ml-auto col-md-4 nopadding">
+<div class="card mr-auto ml-auto col-md-6 nopadding">
   <div class="card-header"><h5>Company Detail</h5> </div>
   <div class="card-body">
     <div class="alert alert-danger" id="error-alert" role="alert" *ngIf="IsError">
@@ -12,51 +12,104 @@
     <form #companyAdd="ngForm" (ngSubmit)="onSaveCompany()" novalidate>
       <!--userAdd.reset()-->
 
-      <div class="form-group">
-        Company Name<strong class="text-danger"> *</strong>
-        <input type="text" required #companyName="ngModel" name="companyName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="companyName.invalid && companyName.touched || companyName.errors?.pattern"
-               class="form-control" [(ngModel)]="companyModel.companyName" placeholder="i.e. Mapple wood enterprise" maxlength="50" />
-        <small class="text-danger" *ngIf="companyName.errors?.required && companyName.touched">* Company Name is required</small>
-        <small class="text-danger" *ngIf="companyName.errors?.pattern">* Company Name is invalid</small>
+      <div class="row">
+        <div class="form-group col-sm-6">
+          Company Name<strong class="text-danger"> *</strong>
+          <input type="text" required #companyName="ngModel" name="companyName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="companyName.invalid && companyName.touched || companyName.errors?.pattern"
+                 class="form-control" [(ngModel)]="companyModel.companyName" placeholder="i.e. Mapple wood enterprise" maxlength="50" />
+          <small class="text-danger" *ngIf="companyName.errors?.required && companyName.touched">* Company Name is required</small>
+          <small class="text-danger" *ngIf="companyName.errors?.pattern">* Company Name is invalid</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Phone Number
+          <input type="text" #phoneNo="ngModel" name="phoneNo" pattern="^[0-9]*$" [class.is-invalid]="phoneNo.touched && phoneNo.errors?.pattern"
+                 class="form-control" [(ngModel)]="companyModel.phoneNo" placeholder="i.e 9876543210" maxlength="15" />
+          <small class="text-danger" *ngIf="phoneNo.errors?.pattern">* Phone Number is invalid</small>
+        </div>
       </div>
 
-      <div class="form-group">
-        First Name<strong class="text-danger"> *</strong>
-        <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
-               class="form-control" [(ngModel)]="userModel.firstName" placeholder="i.e. John" maxlength="50" />
-        <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
-        <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
+      <div class="row">
+        <div class="form-group col-sm-12">
+          Address
+          <textarea type="text" #address="ngModel" name="address" rows="2" [class.is-invalid]="address.invalid && address.touched"
+                    class="form-control" [(ngModel)]="companyModel.address" placeholder="i.e Door number, Street name, Area" maxlength="256"></textarea>
+        </div>
       </div>
 
-      <div class="form-group">
-        Last Name<strong class="text-danger"> *</strong>
-        <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
-               class="form-control" [(ngModel)]="userModel.lastName" placeholder="i.e Smith" maxlength="50" />
-        <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
-        <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
+      <div class="row">
+        <div class="form-group col-sm-6">
+          Admin First Name<strong class="text-danger"> *</strong>
+          <input type="text" required #firstName="ngModel" name="firstName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="firstName.invalid && firstName.touched || firstName.errors?.pattern"
+                 class="form-control" [(ngModel)]="userModel.firstName" placeholder="i.e. John" maxlength="50" />
+          <small class="text-danger" *ngIf="firstName.errors?.required && firstName.touched">* First Name is required</small>
+          <small class="text-danger" *ngIf="firstName.errors?.pattern">* First Name is invalid</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Admin Last Name<strong class="text-danger"> *</strong>
+          <input type="text" required #lastName="ngModel" name="lastName" pattern="^[a-zA-Z'\s]+$" [class.is-invalid]="lastName.invalid && lastName.touched || lastName.errors?.pattern"
+                 class="form-control" [(ngModel)]="userModel.lastName" placeholder="i.e Smith" maxlength="50" />
+          <small class="text-danger" *ngIf="lastName.errors?.required && lastName.touched">* Last Name is required</small>
+          <small class="text-danger" *ngIf="lastName.errors?.pattern">* Last Name is invalid</small>
+        </div>
       </div>
 
-      <div class="form-group">
-        Admin Email Id<strong class="text-danger"> *</strong>
-        <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
-               [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="150"
-               class="form-control" [(ngModel)]="userModel.email" placeholder="i.e. email@example.com" />
-        <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
-        <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>
+      <div class="row">
+        <div class="form-group col-sm-6">
+          Employee Code<strong class="text-danger"> *</strong>
+          <input type="text" required #employeeCode="ngModel" name="employeeCode" [class.is-invalid]="employeeCode.invalid && employeeCode.touched"
+                 class="form-control" [(ngModel)]="userModel.employeeCode" placeholder="i.e. EMP101" maxlength="10" />
+          <small class="text-danger" *ngIf="employeeCode.errors?.required && employeeCode.touched">* Employee Code is required</small>
+        </div>
+
+        <div class="form-group col-sm-6">
+          Admin Email Id<strong class="text-danger"> *</strong>
+          <input type="text" required pattern="[a-zA-Z0-9._-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" #email="ngModel" name="email"
+                 [class.is-invalid]="email.invalid && email.touched || email.errors?.pattern" maxlength="150"
+                 class="form-control" [(ngModel)]="userModel.email" placeholder="i.e. email@example.com" />
+          <small class="text-danger" *ngIf="email.errors?.required && email.touched">* Email is required</small>
+          <small class="text-danger" *ngIf="email.errors?.pattern">* Email is invalid</small>
+        </div>
       </div>
 
-      <div class="form-group">
-        Employee Code<strong class="text-danger"> *</strong>
-        <input type="text" required #employeeCode="ngModel" name="employeeCode" [class.is-invalid]="employeeCode.invalid && employeeCode.touched"
-               class="form-control" [(ngModel)]="userModel.employeeCode" placeholder="i.e. EMP101" maxlength="10"/>
-        <small class="text-danger" *ngIf="employeeCode.errors?.required && employeeCode.touched">* Employee Code is required</small>
-      </div>
+      <div class="row">
+        <div class="form-group col-sm-6">
+          No. of User Subscription
+          <input type="text" #userSubscription="ngModel" name="userSubscription" pattern="^[0-9]*$" [class.is-invalid]="userSubscription.touched && userSubscription.errors?.pattern"
+                 class="form-control" [(ngModel)]="companyModel.userSubscription" placeholder="i.e 10" maxlength="2" />
+          <small class="text-danger" *ngIf="userSubscription.errors?.pattern">* No. of user is invalid</small>
+        </div>
 
-      <div class="form-group">
-        No. of User Subscription
-        <input type="text" #userSubscription="ngModel" name="userSubscription" pattern="^[0-9]*$" [class.is-invalid]="userSubscription.touched && userSubscription.errors?.pattern"
-               class="form-control" [(ngModel)]="companyModel.userSubscription" placeholder="i.e 10" maxlength="2" />
-        <small class="text-danger" *ngIf="userSubscription.errors?.pattern">* No. of user is invalid</small>
+        <!--<label class="form-group col-sm-6 image-upload-container btn btn-bwm">
+          <span>Select Image</span>
+          <input #imageInput
+                 type="file"
+                 accept="image/png"
+                 (change)="processFile(imageInput)">
+        </label>-->
+
+        <div class="form-group col-sm-6">
+          Company Logo
+          <div class="custom-file">
+            <input type="file" accept="image/png" class="custom-file-input" #imageInput id="inputGroupFile" (change)="onImageUpload(imageInput)">
+            <label class="custom-file-label" for="inputGroupFile" #labelImport>Choose .png file</label>
+          </div>
+        </div>
+
+        <!--<div *ngIf="selectedFile" class="img-preview-container">
+
+          <div class="img-preview{{selectedFile.status === 'fail' ? '-error' : ''}}"
+               [ngStyle]="{'background-image': 'url('+ selectedFile.src + ')'}">
+          </div>
+
+          <div *ngIf="selectedFile.pending" class="img-loading-overlay">
+            <div class="img-spinning-circle"></div>
+          </div>
+
+          <div *ngIf="selectedFile.status === 'ok'" class="alert alert-success"> Image Uploaded Succesfuly!</div>
+          <div *ngIf="selectedFile.status === 'fail'" class="alert alert-danger"> Image Upload Failed!</div>
+        </div>-->
       </div>
 
       <div class="form-group form-row form-inline">

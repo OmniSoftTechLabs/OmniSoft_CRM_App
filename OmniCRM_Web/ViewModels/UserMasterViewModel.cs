@@ -9,6 +9,8 @@ namespace OmniCRM_Web.ViewModels
     public class UserMasterViewModel
     {
         public string Token { get; set; }
+        public Guid CompanyId { get; set; }
+        public string LogoImage { get; set; }
         public Guid UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -120,6 +120,8 @@ namespace OmniCRM_Web.Models
             {
                 entity.HasKey(e => e.CallId);
 
+                entity.HasIndex(e => e.CompanyId);
+
                 entity.HasIndex(e => e.CreatedBy);
 
                 entity.HasIndex(e => e.LastChangedDate);
@@ -287,6 +289,8 @@ namespace OmniCRM_Web.Models
 
                 entity.Property(e => e.CompanyId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.Address).HasMaxLength(256);
+
                 entity.Property(e => e.CompanyLogo).HasColumnType("image");
 
                 entity.Property(e => e.CompanyName)
@@ -296,6 +300,8 @@ namespace OmniCRM_Web.Models
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.PhoneNo).HasMaxLength(50);
             });
 
             modelBuilder.Entity<FollowupHistory>(entity =>

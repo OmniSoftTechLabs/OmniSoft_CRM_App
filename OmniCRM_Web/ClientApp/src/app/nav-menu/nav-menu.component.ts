@@ -13,15 +13,16 @@ export class NavMenuComponent {
   isExpanded = false;
   currentUser: UserMaster;
   userName: string;
-
+  logoSrc: string;
   constructor(private router: Router, private auth: AuthenticationService) {
-
+    this.logoSrc = "../../assets/OmniCRM-Logo.png";
   }
 
   get isLoggedIn(): boolean {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       this.userName = this.currentUser.firstName;
+      this.logoSrc = this.currentUser.logoImage;
       return true;
     }
     return false;
@@ -66,6 +67,7 @@ export class NavMenuComponent {
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+    this.logoSrc = "../../assets/OmniCRM-Logo.png";
   }
 
   collapse() {
