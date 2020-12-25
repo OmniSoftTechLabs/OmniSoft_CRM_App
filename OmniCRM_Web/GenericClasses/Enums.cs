@@ -42,6 +42,7 @@ namespace OmniCRM_Web.GenericClasses
             CallLater = 4,
             WrongNumber = 5,
             None = 6,
+            Dropped = 7,
         }
     }
 

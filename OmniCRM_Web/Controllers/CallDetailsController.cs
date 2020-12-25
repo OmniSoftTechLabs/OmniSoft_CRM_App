@@ -1205,11 +1205,17 @@ namespace OmniCRM_Web.Controllers
                 //}
                 Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
-                var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
-                                      join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
+                //var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
+                //                      join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
+                //                      from TeleLeads in UserLead.DefaultIfEmpty()
+                //                      select new { Teleuser.FirstName, UserLead, TeleLeads };
+
+
+                var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
+                                      join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList()
+                                      .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
                                       from TeleLeads in UserLead.DefaultIfEmpty()
                                       select new { Teleuser.FirstName, UserLead, TeleLeads };
-
 
                 TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsData()
                 {
@@ -1274,11 +1280,15 @@ namespace OmniCRM_Web.Controllers
                 //}
                 Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
-                var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToListAsync()
-                                       join Leads in _context.AppointmentDetail.AsEnumerable().Where(q => q.AppoinStatusId != (int)AppoinmentStatus.Dismissed && Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.RelationshipManagerId into UserLead
+                //var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToListAsync()
+                //                       join Leads in _context.AppointmentDetail.AsEnumerable().Where(q => q.AppoinStatusId != (int)AppoinmentStatus.Dismissed && Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.RelationshipManagerId into UserLead
+                //                       from ReleLeads in UserLead.DefaultIfEmpty()
+                //                       select new { Relauser.FirstName, UserLead, ReleLeads };
+
+                var RelaManagerLeads = from Relauser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToList()
+                                       join Leads in _context.FollowupHistory.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.CreatedByRmanagerId into UserLead
                                        from ReleLeads in UserLead.DefaultIfEmpty()
                                        select new { Relauser.FirstName, UserLead, ReleLeads };
-
 
                 RMStatusReport.RMRowsData = RelaManagerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsDataRM()
                 {
