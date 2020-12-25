@@ -38,6 +38,7 @@ import { LeadListRmComponent } from './lead-list-rm/lead-list-rm.component';
 import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-summary.component';
 import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager-summary.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { CompanyMasterComponent } from './company-master/company-master.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     LeadListRmComponent,
     TeleCallerSummaryComponent,
     ReleManagerSummaryComponent,
+    CompanyMasterComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -85,6 +87,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
       { path: 'forget-password', component: ForgetPasswordComponent },
       { path: 'chng-pwd', component: ChangePasswordComponent, canActivate: [AuthGuard] },
 
+      { path: 'company-detail', component: CompanyMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User'] } },
       { path: 'setting', component: AdminSettingComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-detail', component: UserMasterComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },

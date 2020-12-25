@@ -29,8 +29,10 @@ namespace OmniCRM_Web.Models
         public DateTime? NextCallDate { get; set; }
         public string Remark { get; set; }
         public bool? IsDeleted { get; set; }
+        public Guid? CompanyId { get; set; }
 
         public virtual CityMaster City { get; set; }
+        public virtual CompanyMaster Company { get; set; }
         public virtual UserMaster CreatedByNavigation { get; set; }
         public virtual CallOutcomeMaster OutCome { get; set; }
         public virtual ProductMaster Product { get; set; }

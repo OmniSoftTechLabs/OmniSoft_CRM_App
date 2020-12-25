@@ -38,6 +38,8 @@ namespace OmniCRM_Web
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             #endregion
 
+            services.AddDistributedMemoryCache();//To Store session in Memory, This is default implementation of IDistributedCache    
+            services.AddSession();
 
             //services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
@@ -81,6 +83,7 @@ namespace OmniCRM_Web
                 configuration.RootPath = "ClientApp/dist";
             });
 
+
             DailyEmailService._configuration = Configuration;
             //DailyEmailService._hostingEnvironment = HostingEnvironment;
             GenericMethods._hostingEnvironment = HostingEnvironment;
@@ -108,10 +111,14 @@ namespace OmniCRM_Web
                 app.UseSpaStaticFiles();
             }
 
+            app.UseCookiePolicy();
+            app.UseSession();
+
             app.UseRouting();
             app.UseCertificateForwarding();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

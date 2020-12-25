@@ -2,6 +2,8 @@ import { RoleMaster } from "./role-master";
 
 export class UserMaster {
   token: string = "";
+  companyId: any;
+  logoImage: string;
   employeeCode: string = "";
   userId: any;
   firstName: string = "";

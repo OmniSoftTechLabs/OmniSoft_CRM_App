@@ -13,22 +13,23 @@ export class NavMenuComponent {
   isExpanded = false;
   currentUser: UserMaster;
   userName: string;
-
+  logoSrc: string;
   constructor(private router: Router, private auth: AuthenticationService) {
-
+    this.auth.currentUser.subscribe(x => this.currentUser = x);
+    this.logoSrc = "../../assets/OmniCRM-Logo.png";
   }
 
   get isLoggedIn(): boolean {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       this.userName = this.currentUser.firstName;
+      if (this.currentUser.logoImage != null)
+        this.logoSrc = this.currentUser.logoImage;
       return true;
     }
     return false;
   }
 
   get isAdminRole(): boolean {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       if (this.currentUser.roleId == roles.Admin)
         return true;
@@ -37,7 +38,6 @@ export class NavMenuComponent {
   }
 
   get isTeleCaller(): boolean {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       if (this.currentUser.roleId == roles["Tele Caller"])
         return true;
@@ -46,7 +46,6 @@ export class NavMenuComponent {
   }
 
   get isRManager(): boolean {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       if (this.currentUser.roleId == roles["Relationship Manager"])
         return true;
@@ -55,7 +54,6 @@ export class NavMenuComponent {
   }
 
   get isSuperUser(): boolean {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       if (this.currentUser.roleId == roles["Super User"])
         return true;
@@ -66,6 +64,7 @@ export class NavMenuComponent {
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+    this.logoSrc = "../../assets/OmniCRM-Logo.png";
   }
 
   collapse() {
@@ -77,7 +76,6 @@ export class NavMenuComponent {
   }
 
   onBrandClick() {
-    this.auth.currentUser.subscribe(x => this.currentUser = x);
     if (this.currentUser != null) {
       if (this.currentUser.roleId == roles["Tele Caller"])
         this.router.navigate(['/dash-tele']);

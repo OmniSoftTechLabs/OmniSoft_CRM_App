@@ -49,10 +49,11 @@ namespace OmniCRM_Web.Controllers
                 //var listLead = _mapper.Map<List<CallDetailViewModel>>(callDetail);
                 //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 var MaxAppointData = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault()).ToList();
 
-                var leadlist = from lead in _context.CallDetail.Include(p => p.OutCome).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true).ToList()
+                var leadlist = from lead in _context.CallDetail.Include(p => p.OutCome).Where(p => (isAdmin == false ? p.CreatedBy == id : true) && p.IsDeleted != true && p.CompanyId == currentCompanyId).ToList()
                                join appoint in MaxAppointData on lead.CallId equals appoint.CallId into ledapp
                                from appoint in ledapp.DefaultIfEmpty(new AppointmentDetail())
                                    //where MaxAppointIDs.Contains(appoint.AppintmentId)
@@ -181,12 +182,13 @@ namespace OmniCRM_Web.Controllers
 
                 //var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
 
                 var MaxAppointIDs = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault().AppintmentId);
 
-                var leadlist = from lead in _context.CallDetail.Where(p => p.IsDeleted != true)
+                var leadlist = from lead in _context.CallDetail.Where(p => p.IsDeleted != true && p.CompanyId == currentCompanyId)
                                join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus).Where(p => isAdmin == false ? p.RelationshipManagerId == id : true) on lead.CallId equals appoint.CallId
                                join state in _context.StateMaster on lead.StateId equals state.StateId into ledState
                                from state in ledState.DefaultIfEmpty()
@@ -549,8 +551,10 @@ namespace OmniCRM_Web.Controllers
                 if (ModelState.IsValid)
                 {
                     DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
+                    Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                     callDetail.LastChangedDate = indianTime;
+                    callDetail.CompanyId = currentCompanyId;
 
                     if (callDetail.NextCallDate != null)
                         callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
@@ -671,6 +675,7 @@ namespace OmniCRM_Web.Controllers
             {
 
                 List<RMangerViewModel> listManager = new List<RMangerViewModel>();
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
                 //foreach (var item in listUser)
@@ -679,7 +684,7 @@ namespace OmniCRM_Web.Controllers
                 //}
 
 
-                listManager = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync()
+                listManager = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToListAsync()
                                select user).Select(p => new RMangerViewModel() { UserId = p.UserId, FirstName = p.FirstName, LastName = p.LastName }).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRelationshipManagerList: " + "-get all relationship manager user");
@@ -701,6 +706,7 @@ namespace OmniCRM_Web.Controllers
             {
 
                 List<RMangerViewModel> listTeleCaller = new List<RMangerViewModel>();
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
                 //foreach (var item in listUser)
@@ -709,7 +715,7 @@ namespace OmniCRM_Web.Controllers
                 //}
 
 
-                listTeleCaller = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.TeleCaller).ToListAsync()
+                listTeleCaller = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToListAsync()
                                   select user).Select(p => new RMangerViewModel() { UserId = p.UserId, FirstName = p.FirstName, LastName = p.LastName }).ToList();
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTeleCallerList: " + "-get all tele caller user");
@@ -821,6 +827,7 @@ namespace OmniCRM_Web.Controllers
 
                         List<CallDetail> callDetail = new List<CallDetail>();
                         List<UserMaster> userMasters = _context.UserMaster.Where(p => p.Status == true).ToList();
+                        Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                         for (int i = 2; i <= totalRows; i++)
                         {
@@ -836,6 +843,7 @@ namespace OmniCRM_Web.Controllers
                             callDetail.Add(new CallDetail()
                             {
                                 CreatedBy = createdbyuserid,
+                                CompanyId = currentCompanyId,
                                 FirstName = workSheet.Cells[i, firstName].Value.ToString(),
                                 MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
                                 LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
@@ -1036,13 +1044,13 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
                 AdminDashboard objAdminDash = new AdminDashboard();
-
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => q.CreatedBy == id && Convert.ToDateTime(q.CreatedDate).Date == DateTime.Now.Date).ToList()
                 //    .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList();
 
 
-                var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToList()
+                var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
                                       join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList()
                                       .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
                                       from TeleLeads in UserLead.DefaultIfEmpty()
@@ -1061,7 +1069,7 @@ namespace OmniCRM_Web.Controllers
                 }).ToList();
 
 
-                var ManagerLeads = from Manauser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToList()
+                var ManagerLeads = from Manauser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToList()
                                    join Leads in _context.FollowupHistory.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Manauser.UserId equals Leads.CreatedByRmanagerId into UserLead
                                    from ManaLeads in UserLead.DefaultIfEmpty()
                                    select new { Manauser.FirstName, UserLead, ManaLeads };
@@ -1195,6 +1203,7 @@ namespace OmniCRM_Web.Controllers
                 //        AppoinmentTaken = 
                 //    });
                 //}
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                 var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
                                       join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
@@ -1263,8 +1272,9 @@ namespace OmniCRM_Web.Controllers
                 //        AppoinmentTaken = 
                 //    });
                 //}
+                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
-                var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToListAsync()
+                var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToListAsync()
                                        join Leads in _context.AppointmentDetail.AsEnumerable().Where(q => q.AppoinStatusId != (int)AppoinmentStatus.Dismissed && Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.RelationshipManagerId into UserLead
                                        from ReleLeads in UserLead.DefaultIfEmpty()
                                        select new { Relauser.FirstName, UserLead, ReleLeads };

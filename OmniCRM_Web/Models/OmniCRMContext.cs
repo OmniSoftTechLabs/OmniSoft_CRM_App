@@ -23,6 +23,7 @@ namespace OmniCRM_Web.Models
         public virtual DbSet<CallOutcomeMaster> CallOutcomeMaster { get; set; }
         public virtual DbSet<CallTransactionDetail> CallTransactionDetail { get; set; }
         public virtual DbSet<CityMaster> CityMaster { get; set; }
+        public virtual DbSet<CompanyMaster> CompanyMaster { get; set; }
         public virtual DbSet<FollowupHistory> FollowupHistory { get; set; }
         public virtual DbSet<ProductMaster> ProductMaster { get; set; }
         public virtual DbSet<RoleMaster> RoleMaster { get; set; }
@@ -119,6 +120,8 @@ namespace OmniCRM_Web.Models
             {
                 entity.HasKey(e => e.CallId);
 
+                entity.HasIndex(e => e.CompanyId);
+
                 entity.HasIndex(e => e.CreatedBy);
 
                 entity.HasIndex(e => e.LastChangedDate);
@@ -157,6 +160,11 @@ namespace OmniCRM_Web.Models
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CityId)
                     .HasConstraintName("FK_CallDetail_CityMaster");
+
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.CallDetail)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_CallDetail_CompanyMaster");
 
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.CallDetail)
@@ -275,6 +283,27 @@ namespace OmniCRM_Web.Models
                     .HasConstraintName("FK_CityMaster_StateMaster");
             });
 
+            modelBuilder.Entity<CompanyMaster>(entity =>
+            {
+                entity.HasKey(e => e.CompanyId);
+
+                entity.Property(e => e.CompanyId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Address).HasMaxLength(256);
+
+                entity.Property(e => e.CompanyLogo).HasColumnType("image");
+
+                entity.Property(e => e.CompanyName)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.PhoneNo).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<FollowupHistory>(entity =>
             {
                 entity.HasKey(e => e.FollowupId);
@@ -306,6 +335,7 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Call)
                     .WithMany(p => p.FollowupHistory)
                     .HasForeignKey(d => d.CallId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FollowupHistory_CallDetail");
 
                 entity.HasOne(d => d.CreatedByRmanager)
@@ -381,6 +411,11 @@ namespace OmniCRM_Web.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.LinkExpiryDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.UserMaster)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_UserMaster_CompanyMaster");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserMaster)
