@@ -71,7 +71,7 @@ export class LeadListRmComponent implements OnInit {
       this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
-    let getFromDate = new Date(new Date().getTime() - (1 * 24 * 60 * 60 * 1000));
+    let getFromDate = new Date(new Date().getTime() - (0 * 24 * 60 * 60 * 1000));
     this.nextFollowupDate = this.minDate = { day: new Date().getDate() + 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.nextFollowupTime = { hour: 9, minute: 30, second: 0 };
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };

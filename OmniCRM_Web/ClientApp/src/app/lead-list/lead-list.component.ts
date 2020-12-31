@@ -66,7 +66,7 @@ export class LeadListComponent implements OnInit {
       this.isAdmin = true;
     modalConfig.backdrop = 'static';
     modalConfig.keyboard = false;
-    let getFromDate = new Date(new Date().getTime() - (1 * 24 * 60 * 60 * 1000));
+    let getFromDate = new Date(new Date().getTime() - (0 * 24 * 60 * 60 * 1000));
     this.fromDate = { day: getFromDate.getDate(), month: getFromDate.getMonth() + 1, year: getFromDate.getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
   }

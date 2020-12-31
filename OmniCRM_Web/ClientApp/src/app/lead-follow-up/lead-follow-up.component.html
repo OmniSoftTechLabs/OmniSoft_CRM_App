@@ -51,7 +51,7 @@
       <div class="row">
         <div class="form-group col-sm-12">
           Follow up Status<strong class="text-danger"> *</strong>
-          <select class="form-control custom-select" required #appoinStatusId="ngModel" [(ngModel)]="appointmentDetailObj.appoinStatusId" name="appoinStatusId" [class.is-invalid]="appoinStatusId.invalid && appoinStatusId.touched || appointmentDetailObj.appoinStatusId==7">
+          <select class="form-control custom-select" required #appoinStatusId="ngModel" [(ngModel)]="appointmentDetailObj.appoinStatusId" name="appoinStatusId" (change)="onStatusChange($event)" [class.is-invalid]="appoinStatusId.invalid && appoinStatusId.touched || appointmentDetailObj.appoinStatusId==7">
             <!--<option selected disabled value="0">Choose...</option>-->
             <option *ngFor="let objStatus of appoinmentStatusList" value="{{objStatus.appoinStatusId}}"> {{objStatus.status}}</option>
           </select>

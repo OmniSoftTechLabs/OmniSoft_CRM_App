@@ -51,6 +51,8 @@ export class LeadFollowUpComponent implements OnInit {
   productList: ProductMaster[];
   loading: boolean;
   dateTimeStr: string;
+  currentAppoinStatusId: number;
+  currentRemarks: string;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -107,6 +109,8 @@ export class LeadFollowUpComponent implements OnInit {
     this.leadRepo.getLeadById(this.callId).subscribe(
       data => (this.leadModel = data,
         this.appointmentDetailObj = data.appointmentDetail[0],
+        this.currentAppoinStatusId = this.appointmentDetailObj.appoinStatusId,
+        this.currentRemarks = this.leadModel.remark,
         this.lastAppoinDate = this.appointmentDetailObj.appointmentDateTime,
         this.leadRepo.getSelectedState(data.stateId).subscribe(state => { this.selectedState = state }),
         this.leadRepo.getSelectedCity(data.cityId).subscribe(city => { this.selectedCity = city })
@@ -256,5 +260,13 @@ export class LeadFollowUpComponent implements OnInit {
     }
 
     this.isOnDatePickerLoad = false;
+  }
+
+  onStatusChange(value: any) {
+    let appoinStatusId = value.currentTarget.value;
+    if (appoinStatusId != this.currentAppoinStatusId)
+      this.leadModel.remark = "";
+    else
+      this.leadModel.remark = this.currentRemarks;
   }
 }

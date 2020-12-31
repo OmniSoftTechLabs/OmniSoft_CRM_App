@@ -55,6 +55,8 @@ export class LeadCreateComponent implements OnInit {
   productList: ProductMaster[];
   loading: boolean;
   dateTimeStr: string;
+  currentOutcomeId: number;
+  currentRemarks: string;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -126,6 +128,8 @@ export class LeadCreateComponent implements OnInit {
       this.leadRepo.getLeadById(this.callId).subscribe(
         data => {
           this.leadModel = data;
+          this.currentOutcomeId = this.leadModel.outComeId;
+          this.currentRemarks = this.leadModel.remark;
           if (data.appointmentDetail.length > 0) {
             this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
               this.appointmentDate = {
@@ -302,6 +306,10 @@ export class LeadCreateComponent implements OnInit {
     let outComeId = value.currentTarget.value;
     if (outComeId != 4)
       this.leadModel.nextCallDate = null;
+    if (outComeId != this.currentOutcomeId)
+      this.leadModel.remark = "";
+    else
+      this.leadModel.remark = this.currentRemarks;
   }
 }
 

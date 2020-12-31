@@ -840,28 +840,33 @@ namespace OmniCRM_Web.Controllers
                                     createdbyuserid = user.UserId;
                             }
 
-                            callDetail.Add(new CallDetail()
+                            bool isMobileExist = _context.CallDetail.Any(p => p.MobileNumber == workSheet.Cells[i, mobileNumber].Value.ToString());
+
+                            if (isMobileExist == false)
                             {
-                                CreatedBy = createdbyuserid,
-                                CompanyId = currentCompanyId,
-                                FirstName = workSheet.Cells[i, firstName].Value.ToString(),
-                                MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
-                                LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
-                                Address = address > 0 ? Convert.ToString(workSheet.Cells[i, address].Value) : null,
-                                EmailId = emailId > 0 ? Convert.ToString(workSheet.Cells[i, emailId].Value) : null,
-                                LastChangedDate = DateTime.Now,
-                                OutComeId = (int)CallOutcome.None,
-                                Remark = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null,
-                                CallTransactionDetail = new List<CallTransactionDetail>()
+                                callDetail.Add(new CallDetail()
                                 {
-                                    new CallTransactionDetail()
+                                    CreatedBy = createdbyuserid,
+                                    CompanyId = currentCompanyId,
+                                    FirstName = workSheet.Cells[i, firstName].Value.ToString(),
+                                    MobileNumber = workSheet.Cells[i, mobileNumber].Value.ToString(),
+                                    LastName = lastName > 0 ? Convert.ToString(workSheet.Cells[i, lastName].Value) : null,
+                                    Address = address > 0 ? Convert.ToString(workSheet.Cells[i, address].Value) : null,
+                                    EmailId = emailId > 0 ? Convert.ToString(workSheet.Cells[i, emailId].Value) : null,
+                                    LastChangedDate = DateTime.Now,
+                                    OutComeId = (int)CallOutcome.None,
+                                    Remark = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null,
+                                    CallTransactionDetail = new List<CallTransactionDetail>()
                                     {
-                                        CreatedBy = id,
-                                        OutComeId = (int)CallOutcome.NoResponse,
-                                        Remarks = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null
+                                        new CallTransactionDetail()
+                                        {
+                                            CreatedBy = id,
+                                            OutComeId = (int)CallOutcome.None,
+                                            Remarks = remarks > 0 ? Convert.ToString(workSheet.Cells[i, remarks].Value) : null
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
 
                         await _context.CallDetail.AddRangeAsync(callDetail);
