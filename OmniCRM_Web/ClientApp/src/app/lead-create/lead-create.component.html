@@ -171,7 +171,7 @@
 
       <div class="form-group form-row form-inline">
         <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || (leadModel.outComeId == 3 && appointmentTime == null) || (leadModel.outComeId == 4 && nextCallTimeNg == null) || is_progress" type="submit" style="width:120px;">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || leadModel.outComeId == 0 || (leadModel.outComeId == 3 && appointmentTime == null) || (leadModel.outComeId == 4 && nextCallTimeNg == null) || is_progress" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>
@@ -184,3 +184,21 @@
 </div>
 
 
+<!--Modal MobileValidation Confirm-->
+
+<ng-template #modalConfirm class="modal-content" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Confirmation</h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This lead is already exist. Are you sure to save this lead?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="modal.close(onConfirmYesModal())">Yes</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.close(onDismissModel())">No</button>
+    <!--<button type="button" class="btn btn-primary">Understood</button>-->
+  </div>
+</ng-template>

@@ -29,6 +29,10 @@ export class LeadRepositoryService {
     return this.http.get<AppoinmentStatusMaster[]>(this.baseUrl + 'api/AppoinmentStatusMasters').pipe();
   }
 
+  checkMobileValidation(mobilenumber: string) {
+    return this.http.post(this.baseUrl + 'api/CallDetails/PostCheckMobilevalidation/' + mobilenumber, { responseType: 'text' }).pipe();
+  }
+
   createLead(leadModel: LeadMaster) {
     return this.http.post(this.baseUrl + 'api/CallDetails', leadModel, { responseType: 'text' }).pipe();
   }

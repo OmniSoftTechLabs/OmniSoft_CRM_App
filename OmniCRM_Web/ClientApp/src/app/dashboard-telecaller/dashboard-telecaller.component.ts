@@ -117,6 +117,6 @@ export class DashboardTelecallerComponent implements OnInit {
         data: salesChartData,
         options: salesChartOptions
       });
-    }, 1600);
+    }, 2000);
   }
 }

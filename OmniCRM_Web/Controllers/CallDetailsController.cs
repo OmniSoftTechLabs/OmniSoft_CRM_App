@@ -559,6 +559,8 @@ namespace OmniCRM_Web.Controllers
                     if (callDetail.NextCallDate != null)
                         callDetail.NextCallDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(callDetail.NextCallDate), GenericMethods.Indian_Zone);
 
+                    //if (CallDetailMobileExists(callDetail.MobileNumber) && isConfirm == false)
+                    //    return Conflict("MobileNumberConflict");
 
                     var ObjAppointment = callDetail.AppointmentDetail.LastOrDefault();
                     if (ObjAppointment != null && ObjAppointment.AppointmentDateTime != null)
@@ -665,6 +667,25 @@ namespace OmniCRM_Web.Controllers
         private bool CallDetailExists(int id)
         {
             return _context.CallDetail.Any(e => e.CallId == id);
+        }
+
+        [HttpPost]
+        [Route("PostCheckMobilevalidation/{mobilenumber}")]
+        public async Task<ActionResult> PostCheckMobilevalidation(string mobilenumber)
+        {
+            try
+            {
+                bool isMobileExist = _context.CallDetail.Any(p => p.MobileNumber == mobilenumber);
+                if (isMobileExist)
+                    return Conflict("MobileNumberConflict");
+                else
+                    return Ok();
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostCheckMobilevalidation: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         [HttpGet]

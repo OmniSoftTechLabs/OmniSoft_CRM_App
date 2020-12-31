@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, TemplateRef } from '@angular/core';
 import { NgForm, FormControl, Validators } from '@angular/forms';
 import { LeadMaster, OutcomeMaster, AppointmentDetail, StateMaster, CityMaster } from '../models/lead-master';
 import { LeadRepositoryService } from '../services/lead-repository.service';
 import { UserMaster } from '../models/user-master';
 import { AuthenticationService } from '../services/authentication.service';
 import { RmanagerMaster } from '../models/rmanager-master';
-import { NgbDateStruct, NgbTimeStruct, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct, NgbActiveModal, NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppoinmentStatus, LeadOutCome } from '../services/generic-enums';
 import { AdminSetting } from '../models/admin-setting';
 import { Observable, concat, of, Subject } from 'rxjs';
@@ -21,6 +21,7 @@ import { ProductMaster } from '../models/product-master';
 export class LeadCreateComponent implements OnInit {
 
   @ViewChild('leadAdd') form: NgForm;
+  @ViewChild('modalConfirm') modalConfirm: TemplateRef<any>;
   @Input() callId: number;
 
   //callId: number;
@@ -106,12 +107,15 @@ export class LeadCreateComponent implements OnInit {
   });
 
 
-  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, public activeModal: NgbActiveModal, private datePipe: DatePipe) {
+  constructor(private leadRepo: LeadRepositoryService, private auth: AuthenticationService, public activeModal: NgbActiveModal, private datePipe: DatePipe,
+    private modalService: NgbModal, private modalConfig: NgbModalConfig) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
     this.minDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() }
     this.adminSetting = <AdminSetting>JSON.parse(localStorage.getItem('adminSetting'));
     this.productList = <ProductMaster[]>JSON.parse(localStorage.getItem('productMasters'));
     this.minuteStep = this.adminSetting.appoinTimeInterval;
+    modalConfig.backdrop = 'static';
+    modalConfig.keyboard = false;
   }
 
   ngOnInit(): void {
@@ -239,22 +243,50 @@ export class LeadCreateComponent implements OnInit {
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
     }
 
+    this.leadRepo.checkMobileValidation(this.leadModel.mobileNumber).subscribe({
+      next: data => {
+        if (this.is_edit == true) {
+          this.onEditConfirmLead();
+        } else {
+          this.onSaveConfirmLead();
+        }
+      },
+      error: error => {
+        if (error.error == 'MobileNumberConflict') {
+          this.modalService.open(this.modalConfirm);
+        } else {
+          this.errorMsg = error.error; this.IsError = true; this.onSaveCompleted();
+        }
+      }
+    });
+  }
+
+  onSaveConfirmLead() {
+    this.leadModel.createdBy = this.currentUser.userId;
+    this.leadRepo.createLead(this.leadModel).subscribe({
+      next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
+      error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
+    });
+  }
+
+  onEditConfirmLead() {
+    this.leadRepo.editlead(this.leadModel).subscribe({
+      next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
+      error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
+    });
+  }
+
+  onConfirmYesModal() {
     if (this.is_edit == true) {
-
-      this.leadRepo.editlead(this.leadModel).subscribe({
-        next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
-        error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
-      });
-
+      this.onEditConfirmLead();
+    } else {
+      this.onSaveConfirmLead();
     }
-    else {
+  }
 
-      this.leadModel.createdBy = this.currentUser.userId;
-      this.leadRepo.createLead(this.leadModel).subscribe({
-        next: data => (this.successMsg = data, this.IsSucess = true, this.onSaveCompleted()),
-        error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
-      });
-    }
+  onDismissModel() {
+    this.is_progress = false;
+    this.saveBtnTxt = "Save";
   }
 
   closeAlert() {
