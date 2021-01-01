@@ -164,6 +164,7 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Company)
                     .WithMany(p => p.CallDetail)
                     .HasForeignKey(d => d.CompanyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CallDetail_CompanyMaster");
 
                 entity.HasOne(d => d.CreatedByNavigation)
@@ -415,6 +416,7 @@ namespace OmniCRM_Web.Models
                 entity.HasOne(d => d.Company)
                     .WithMany(p => p.UserMaster)
                     .HasForeignKey(d => d.CompanyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserMaster_CompanyMaster");
 
                 entity.HasOne(d => d.Role)

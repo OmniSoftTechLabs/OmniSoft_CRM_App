@@ -25,7 +25,7 @@ namespace OmniCRM_Web.Models
         public string PasswordHash { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? LinkExpiryDate { get; set; }
-        public Guid? CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
         public virtual CompanyMaster Company { get; set; }
         public virtual RoleMaster Role { get; set; }

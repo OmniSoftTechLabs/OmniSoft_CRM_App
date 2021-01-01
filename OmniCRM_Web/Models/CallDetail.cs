@@ -29,7 +29,7 @@ namespace OmniCRM_Web.Models
         public DateTime? NextCallDate { get; set; }
         public string Remark { get; set; }
         public bool? IsDeleted { get; set; }
-        public Guid? CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
         public virtual CityMaster City { get; set; }
         public virtual CompanyMaster Company { get; set; }
