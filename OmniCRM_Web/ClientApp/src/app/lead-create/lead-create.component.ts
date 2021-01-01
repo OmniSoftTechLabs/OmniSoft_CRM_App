@@ -58,6 +58,7 @@ export class LeadCreateComponent implements OnInit {
   dateTimeStr: string;
   currentOutcomeId: number;
   currentRemarks: string;
+  currentMobile: string;
 
   timeCtrl = new FormControl('', (control: FormControl) => {
     const value = control.value;
@@ -134,6 +135,7 @@ export class LeadCreateComponent implements OnInit {
           this.leadModel = data;
           this.currentOutcomeId = this.leadModel.outComeId;
           this.currentRemarks = this.leadModel.remark;
+          this.currentMobile = this.leadModel.mobileNumber;
           if (data.appointmentDetail.length > 0) {
             this.appointmentDetailObj.relationshipManagerId = data.appointmentDetail[0].relationshipManagerId,
               this.appointmentDate = {
@@ -243,22 +245,26 @@ export class LeadCreateComponent implements OnInit {
       this.leadModel.appointmentDetail.push(this.appointmentDetailObj);
     }
 
-    this.leadRepo.checkMobileValidation(this.leadModel.mobileNumber).subscribe({
-      next: data => {
-        if (this.is_edit == true) {
-          this.onEditConfirmLead();
-        } else {
-          this.onSaveConfirmLead();
+    if (this.is_edit == true && this.currentMobile == this.leadModel.mobileNumber) {
+      this.onEditConfirmLead();
+    } else {
+      this.leadRepo.checkMobileValidation(this.leadModel.mobileNumber).subscribe({
+        next: data => {
+          if (this.is_edit == true) {
+            this.onEditConfirmLead();
+          } else {
+            this.onSaveConfirmLead();
+          }
+        },
+        error: error => {
+          if (error.error == 'MobileNumberConflict') {
+            this.modalService.open(this.modalConfirm);
+          } else {
+            this.errorMsg = error.error; this.IsError = true; this.onSaveCompleted();
+          }
         }
-      },
-      error: error => {
-        if (error.error == 'MobileNumberConflict') {
-          this.modalService.open(this.modalConfirm);
-        } else {
-          this.errorMsg = error.error; this.IsError = true; this.onSaveCompleted();
-        }
-      }
-    });
+      });
+    }
   }
 
   onSaveConfirmLead() {
