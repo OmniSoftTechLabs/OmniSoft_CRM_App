@@ -551,7 +551,7 @@ namespace OmniCRM_Web.Controllers
                 if (ModelState.IsValid)
                 {
                     DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
-                    Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                    Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                     callDetail.LastChangedDate = indianTime;
                     callDetail.CompanyId = currentCompanyId;
@@ -848,7 +848,7 @@ namespace OmniCRM_Web.Controllers
 
                         List<CallDetail> callDetail = new List<CallDetail>();
                         List<UserMaster> userMasters = _context.UserMaster.Where(p => p.Status == true).ToList();
-                        Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                        Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
 
                         for (int i = 2; i <= totalRows; i++)
                         {
