@@ -1,7 +1,17 @@
 <div class="card">
-  <div class="card-header">
-    <h5 class="card-title">Relationship Manager Lead Details</h5>
-    <div class="card-tools">
+  <div class="card-header" style="padding-top:6px;padding-bottom:6px">
+    <h5 class="card-title mb-0 mt-2">Relationship Manager Lead Details</h5>
+    <div class="card-tools form-inline">
+      <div *ngIf="isCheckedBox">
+        <button *ngIf="isAdmin" type="button" class="btn btn-outline-secondary mr-2" placement="top" ngbTooltip="Re-Allocate" data-toggle="modal" data-target="#modelReAllocate"><i class="fas fa-random"></i></button>
+        <button type="button" class="btn btn-outline-info mr-2" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
+        <button type="button" class="btn btn-outline-danger mr-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
+
+      </div>
+      <div class="form-group has-search">
+        <span class="fas fa-search form-control-feedback"></span>
+        <input class="form-control" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" ngbTooltip="Search by First Name, Last Name or Mobile Number" [openDelay]="700" placeholder="Search" />
+      </div>
       <button type="button" class="btn btn-tool" data-card-widget="remove" (click)="onCardClose()">
         <i class="fas fa-times"></i>
       </button>
@@ -14,22 +24,11 @@
 
   </div>
 
-  <div class="card-body">
+  <div class="card-body pt-1">
 
     <form>
       <div class="form-row">
-        <div class="col-sm form-group form-inline">
-          Search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" style="width:75%" placeholder="Search by First Name, Last Name or Mobile Number" />
-          <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="isLoading || (service.loading$ | async)"></span>
-        </div>
-        <div class="col-sm form-group">
-          <div class="float-right">
-            <button type="button" class="btn btn-outline-success" style="width:120px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="col-sm-3 form-group">
+        <div class="col-sm-2 form-group">
           Status:
           <ng-select [items]="appoinStatusList"
                      [multiple]="true"
@@ -52,7 +51,7 @@
             <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
           </select>
         </div>
-        <div class="col-sm form-inline form-group" style="margin-bottom:-5px;">
+        <div class="col-sm form-inline form-group mt-4">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary">{{filterDateOption}}</button>
             <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -80,16 +79,17 @@
             <button type="button" class="btn btn-outline-primary" placement="right" ngbTooltip="Filter" (click)="onFilterSearch()"><i class="fas fa-search"></i></button>
           </div>
 
-          <div *ngIf="isCheckedBox">
-            <button type="button" class="btn btn-outline-danger float-right ml-2" placement="top" ngbTooltip="Dismiss Selected Leads" data-toggle="modal" data-target="#modelConfirm"><i class="fas fa-calendar-minus"></i></button>
-            <button type="button" class="btn btn-outline-info float-right" placement="top" ngbTooltip="Remind Me Later" data-toggle="modal" data-target="#modelRemindLater"><i class="fas fa-calendar-day"></i></button>
-            <button *ngIf="isAdmin" type="button" class="btn btn-outline-secondary float-right mr-2" placement="top" ngbTooltip="Re-Allocate" data-toggle="modal" data-target="#modelReAllocate"><i class="fas fa-random"></i></button>
-          </div>
+          <span class="spinner-border spinner-border text-primary ml-3" role="status" aria-hidden="true" *ngIf="isLoading || (service.loading$ | async)"></span>
+
         </div>
 
         <!--Search: <input class="form-control ml-2" type="text" name="listFilter" [(ngModel)]="listFilter" placeholder="Search by any value" />-->
         <!--<span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>-->
-
+        <div class="col-sm-3 form-group mt-4">
+          <div class="float-right">
+            <button type="button" class="btn btn-outline-success" style="width:100px;" (click)="exportAsXLSX()"> <i class="fas fa-file-excel mr-2"></i> Export</button>
+          </div>
+        </div>
       </div>
 
       <div class="search-results" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
