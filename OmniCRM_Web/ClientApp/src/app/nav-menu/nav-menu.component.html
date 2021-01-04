@@ -2,13 +2,14 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-info border-bottom box-shadow mb-3">
     <div class="container-fluid">
       <a role="button" (click)="onBrandClick()" class="navbar-brand" style="cursor: pointer"><img [src]="logoSrc" height="40" /></a>
-      <button class="navbar-toggler"
+      <button class="navbar-toggler ml-auto float-xs-right"
               type="button"
               data-toggle="collapse"
               data-target="#navbarContent"
               aria-controls="navbarContent"
               aria-expanded="false"
-              aria-label="Toggle navigation">
+              aria-label="Toggle navigation"
+              *ngIf="isLoggedIn">
         <span class="navbar-toggler-icon"></span>
       </button>
       &nbsp; &nbsp; &nbsp;

@@ -51,6 +51,7 @@ export class LeadListComponent implements OnInit {
   checkedList: LeadMaster[] = [];
   minDate: NgbDateStruct;
   isLoading: boolean = false;
+  isUploading: boolean = false;
 
   @ViewChild('labelImport') labelImport: ElementRef;
   @ViewChild('fileInput') fileInput;
@@ -222,10 +223,11 @@ export class LeadListComponent implements OnInit {
 
   onUploadFile() {
     let formData = new FormData();
+    this.isUploading = true;
     formData.append('upload', this.fileInput.nativeElement.files[0]);
     this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe({
-      next: data => (this.uploadMsg = data, this.isUploadSucc = true, this.fillLeadListCreatedBy()),
-      error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false)
+      next: data => (this.uploadMsg = data, this.isUploadSucc = true, this.isUploading = false, this.fillLeadListCreatedBy()),
+      error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false, this.isUploading = false)
     });
   }
 

@@ -235,13 +235,13 @@ export class LeadListRmComponent implements OnInit {
       this.checkedList = [];
   }
 
-  onDismissAll() {
+  //onDismissAll() {
 
-    this.leadRepo.dismissLeads(this.checkedList).subscribe({
-      next: data => (console.log('Success!', data), this.fillLeadListByRM()),
-      error: error => (console.error('Error!', error), this.fillLeadListByRM())
-    });
-  }
+  //  this.leadRepo.dismissLeads(this.checkedList).subscribe({
+  //    next: data => (console.log('Success!', data), this.fillLeadListByRM()),
+  //    error: error => (console.error('Error!', error), this.fillLeadListByRM())
+  //  });
+  //}
 
   onRemindLater() {
     let date = new Date(this.nextFollowupDate.year, this.nextFollowupDate.month - 1, this.nextFollowupDate.day, this.nextFollowupTime.hour, this.nextFollowupTime.minute, 0, 0);
