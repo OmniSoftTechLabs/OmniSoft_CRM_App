@@ -39,6 +39,7 @@ import { TeleCallerSummaryComponent } from './tele-caller-summary/tele-caller-su
 import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager-summary.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { CompanyMasterComponent } from './company-master/company-master.component';
+import { AdminCalenderComponent } from './admin-calender/admin-calender.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { CompanyMasterComponent } from './company-master/company-master.componen
     TeleCallerSummaryComponent,
     ReleManagerSummaryComponent,
     CompanyMasterComponent,
+    AdminCalenderComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
