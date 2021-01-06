@@ -1359,5 +1359,40 @@ namespace OmniCRM_Web.Controllers
             }
 
         }
+
+        [HttpGet("{id}")]
+        [Route("GetCalenderByRM/{id}")]
+        public async Task<ActionResult<RManagerDashboard>> GetCalenderByRM(Guid id)
+        {
+            try
+            {
+                var MaxAppointIDs = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault().AppintmentId);
+
+                var callDetail = from lead in _context.CallDetail.Where(p => p.IsDeleted != true).ToList()
+                                 join appoint in _context.AppointmentDetail.Include(p => p.AppoinStatus).Where(p => p.RelationshipManagerId == id) on lead.CallId equals appoint.CallId
+                                 where MaxAppointIDs.Contains(appoint.AppintmentId)
+                                 select new { LeadDetail = lead, AppontDetail = appoint };
+
+                RManagerDashboard objManagerDash = new RManagerDashboard();
+
+                objManagerDash.CollCalendarEvents = (from call in callDetail.Where(p => p.AppontDetail.AppointmentDateTime != null) select call).Select(p => new EventCalendar()
+                {
+                    CallId = p.AppontDetail.CallId,
+                    AppointmentTime = Convert.ToDateTime(p.AppontDetail.AppointmentDateTime),
+                    AppointStatus = p.AppontDetail.AppoinStatus.Status,
+                    ClientName = p.LeadDetail.FirstName + " " + p.LeadDetail.LastName,
+                    AppointStatusId = p.AppontDetail.AppoinStatusId
+                }).ToList();
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetCalenderByRM: " + id + "-get manager calender");
+                return await Task.FromResult(objManagerDash);
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetCalenderByRM: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
+        }
     }
 }

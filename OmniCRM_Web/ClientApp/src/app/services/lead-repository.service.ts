@@ -126,6 +126,12 @@ export class LeadRepositoryService {
     return response;
   }
 
+  async loadCalenderByRM(id) {
+    let response = await this.http.get<ManagerDash>(this.baseUrl + 'api/CallDetails/GetCalenderByRM/' + id).toPromise();
+    return response;
+  }
+
+
   async loadAdminDash(filterOption: FilterOptions) {
     let response = await this.http.post<AdminDash>(this.baseUrl + 'api/CallDetails/GetAdminDashboard/', filterOption).toPromise();
     return response;

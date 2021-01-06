@@ -102,6 +102,7 @@ import { AdminCalenderComponent } from './admin-calender/admin-calender.componen
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'tele-caller-summary-rpt', component: TeleCallerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'rele-manager-summary-rpt', component: ReleManagerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'admin-calender', component: AdminCalenderComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
       //{ path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthGuard] },
