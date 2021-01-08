@@ -66,7 +66,7 @@ namespace OmniCRM_Web
                     ValidIssuer = Configuration["TokenSettings:Client_URL"].ToString(),
                     ValidAudience = Configuration["TokenSettings:Client_URL"].ToString(),
 
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
                 };
             });
 

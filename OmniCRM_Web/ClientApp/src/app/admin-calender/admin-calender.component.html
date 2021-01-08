@@ -2,7 +2,7 @@
   <div class="container-fluid">
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-12">
         <div class="card">
           <div class="card-header" style="padding-top:6px;padding-bottom:6px">
             <div class="form-row">
@@ -10,7 +10,7 @@
                 Select Manager: &nbsp;&nbsp; <select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId" (change)="onSelectChange($event)">
                   <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
                 </select>
-               
+
                 <span class="spinner-border text-primary ml-4" role="status" aria-hidden="true" *ngIf="isLoading"></span>
               </div>
               <div class="card-tools">
