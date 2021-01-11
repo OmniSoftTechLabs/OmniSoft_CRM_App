@@ -356,7 +356,7 @@ namespace OmniCRM_Web.Controllers
                                     Issuer = _configuration.GetSection("TokenSettings").GetSection("Client_URL").Value,
                                     Audience = _configuration.GetSection("TokenSettings").GetSection("Client_URL").Value,
 
-                                    Expires = DateTime.Now.AddHours(6),
+                                    Expires = DateTime.UtcNow.AddHours(6),
                                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256Signature)
                                 };
                                 var tokenHandler = new JwtSecurityTokenHandler();

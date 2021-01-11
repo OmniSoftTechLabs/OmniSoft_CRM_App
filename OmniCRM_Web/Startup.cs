@@ -39,7 +39,10 @@ namespace OmniCRM_Web
             #endregion
 
             services.AddDistributedMemoryCache();//To Store session in Memory, This is default implementation of IDistributedCache    
-            services.AddSession();
+            services.AddSession(option =>
+            {
+                option.IdleTimeout = TimeSpan.FromHours(6);
+            });
 
             //services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
