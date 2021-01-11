@@ -47,6 +47,7 @@ export class TeleCallerSummaryComponent implements OnInit {
         data.tcRowsData.forEach(obj => {
           this.renameKey(obj, "appoinmentTaken", "Appoinment Taken"),
             this.renameKey(obj, "callLater", "Call Later"),
+            this.renameKey(obj, "dropped", "Dropped"),
             this.renameKey(obj, "none", "None"),
             this.renameKey(obj, "noResponse", "No Response"),
             this.renameKey(obj, "notInterested", "Not Interested"),

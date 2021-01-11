@@ -11,6 +11,7 @@ export class TeleCallerChartData {
   callLater: number;
   wrongNumber: number;
   none: number;
+  dropped: number;
 }
 
 export class ManagerChartData {

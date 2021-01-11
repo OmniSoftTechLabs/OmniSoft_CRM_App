@@ -55,6 +55,7 @@ export class DashboardComponent implements OnInit {
   callLater: number[] = [];
   wrongNumber: number[] = [];
   none: number[] = [];
+  droppedT: number[] = [];
 
   managers: string[] = [];
   firstMeeting: number[] = [];
@@ -96,8 +97,8 @@ export class DashboardComponent implements OnInit {
           this.callLater.push(item.callLater);
           this.wrongNumber.push(item.wrongNumber);
           this.none.push(item.none);
+          this.droppedT.push(item.dropped);
         });
-
 
         this.adminDashboard.collMangerChartData.forEach((item) => {
           this.managers.push(item.manager);
@@ -110,15 +111,17 @@ export class DashboardComponent implements OnInit {
           this.pending.push(item.pending);
         });
 
+        this.loadTeleChart();
+        this.loadManagerChart();
       },
       error => console.error(error)
     );
   }
 
-  ngAfterViewInit(): void {
-    this.loadTeleChart();
-    this.loadManagerChart();
-  }
+  //ngAfterViewInit(): void {
+  //  this.loadTeleChart();
+  //  this.loadManagerChart();
+  //}
 
   loadTeleChart() {
     var stackedBarChartCanvas = this.canvasTele.nativeElement.getContext('2d');
@@ -145,8 +148,8 @@ export class DashboardComponent implements OnInit {
         },
         {
           label: 'Call Later',
-          backgroundColor: colors.khaki.secondary,
-          borderColor: colors.khaki.primary,
+          backgroundColor: colors.blue.secondary,
+          borderColor: colors.blue.primary,
           data: this.callLater
         },
         {
@@ -160,6 +163,12 @@ export class DashboardComponent implements OnInit {
           backgroundColor: colors.silver.secondary,
           borderColor: colors.silver.primary,
           data: this.none
+        },
+        {
+          label: 'Dropped',
+          backgroundColor: colors.khaki.secondary,
+          borderColor: colors.khaki.primary,
+          data: this.dropped
         },
       ]
     };
@@ -211,7 +220,7 @@ export class DashboardComponent implements OnInit {
         data: stackedBarChartData,
         options: stackedBarChartOptions
       });
-    }, 2000);
+    }, 1000);
   }
 
   loadManagerChart() {
@@ -284,7 +293,7 @@ export class DashboardComponent implements OnInit {
         data: stackedBarChartData,
         options: stackedBarChartOptions
       });
-    }, 2000);
+    }, 1000);
   }
 
   onDateChange() {
