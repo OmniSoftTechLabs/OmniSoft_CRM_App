@@ -47,8 +47,8 @@ namespace OmniCRM_Web.Controllers
         {
             try
             {
-                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
-                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+                Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetUserMaster: " + "-get all user master");
                 return await _context.UserMaster.Include(p => p.Role).Where(r => currentCompanyId != null ? r.CompanyId == currentCompanyId : true).ToListAsync();
@@ -344,7 +344,7 @@ namespace OmniCRM_Web.Controllers
                                 if (objCompany != null)
                                     objViewUser.LogoImage = objCompany.LogoBase64;
 
-                                //HttpContext.Session.SetString("#COMPANY_ID", userMaster.CompanyId.ToString());
+                                HttpContext.Session.SetString("#COMPANY_ID", userMaster.CompanyId.ToString());
 
                                 var key = _configuration.GetSection("TokenSettings").GetSection("JWT_Secret").Value;
                                 //var key = userMaster.CompanyId.ToString();

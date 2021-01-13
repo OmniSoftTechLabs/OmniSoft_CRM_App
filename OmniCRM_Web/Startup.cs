@@ -2,7 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,12 +40,23 @@ namespace OmniCRM_Web
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             #endregion
 
+            #region Session Setting
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true; // consent required
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             services.AddDistributedMemoryCache();//To Store session in Memory, This is default implementation of IDistributedCache    
             services.AddSession(option =>
             {
                 option.IdleTimeout = TimeSpan.FromHours(6);
                 option.Cookie.IsEssential = true;
             });
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+            
+            #endregion
 
             //services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
