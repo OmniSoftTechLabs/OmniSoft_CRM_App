@@ -49,7 +49,8 @@ namespace OmniCRM_Web.Controllers
                 //var listLead = _mapper.Map<List<CallDetailViewModel>>(callDetail);
                 //List<CallDetailViewModel> listCallDetail = new List<CallDetailViewModel>();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 var MaxAppointData = _context.AppointmentDetail.ToList().GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.AppintmentId).LastOrDefault()).ToList();
 
@@ -182,7 +183,8 @@ namespace OmniCRM_Web.Controllers
 
                 //var callDetail = await _context.CallDetail.Include(p => p.OutCome).Include(p => p.AppointmentDetail).ThenInclude(p => p.AppoinStatus).ToListAsync();
                 bool isAdmin = _context.UserMaster.FirstOrDefault(p => p.UserId == id).RoleId == (int)Roles.Admin;
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //.Where(p => p.AppointmentDetail.OrderBy(q => q.AppintmentId).AsEnumerable().LastOrDefault().RelationshipManagerId == id)
 
@@ -551,7 +553,8 @@ namespace OmniCRM_Web.Controllers
                 if (ModelState.IsValid)
                 {
                     DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GenericMethods.Indian_Zone);
-                    Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                    //Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                    Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                     callDetail.LastChangedDate = indianTime;
                     callDetail.CompanyId = currentCompanyId;
@@ -696,7 +699,8 @@ namespace OmniCRM_Web.Controllers
             {
 
                 List<RMangerViewModel> listManager = new List<RMangerViewModel>();
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
                 //foreach (var item in listUser)
@@ -727,7 +731,8 @@ namespace OmniCRM_Web.Controllers
             {
 
                 List<RMangerViewModel> listTeleCaller = new List<RMangerViewModel>();
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //var listUser = await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
                 //foreach (var item in listUser)
@@ -848,7 +853,9 @@ namespace OmniCRM_Web.Controllers
 
                         List<CallDetail> callDetail = new List<CallDetail>();
                         List<UserMaster> userMasters = _context.UserMaster.Where(p => p.Status == true).ToList();
-                        Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                        //Guid currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                        Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+
 
                         for (int i = 2; i <= totalRows; i++)
                         {
@@ -1075,7 +1082,9 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
                 AdminDashboard objAdminDash = new AdminDashboard();
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+
 
                 //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => q.CreatedBy == id && Convert.ToDateTime(q.CreatedDate).Date == DateTime.Now.Date).ToList()
                 //    .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList();
@@ -1234,7 +1243,8 @@ namespace OmniCRM_Web.Controllers
                 //        AppoinmentTaken = 
                 //    });
                 //}
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
                 //                      join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
@@ -1311,7 +1321,8 @@ namespace OmniCRM_Web.Controllers
                 //        AppoinmentTaken = 
                 //    });
                 //}
-                Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //var RelaManagerLeads = from Relauser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId).ToListAsync()
                 //                       join Leads in _context.AppointmentDetail.AsEnumerable().Where(q => q.AppoinStatusId != (int)AppoinmentStatus.Dismissed && Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Relauser.UserId equals Leads.RelationshipManagerId into UserLead

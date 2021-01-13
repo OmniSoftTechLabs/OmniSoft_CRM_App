@@ -168,7 +168,7 @@ export class DashboardComponent implements OnInit {
           label: 'Dropped',
           backgroundColor: colors.khaki.secondary,
           borderColor: colors.khaki.primary,
-          data: this.dropped
+          data: this.droppedT
         },
       ]
     };

@@ -42,6 +42,7 @@ namespace OmniCRM_Web
             services.AddSession(option =>
             {
                 option.IdleTimeout = TimeSpan.FromHours(6);
+                option.Cookie.IsEssential = true;
             });
 
             //services.AddControllersWithViews();
