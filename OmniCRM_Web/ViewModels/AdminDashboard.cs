@@ -20,6 +20,7 @@ namespace OmniCRM_Web.ViewModels
         public int CallLater { get; set; }
         public int WrongNumber { get; set; }
         public int None { get; set; }
+        public int Dropped { get; set; }
     }
 
     public class ManagerChartData
