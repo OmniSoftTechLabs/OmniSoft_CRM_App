@@ -30,7 +30,7 @@ namespace OmniCRM_Web.GenericClasses
             Dropped = 4,
             Hold = 5,
             NotInterested = 6,
-            Pending = 7,
+            AppoinmentTaken = 7,
             Dismissed = 8,
         }
 

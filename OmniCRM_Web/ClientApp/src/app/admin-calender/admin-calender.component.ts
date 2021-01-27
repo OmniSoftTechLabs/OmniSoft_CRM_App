@@ -108,7 +108,7 @@ export class AdminCalenderComponent implements OnInit {
               title: item.clientName + " - " + item.appointStatus + " - " + this.datePipe.transform(item.appointmentTime, "hh:mm a"),
               start: new Date(item.appointmentTime),
               end: addMinutes(30, new Date(item.appointmentTime)), // new Date(new Date(item.appointmentTime).setMinutes(new Date(item.appointmentTime).getMinutes() + 30)),
-              color: item.appointStatusId == AppoinmentStatus.Pending ? colors.orange :
+              color: item.appointStatusId == AppoinmentStatus.AppoinmentTaken ? colors.orange :
                 item.appointStatusId == AppoinmentStatus.FirstMeeting ? colors.purple :
                   item.appointStatusId == AppoinmentStatus.SecondMeeting ? colors.silver :
                     item.appointStatusId == AppoinmentStatus.Sold ? colors.green :

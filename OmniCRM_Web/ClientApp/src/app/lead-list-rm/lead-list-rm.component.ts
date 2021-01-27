@@ -292,7 +292,7 @@ export class LeadListRmComponent implements OnInit {
       objAppointment.callId = obj.callId;
       objAppointment.createdBy = this.currentUser.userId;
       objAppointment.appointmentDateTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), (Math.round(new Date().getMinutes() / 15) * 15) + 15, 0, 0);
-      objAppointment.appoinStatusId = AppoinmentStatus.Pending;
+      objAppointment.appoinStatusId = AppoinmentStatus.AppoinmentTaken;
       objAppointment.remarks = "Lead re-allocated";
 
       this.collAppointDetail.push(objAppointment);

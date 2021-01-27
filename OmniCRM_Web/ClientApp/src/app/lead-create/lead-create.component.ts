@@ -237,7 +237,7 @@ export class LeadCreateComponent implements OnInit {
       || this.leadModel.appointmentDetail[0].relationshipManagerId != this.appointmentDetailObj.relationshipManagerId
       || this.leadModel.appointmentDetail[0].appointmentDateTime != newAppDateTime)) {
       this.appointmentDetailObj.callId = this.leadModel.callId;
-      this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.Pending;
+      this.appointmentDetailObj.appoinStatusId = AppoinmentStatus.AppoinmentTaken;
       this.appointmentDetailObj.appointmentDateTime = newAppDateTime;
       this.appointmentDetailObj.createdBy = this.currentUser.userId;
       this.appointmentDetailObj.remarks = this.leadModel.remark;
