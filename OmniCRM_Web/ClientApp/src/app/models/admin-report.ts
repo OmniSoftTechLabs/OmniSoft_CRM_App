@@ -34,6 +34,6 @@ export class RowsDataRM {
   dropped: number;
   hold: number;
   notInterested: number;
-  pending: number;
+  appointTaken: number;
   total: number;
 }

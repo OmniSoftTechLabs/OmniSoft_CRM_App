@@ -48,7 +48,7 @@ export class ReleManagerSummaryComponent implements OnInit {
             this.renameKey(obj, "hold", "Work In Progress"),
             this.renameKey(obj, "notInterested", "Not Interested"),
             this.renameKey(obj, "rmName", "Relationship Manager"),
-            this.renameKey(obj, "pending", "Pending")
+            this.renameKey(obj, "appointTaken", "Appointment Taken")
           this.renameKey(obj, "total", "Total")
         });
         this.rmStatusReport = data;

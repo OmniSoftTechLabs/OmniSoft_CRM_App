@@ -59,7 +59,7 @@ export class DashboardComponent implements OnInit {
 
   managers: string[] = [];
   firstMeeting: number[] = [];
-  secondMeeting: number[] = [];
+  //secondMeeting: number[] = [];
   sold: number[] = [];
   dropped: number[] = [];
   workInProg: number[] = [];
@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit {
         this.adminDashboard.collMangerChartData.forEach((item) => {
           this.managers.push(item.manager);
           this.firstMeeting.push(item.firstMeeting);
-          this.secondMeeting.push(item.secondMeeting);
+          //this.secondMeeting.push(item.secondMeeting);
           this.sold.push(item.sold);
           this.dropped.push(item.dropped);
           this.workInProg.push(item.hold);
@@ -234,12 +234,12 @@ export class DashboardComponent implements OnInit {
           borderColor: colors.yellow.primary,//'rgba(88, 214, 141, 1)',
           data: this.firstMeeting
         },
-        {
-          label: 'Second Meeting',
-          backgroundColor: colors.blue.secondary, //'rgba(88, 214, 141, 0.2)',
-          borderColor: colors.blue.primary,//'rgba(88, 214, 141, 1)',
-          data: this.secondMeeting
-        },
+        //{
+        //  label: 'Second Meeting',
+        //  backgroundColor: colors.blue.secondary, //'rgba(88, 214, 141, 0.2)',
+        //  borderColor: colors.blue.primary,//'rgba(88, 214, 141, 1)',
+        //  data: this.secondMeeting
+        //},
         {
           label: 'Sold',
           backgroundColor: colors.green.secondary,
@@ -308,7 +308,7 @@ export class DashboardComponent implements OnInit {
 
     this.managers = [];
     this.firstMeeting = [];
-    this.secondMeeting = [];
+    //this.secondMeeting = [];
     this.sold = [];
     this.dropped = [];
     this.workInProg = [];

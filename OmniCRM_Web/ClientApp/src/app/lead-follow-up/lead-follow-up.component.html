@@ -51,7 +51,7 @@
       <div class="row">
         <div class="form-group col-sm-12">
           Follow up Status<strong class="text-danger"> *</strong>
-          <select class="form-control custom-select" required #appoinStatusId="ngModel" [(ngModel)]="appointmentDetailObj.appoinStatusId" name="appoinStatusId" (change)="onStatusChange($event)" [class.is-invalid]="appoinStatusId.invalid && appoinStatusId.touched || appointmentDetailObj.appoinStatusId==7">
+          <select class="form-control custom-select" required #appoinStatusId="ngModel" [(ngModel)]="appointmentDetailObj.appoinStatusId" name="appoinStatusId" (change)="onStatusChange($event)" [class.is-invalid]="appoinStatusId.invalid && appoinStatusId.touched">
             <!--<option selected disabled value="0">Choose...</option>-->
             <option *ngFor="let objStatus of appoinmentStatusList" value="{{objStatus.appoinStatusId}}"> {{objStatus.status}}</option>
           </select>
@@ -153,7 +153,7 @@
 
       <div class="form-group form-row form-inline">
         <div class=" col-md-12 ">
-          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress || appointmentDetailObj.appoinStatusId==7 || dateCtrl.invalid" type="submit" style="width:120px;">
+          <button class="btn btn-primary" [disabled]="leadAdd.form.invalid || is_progress || dateCtrl.invalid" type="submit" style="width:120px;">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="is_progress"></span>
             {{saveBtnTxt}}
           </button>
