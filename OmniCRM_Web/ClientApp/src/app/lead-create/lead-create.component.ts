@@ -229,7 +229,7 @@ export class LeadCreateComponent implements OnInit {
     if (this.nextCallDateNg != null)
       nextCalldate = new Date(this.nextCallDateNg.year, this.nextCallDateNg.month - 1, this.nextCallDateNg.day, this.nextCallTimeNg.hour, this.nextCallTimeNg.minute, 0, 0);
 
-    if (this.leadModel.outComeId == LeadOutCome.CallLater) {
+    if (this.leadModel.outComeId == LeadOutCome.CallLater || this.leadModel.outComeId == LeadOutCome.Interested) {
       this.leadModel.nextCallDate = nextCalldate;
     }
 

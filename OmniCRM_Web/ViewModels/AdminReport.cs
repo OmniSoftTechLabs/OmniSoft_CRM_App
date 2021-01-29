@@ -28,6 +28,7 @@ namespace OmniCRM_Web.ViewModels
             public int WrongNumber { get; set; }
             public int None { get; set; }
             public int Dropped { get; set; }
+            public int Interested { get; set; }
             public int Total { get; set; }
 
         }

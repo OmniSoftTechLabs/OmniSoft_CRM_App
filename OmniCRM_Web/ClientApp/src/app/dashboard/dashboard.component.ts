@@ -33,6 +33,10 @@ const colors: any = {
   khaki: {
     primary: '#BDB76B',
     secondary: '#DEDBB5'
+  },
+  darkGreen: {
+    primary: '#117A65',
+    secondary: '#88BDB2'
   }
 };
 
@@ -56,6 +60,7 @@ export class DashboardComponent implements OnInit {
   wrongNumber: number[] = [];
   none: number[] = [];
   droppedT: number[] = [];
+  interested: number[] = [];
 
   managers: string[] = [];
   firstMeeting: number[] = [];
@@ -98,6 +103,7 @@ export class DashboardComponent implements OnInit {
           this.wrongNumber.push(item.wrongNumber);
           this.none.push(item.none);
           this.droppedT.push(item.dropped);
+          this.interested.push(item.interested);
         });
 
         this.adminDashboard.collMangerChartData.forEach((item) => {
@@ -169,6 +175,12 @@ export class DashboardComponent implements OnInit {
           backgroundColor: colors.khaki.secondary,
           borderColor: colors.khaki.primary,
           data: this.droppedT
+        },
+        {
+          label: 'Interested',
+          backgroundColor: colors.darkGreen.secondary,
+          borderColor: colors.darkGreen.primary,
+          data: this.interested
         },
       ]
     };
@@ -265,7 +277,7 @@ export class DashboardComponent implements OnInit {
           data: this.notInterestedM
         },
         {
-          label: 'Pending',
+          label: 'Appoint. Taken',
           backgroundColor: colors.silver.secondary,
           borderColor: colors.silver.primary,
           data: this.pending
@@ -304,6 +316,8 @@ export class DashboardComponent implements OnInit {
     this.callLater = [];
     this.wrongNumber = [];
     this.none = [];
+    this.droppedT = [];
+    this.interested = [];
     this.telechart.destroy();
 
     this.managers = [];

@@ -43,6 +43,7 @@ namespace OmniCRM_Web.GenericClasses
             WrongNumber = 5,
             None = 6,
             Dropped = 7,
+            Interested = 8,
         }
     }
 

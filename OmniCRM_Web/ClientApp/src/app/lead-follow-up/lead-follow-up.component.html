@@ -81,10 +81,11 @@
           </div>-->
           <div class="input-group">
             <input ngbDatepicker [required]="appointmentDetailObj.appoinStatusId != 3 && appointmentDetailObj.appoinStatusId != 4 && appointmentDetailObj.appoinStatusId != 6 && appointmentDetailObj.appoinStatusId != 8" #appoinDate="ngbDatepicker" name="appoinDate"
+                   [disabled]="appointmentDetailObj.appoinStatusId == 6"
                    placeholder="dd/mm/yyyy" [formControl]="dateCtrl" class="form-control" [value]="dateTimeStr" [(ngModel)]="appointmentDate" [minDate]="minDate" (ngModelChange)="onDateChange($event)" [footerTemplate]="footerTemplate"
                    [placement]="placement" [positionTarget]="buttonEl" [autoClose]="'outside'" [class.is-invalid]="dateCtrl.invalid && dateCtrl.touched" />
             <div class="input-group-append">
-              <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button"></button>
+              <button #buttonEl class="btn btn-outline-secondary calendar" (click)="appoinDate.toggle()" type="button" [disabled]="appointmentDetailObj.appoinStatusId == 6"></button>
             </div>
           </div>
           <small class="text-danger" *ngIf="dateCtrl.errors?.required && dateCtrl.touched">* Appointment date time is required</small>

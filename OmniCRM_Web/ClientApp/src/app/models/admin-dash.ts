@@ -12,6 +12,7 @@ export class TeleCallerChartData {
   wrongNumber: number;
   none: number;
   dropped: number;
+  interested: number;
 }
 
 export class ManagerChartData {
