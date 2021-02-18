@@ -1347,6 +1347,7 @@ namespace OmniCRM_Web.Controllers
                     Hold = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
                     NotInterested = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.NotInterested),
                     AppointTaken = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.AppoinmentTaken),
+                    Interested = r.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Interested),
                     Total = r.Count(q => q.ReleLeads != null)
                 }).ToList();
 
@@ -1360,6 +1361,7 @@ namespace OmniCRM_Web.Controllers
                     Hold = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Hold),
                     NotInterested = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.NotInterested),
                     AppointTaken = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.AppoinmentTaken),
+                    Interested = RelaManagerLeads.Count(q => q.ReleLeads != null && q.ReleLeads.AppoinStatusId == (int)Enums.AppoinmentStatus.Interested),
                     Total = RelaManagerLeads.Count(q => q.ReleLeads != null)
                 };
 
