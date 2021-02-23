@@ -34,5 +34,6 @@ namespace OmniCRM_Web.ViewModels
         public int Hold { get; set; }
         public int NotInterested { get; set; }
         public int Pending { get; set; }
+        public int Interested { get; set; }
     }
 }

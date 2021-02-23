@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit {
   workInProg: number[] = [];
   notInterestedM: number[] = [];
   pending: number[] = [];
-
+  interestedM: number[] = [];
 
   filterOption: FilterOptions = new FilterOptions();
   fromDate: NgbDateStruct;
@@ -115,6 +115,7 @@ export class DashboardComponent implements OnInit {
           this.workInProg.push(item.hold);
           this.notInterestedM.push(item.notInterested);
           this.pending.push(item.pending);
+          this.interestedM.push(item.interested);
         });
 
         this.loadTeleChart();
@@ -282,6 +283,12 @@ export class DashboardComponent implements OnInit {
           borderColor: colors.silver.primary,
           data: this.pending
         },
+        {
+          label: 'Interested',
+          backgroundColor: colors.darkGreen.secondary,
+          borderColor: colors.darkGreen.primary,
+          data: this.interestedM
+        },
       ]
     };
 
@@ -328,6 +335,7 @@ export class DashboardComponent implements OnInit {
     this.workInProg = [];
     this.notInterestedM = [];
     this.pending = [];
+    this.interestedM = [];
     this.managerchart.destroy();
 
     this.loadData();

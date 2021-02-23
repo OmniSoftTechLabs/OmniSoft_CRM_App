@@ -24,4 +24,5 @@ export class ManagerChartData {
   hold: number;
   notInterested: number;
   pending: number;
+  interested: number;
 }

@@ -32,6 +32,7 @@ namespace OmniCRM_Web.GenericClasses
             NotInterested = 6,
             AppoinmentTaken = 7,
             Dismissed = 8,
+            Interested = 9,
         }
 
         public enum CallOutcome
