@@ -38,8 +38,8 @@
 
     <form>
       <div class="form-row form-inline mb-2">
-        <div class="form-group col-sm-9">
-         Status:&nbsp; <ng-select [items]="outcomeList"
+        <div class="form-group col-sm-12">
+         Status:&nbsp;<ng-select [items]="outcomeList"
                              [multiple]="true"
                              [closeOnSelect]="false"
                              [searchable]="true"
@@ -47,7 +47,7 @@
                              bindValue="outComeId"
                              placeholder="All"
                              [(ngModel)]="outComeId"
-                             [ngModelOptions]="{standalone: true}" style="width:89%;" >
+                             [ngModelOptions]="{standalone: true}" style="width:75%;" >
           </ng-select>
 
           <!--<select class="form-control custom-select" [(ngModel)]="outComeId" name="outComeId">
@@ -59,8 +59,8 @@
 
       </div>
       <div class="form-row form-inline mb-2">
-        <div class="col-sm-2 form-group">
-          {{allocateCreatedBytxt}}:&nbsp;&nbsp;<select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId">
+        <div class="col-sm-3 form-group">
+          {{allocateCreatedBytxt}}:&nbsp;<select class="form-control custom-select" [(ngModel)]="filteruserId" name="filteruserId" style="width:70%">
             <option value="0">All</option>
             <option *ngFor="let user of filterUserList" value="{{user.userId}}"> {{user.firstName}} {{user.lastName}}</option>
           </select>
