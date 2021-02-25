@@ -42,6 +42,10 @@ const colors: any = {
   khaki: {
     primary: '#BDB76B',
     secondary: '#DEDBB5'
+  },
+  darkGreen: {
+    primary: '#117A65',
+    secondary: '#88BDB2'
   }
 };
 
@@ -121,6 +125,7 @@ export class DashboardManagerComponent implements OnInit {
                       item.appointStatusId == AppoinmentStatus.Dropped ? colors.khaki :
                         item.appointStatusId == AppoinmentStatus.Hold ? colors.yellow :
                           item.appointStatusId == AppoinmentStatus.NotInterested ? colors.blue :
+                            item.appointStatusId == AppoinmentStatus.Interested ? colors.darkGreen :
                             colors.blue,
             },
           ];

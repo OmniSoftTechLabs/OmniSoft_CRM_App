@@ -50,6 +50,7 @@ namespace OmniCRM_Web.ViewModels
             public int Hold { get; set; }
             public int NotInterested { get; set; }
             public int AppointTaken { get; set; }
+            public int Interested { get; set; }
             public int Total { get; set; }
             public int Interested { get; set; }
 
