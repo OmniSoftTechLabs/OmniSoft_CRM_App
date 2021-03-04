@@ -28,6 +28,7 @@ namespace OmniCRM_Web.Models
         public virtual DbSet<ProductMaster> ProductMaster { get; set; }
         public virtual DbSet<RoleMaster> RoleMaster { get; set; }
         public virtual DbSet<StateMaster> StateMaster { get; set; }
+        public virtual DbSet<TargetMaster> TargetMaster { get; set; }
         public virtual DbSet<UserMaster> UserMaster { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -377,6 +378,30 @@ namespace OmniCRM_Web.Models
                 entity.Property(e => e.StateName)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TargetMaster>(entity =>
+            {
+                entity.HasKey(e => e.TagetId)
+                    .HasName("PK_TargetMaster_1");
+
+                entity.HasIndex(e => new { e.TelecallerId, e.MonthYear })
+                    .HasName("UK_TargetMaster")
+                    .IsUnique();
+
+                entity.Property(e => e.TagetId)
+                    .HasColumnName("TagetID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.MonthYear).HasColumnType("date");
+
+                entity.Property(e => e.TelecallerId).HasColumnName("TelecallerID");
+
+                entity.HasOne(d => d.Telecaller)
+                    .WithMany(p => p.TargetMaster)
+                    .HasForeignKey(d => d.TelecallerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TargetMaster_UserMaster");
             });
 
             modelBuilder.Entity<UserMaster>(entity =>

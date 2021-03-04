@@ -40,6 +40,7 @@ import { ReleManagerSummaryComponent } from './rele-manager-summary/rele-manager
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { CompanyMasterComponent } from './company-master/company-master.component';
 import { AdminCalenderComponent } from './admin-calender/admin-calender.component';
+import { TargetEntryComponent } from './target-entry/target-entry.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { AdminCalenderComponent } from './admin-calender/admin-calender.componen
     ReleManagerSummaryComponent,
     CompanyMasterComponent,
     AdminCalenderComponent,
+    TargetEntryComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -103,6 +105,7 @@ import { AdminCalenderComponent } from './admin-calender/admin-calender.componen
       { path: 'tele-caller-summary-rpt', component: TeleCallerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'rele-manager-summary-rpt', component: ReleManagerSummaryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
       { path: 'admin-calender', component: AdminCalenderComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
+      { path: 'target-entry', component: TargetEntryComponent, canActivate: [AuthGuard], data: { permittedRoles: ['Super User', 'Admin'] } },
 
       //{ path: 'counter', component: CounterComponent, canActivate: [AuthGuard] },
       //{ path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthGuard] },

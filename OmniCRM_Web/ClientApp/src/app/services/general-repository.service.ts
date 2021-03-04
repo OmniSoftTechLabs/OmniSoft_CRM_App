@@ -7,6 +7,7 @@ import { ChangePwd } from '../models/change-pwd';
 import { AdminSetting } from '../models/admin-setting';
 import { ProductMaster } from '../models/product-master';
 import { CompanyMaster } from '../models/company-master';
+import { TargetMaster } from '../models/target-master';
 
 @Injectable({
   providedIn: 'root'
@@ -78,8 +79,12 @@ export class GeneralRepositoryService {
     return this.http.get<ProductMaster[]>(this.baseUrl + 'api/ProductMasters').pipe();
   }
 
-
   createCompany(companyModel: CompanyMaster) {
     return this.http.post<CompanyMaster>(this.baseUrl + 'api/CompanyMasters', companyModel).pipe();
+  }
+
+  getTargetEntry(month: string) {
+    return this.http.get<TargetMaster[]>(this.baseUrl + 'api/TargetMasters/GetTargetByMonth/' + month).pipe();
+
   }
 }

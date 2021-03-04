@@ -12,6 +12,7 @@ namespace OmniCRM_Web.Models
             CallDetail = new HashSet<CallDetail>();
             CallTransactionDetail = new HashSet<CallTransactionDetail>();
             FollowupHistory = new HashSet<FollowupHistory>();
+            TargetMaster = new HashSet<TargetMaster>();
         }
 
         public Guid UserId { get; set; }
@@ -34,5 +35,6 @@ namespace OmniCRM_Web.Models
         public virtual ICollection<CallDetail> CallDetail { get; set; }
         public virtual ICollection<CallTransactionDetail> CallTransactionDetail { get; set; }
         public virtual ICollection<FollowupHistory> FollowupHistory { get; set; }
+        public virtual ICollection<TargetMaster> TargetMaster { get; set; }
     }
 }

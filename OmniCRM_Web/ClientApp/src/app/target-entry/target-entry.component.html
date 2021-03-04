@@ -1,0 +1,73 @@
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header" style="padding-top:6px;padding-bottom:6px">
+            <div class="form-row">
+              <div class="col-md form-inline">
+                Select Month: &nbsp;&nbsp;
+                <div class="input-group">
+                  <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="selectedDate" name="fDate" placeholder="Select Month" (ngModelChange)="onMonthChange()" style="width:180px" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
+                  </div>
+                </div>
+
+
+                <span class="spinner-border text-primary ml-4" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+              </div>
+              <div class="card-tools">
+
+                <button type="button" class="btn btn-outline-warning" style="width:100px;" (click)="onEdit(0)" *ngIf="!isEdit"> <i class="fas fa-edit mr-2"></i> Edit</button>
+                <button type="button" class="btn btn-outline-success" style="width:100px;" (click)="onSave(0)" *ngIf="isEdit"> <i class="fas fa-save mr-2"></i> Save</button>
+
+                <button type="button" class="btn btn-tool" data-card-widget="remove" (click)="onCardClose()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-body">
+
+            <div class="col-md-12">
+
+              <table class='table table-striped table-sm' aria-labelledby="tableLabel">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width:15px">#</th>
+                    <th scope="col" style="width:300px">Telecaller Name</th>
+                    <th scope="col" style="width:150px">Target</th>
+                    <!--<th scope="col">Action</th>-->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let objTarget of targetEntryList; index as i">
+                    <th scope="row">{{i + 1}}</th>
+                    <td>{{objTarget.telecallerName}}</td>
+                    <td>
+                      <div *ngIf="!isEdit">{{objTarget.target}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #target="ngModel" name="target" pattern="^[0-9]*$" [class.is-invalid]="target.invalid && target.touched || target.errors?.pattern"
+                               class="form-control" [(ngModel)]="objTarget.target" maxlength="4" style="width:150px"/>
+                      </div>
+                    </td>
+                    <!--<td>
+                      <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-warning rounded-circle" *ngIf="!isEdit" (click)="onEdit(objTarget.tagetId)"><i class="fas fa-edit"></i></button>
+                      <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-success rounded-circle" *ngIf="isEdit && editTargetId == objTarget.tagetId" (click)="onSave(objTarget.tagetId)"><i class="fas fa-save"></i></button>
+                    </td>-->
+                  </tr>
+
+                </tbody>
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

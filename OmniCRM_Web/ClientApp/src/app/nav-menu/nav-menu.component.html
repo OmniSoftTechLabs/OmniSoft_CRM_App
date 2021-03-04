@@ -16,16 +16,16 @@
       <div class="navbar-collapse collapse" id="navbarContent" *ngIf="isLoggedIn">
         <ul class="navbar-nav mr-auto">
           <!--<li class="nav-item"
-              [routerLinkActive]="['link-active']"
-              [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/counter']">Counter</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Fetch data</a>
-          </li>-->
+      [routerLinkActive]="['link-active']"
+      [routerLinkActiveOptions]="{ exact: true }">
+    <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+  </li>
+  <li class="nav-item" [routerLinkActive]="['link-active']">
+    <a class="nav-link text-dark" [routerLink]="['/counter']">Counter</a>
+  </li>
+  <li class="nav-item" [routerLinkActive]="['link-active']">
+    <a class="nav-link text-dark" [routerLink]="['/fetch-data']">Fetch data</a>
+  </li>-->
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isTeleCaller">
             <a class="btn btn-outline-light" [routerLink]="['/lead-list']">Lead Details</a>
             <!--<a class="nav-link underlineHover active" [routerLink]="['/lead-list']">Lead Details</a>-->
@@ -72,6 +72,11 @@
           <!------------------------------------->
           <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
             <a class="btn btn-outline-light" [routerLink]="['/admin-calender']">Calender</a>
+          </li>
+
+          &nbsp; &nbsp;
+          <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show" *ngIf="isSuperUser || isAdminRole">
+            <a class="btn btn-outline-light" [routerLink]="['/target-entry']">Target Entry</a>
           </li>
         </ul>
         <span class="navbar-text" style="color:white">
