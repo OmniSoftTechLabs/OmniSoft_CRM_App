@@ -1,6 +1,7 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDatepickerNavigateEvent, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbDatepickerNavigateEvent, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Data } from 'popper.js';
 import { TargetMaster } from '../models/target-master';
 import { GeneralRepositoryService } from '../services/general-repository.service';
@@ -29,26 +30,27 @@ export class TargetEntryComponent implements OnInit {
   isEdit: boolean = false;
   editTargetId: number = 0;
 
-  constructor(private router: Router, private generalRepository: GeneralRepositoryService) {
+  minDate: NgbDateStruct;
+  maxDate: NgbDateStruct;
+  isBackDate: boolean = false;
+  constructor(private router: Router, private generalRepository: GeneralRepositoryService, private datePipe: DatePipe) {
     this.selectedDate = { day: 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() };
+    //this.firstDateofMonths.push();
   }
 
   ngOnInit(): void {
+    this.onLoadTarget();
+  }
 
+  onLoadTarget() {
     this.is_progress = true;
-    var event = new Date();
-    let date = JSON.stringify(event)
-    date = date.slice(1, 11)
+    let date = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
+    let strDate = this.datePipe.transform(date, "yyyy-MM-dd");
 
-    this.generalRepository.getTargetEntry(date).subscribe({
+    this.generalRepository.getTargetEntry(strDate).subscribe({
       next: data => (this.targetEntryList = data, this.is_progress = false),
       error: error => (console.error = error.error, this.IsError = true, this.is_progress = false)
     });
-
-    //this.generalRepository.getTargetEntry(new Date()).subscribe({
-    //  next: data => (this.successMsg = "Company Created Successfully..", this.IsSucess = true, this.onSaveCompleted()),
-    //  error: error => (this.errorMsg = error.error, this.IsError = true, this.onSaveCompleted())
-    //});
   }
 
   onSaveCompleted() {
@@ -59,6 +61,16 @@ export class TargetEntryComponent implements OnInit {
 
   onSave(targetId: number) {
     this.isEdit = false;
+
+    this.is_progress = true;
+    let date = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
+    let strDate = this.datePipe.transform(date, "yyyy-MM-dd");
+
+    this.generalRepository.postTargetEntry(strDate, this.targetEntryList).subscribe({
+      next: data => (console.log('Success!', data), this.onLoadTarget()),
+      error: error => (console.error('Error!', error), this.onLoadTarget())
+    });
+
   }
 
   onEdit(targetId: number) {
@@ -67,7 +79,17 @@ export class TargetEntryComponent implements OnInit {
   }
 
   onMonthChange() {
-    var abd = this.selectedDate;
+    this.isEdit = false;
+
+    let seleDate = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
+    let currDate = new Date();
+    if (seleDate.getMonth() < currDate.getMonth()) {
+      this.isBackDate = true;
+    }
+    else {
+      this.isBackDate = false;
+    }
+    this.onLoadTarget();
   }
 
   closeAlert() {

@@ -34,28 +34,30 @@ namespace OmniCRM_Web.Controllers
 
         [HttpGet]
         [Route("GetTargetByMonth/{month}")]
-        public List<TargetMasterViewModel> GetTargetByMonth(string month)
+        public async Task<ActionResult<IEnumerable<TargetMasterViewModel>>> GetTargetByMonth(string month)
         {
-            DateTime selectedMonth = Convert.ToDateTime(month);
-
-            //var targetlist = from telecaller in _context.UserMaster.Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true)
-            //                 join target in _context.TargetMaster.Where(p => p.MonthYear == selectedMonth) on telecaller.UserId equals target.TelecallerId into teleTarget
-            //                 from target in teleTarget.DefaultIfEmpty(new TargetMaster())
-            //                 select new { Telecaller = telecaller, Target = target };
-
-            var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true).AsEnumerable();
-            //var targetlist = _context.TargetMaster.Where(r => r.MonthYear == selectedMonth).AsEnumerable();
-
-            List<TargetMasterViewModel> targetViewList = new List<TargetMasterViewModel>();
-            foreach (var item in telecallerList)
+            try
             {
-                var objTarget = item.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
-                if (objTarget == null)
-                    objTarget = new TargetMaster();
-                targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, Target = objTarget.Target, MonthYear = objTarget.MonthYear });
-            }
+                DateTime selectedMonth = Convert.ToDateTime(month);
+                selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true).AsEnumerable();
 
-            return targetViewList.OrderBy(p => p.TelecallerName).ToList();
+                List<TargetMasterViewModel> targetViewList = new List<TargetMasterViewModel>();
+                foreach (var item in telecallerList)
+                {
+                    var objTarget = item.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
+                    if (objTarget == null)
+                        objTarget = new TargetMaster();
+                    targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, Target = objTarget.Target, MonthYear = objTarget.MonthYear });
+                }
+
+                return await Task.FromResult(targetViewList.OrderBy(p => p.TelecallerName).ToList());
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTargetByMonth: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // GET: api/TargetMasters/5
@@ -128,6 +130,44 @@ namespace OmniCRM_Web.Controllers
             }
 
             return CreatedAtAction("GetTargetMaster", new { id = targetMaster.TagetId }, targetMaster);
+        }
+
+        [HttpPost("PostTargetEntry/{month}")]
+        public async Task<IActionResult> PostTargetEntry(string month, List<TargetMaster> collTargetEntry)
+        {
+            try
+            {
+                if (collTargetEntry.Count > 0)
+                {
+                    //_context.Entry(collTargetEntry).State = EntityState.Modified;
+
+                    DateTime selectedMonth = Convert.ToDateTime(month);
+                    selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+                    collTargetEntry.ForEach(p => p.MonthYear = selectedMonth);
+
+                    //foreach (var item in collTargetEntry)
+                    //{
+                    //    if(_context.TargetMaster.Count(p=>p.it))
+                    //}
+
+                    _context.TargetMaster.UpdateRange(collTargetEntry);
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Target Created successfully!");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PostTargetEntry: -target not exist");
+                    return NotFound("Target not found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostTargetEntry: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
         }
 
         // DELETE: api/TargetMasters/5

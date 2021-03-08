@@ -2,6 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
+
 namespace OmniCRM_Web.Models
 {
     public partial class OmniCRMContext : DbContext
@@ -389,9 +393,7 @@ namespace OmniCRM_Web.Models
                     .HasName("UK_TargetMaster")
                     .IsUnique();
 
-                entity.Property(e => e.TagetId)
-                    .HasColumnName("TagetID")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.TagetId).HasColumnName("TagetID");
 
                 entity.Property(e => e.MonthYear).HasColumnType("date");
 

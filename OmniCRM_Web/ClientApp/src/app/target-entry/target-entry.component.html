@@ -9,7 +9,7 @@
               <div class="col-md form-inline">
                 Select Month: &nbsp;&nbsp;
                 <div class="input-group">
-                  <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="selectedDate" name="fDate" placeholder="Select Month" (ngModelChange)="onMonthChange()" style="width:180px" />
+                  <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="selectedDate" name="fDate" placeholder="Select Month" [minDate]="minDate" [maxDate]="maxDate" (ngModelChange)="onMonthChange()" style="width:180px" />
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
                   </div>
@@ -20,8 +20,8 @@
               </div>
               <div class="card-tools">
 
-                <button type="button" class="btn btn-outline-warning" style="width:100px;" (click)="onEdit(0)" *ngIf="!isEdit"> <i class="fas fa-edit mr-2"></i> Edit</button>
-                <button type="button" class="btn btn-outline-success" style="width:100px;" (click)="onSave(0)" *ngIf="isEdit"> <i class="fas fa-save mr-2"></i> Save</button>
+                <button type="button" class="btn btn-outline-warning" style="width:100px;" (click)="onEdit(0)" *ngIf="!isEdit && !isBackDate"> <i class="fas fa-edit mr-2"></i> Edit</button>
+                <button type="button" class="btn btn-outline-success" style="width:100px;" (click)="onSave(0)" *ngIf="isEdit && !isBackDate"> <i class="fas fa-save mr-2"></i> Save</button>
 
                 <button type="button" class="btn btn-tool" data-card-widget="remove" (click)="onCardClose()">
                   <i class="fas fa-times"></i>

@@ -85,6 +85,9 @@ export class GeneralRepositoryService {
 
   getTargetEntry(month: string) {
     return this.http.get<TargetMaster[]>(this.baseUrl + 'api/TargetMasters/GetTargetByMonth/' + month).pipe();
+  }
 
+  postTargetEntry(month: string, collTarget: TargetMaster[]) {
+    return this.http.post(this.baseUrl + 'api/TargetMasters/PostTargetEntry/' + month, collTarget, { responseType: 'text' }).pipe();
   }
 }
