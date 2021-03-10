@@ -3,6 +3,10 @@ export class TeleDash {
   notInterested: number;
   appoinmentTaken: number;
   noResponse: number;
+
+  target: number;
+  achievement: number;
+
   collChartData: ChartData[] = [];
 
   monthlyTotalLeads: number;

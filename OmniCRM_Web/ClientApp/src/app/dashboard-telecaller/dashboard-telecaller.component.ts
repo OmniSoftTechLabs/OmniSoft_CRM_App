@@ -25,6 +25,7 @@ export class DashboardTelecallerComponent implements OnInit {
   currentYear: number;
   currentMonth: string;
   percentTotal: number;
+  percentAchiev: number;
   percentNoResponse: number;
   percentAppoTaken: number;
   percentNotInter: number;
@@ -49,7 +50,8 @@ export class DashboardTelecallerComponent implements OnInit {
       data => {
         this.teleDashboard = data;
 
-        this.percentTotal = (this.teleDashboard.monthlyTotalLeads / 200) * 100;
+        //this.percentTotal = (this.teleDashboard.monthlyTotalLeads / 200) * 100;
+        this.percentAchiev = (this.teleDashboard.achievement / this.teleDashboard.target) * 100;
         this.percentNoResponse = (this.teleDashboard.monthlyNoResponse / this.teleDashboard.monthlyTotalLeads) * 100;
         this.percentAppoTaken = (this.teleDashboard.monthlyAppoinmentTaken / this.teleDashboard.monthlyTotalLeads) * 100;
         this.percentNotInter = (this.teleDashboard.monthlyNotInterested / this.teleDashboard.monthlyTotalLeads) * 100;

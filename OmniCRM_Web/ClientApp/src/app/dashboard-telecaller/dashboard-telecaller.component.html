@@ -125,10 +125,10 @@
                 </p>
 
                 <div class="progress-group">
-                  Created Leads
-                  <span class="float-right"><b>{{teleDashboard.monthlyTotalLeads}}</b>/200</span>
+                  Achieved Leads
+                  <span class="float-right"><b>{{teleDashboard.achievement}}</b>/{{teleDashboard.target}}</span>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-info" [style.width]="percentTotal + '%'"></div>
+                    <div class="progress-bar bg-info" [style.width]="percentAchiev + '%'"></div>
                   </div>
                 </div>
                 <!-- /.progress-group -->

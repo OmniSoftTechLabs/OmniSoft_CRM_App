@@ -11,6 +11,10 @@ namespace OmniCRM_Web.ViewModels
         public int NotInterested { get; set; }
         public int AppoinmentTaken { get; set; }
         public int NoResponse { get; set; }
+
+        public int Target { get; set; }
+        public int Achievement { get; set; }
+
         public List<ChartData> CollChartData { get; set; }
 
         public int MonthlyTotalLeads { get; set; }
