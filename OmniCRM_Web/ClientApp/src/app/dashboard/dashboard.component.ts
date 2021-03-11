@@ -53,14 +53,14 @@ export class DashboardComponent implements OnInit {
   managerchart: any;
   adminDashboard: AdminDash = new AdminDash();
   teleCallers: string[] = [];
-  noResponse: number[] = [];
+  //noResponse: number[] = [];
   notInterested: number[] = [];
   appoinmentTaken: number[] = [];
   callLater: number[] = [];
   wrongNumber: number[] = [];
-  none: number[] = [];
-  droppedT: number[] = [];
-  interested: number[] = [];
+  //none: number[] = [];
+  //droppedT: number[] = [];
+  //interested: number[] = [];
 
   managers: string[] = [];
   firstMeeting: number[] = [];
@@ -96,14 +96,14 @@ export class DashboardComponent implements OnInit {
 
         this.adminDashboard.collTeleChartData.forEach((item) => {
           this.teleCallers.push(item.telecaller);
-          this.noResponse.push(item.noResponse);
+          //this.noResponse.push(item.noResponse);
           this.notInterested.push(item.notInterested);
           this.appoinmentTaken.push(item.appoinmentTaken);
           this.callLater.push(item.callLater);
           this.wrongNumber.push(item.wrongNumber);
-          this.none.push(item.none);
-          this.droppedT.push(item.dropped);
-          this.interested.push(item.interested);
+          //this.none.push(item.none);
+          //this.droppedT.push(item.dropped);
+          //this.interested.push(item.interested);
         });
 
         this.adminDashboard.collMangerChartData.forEach((item) => {
@@ -135,12 +135,12 @@ export class DashboardComponent implements OnInit {
     var stackedBarChartData = {
       labels: this.teleCallers,
       datasets: [
-        {
-          label: 'No Response',
-          backgroundColor: colors.yellow.secondary, //'rgba(88, 214, 141, 0.2)',
-          borderColor: colors.yellow.primary,//'rgba(88, 214, 141, 1)',
-          data: this.noResponse
-        },
+        //{
+        //  label: 'No Response',
+        //  backgroundColor: colors.yellow.secondary, //'rgba(88, 214, 141, 0.2)',
+        //  borderColor: colors.yellow.primary,//'rgba(88, 214, 141, 1)',
+        //  data: this.noResponse
+        //},
         {
           label: 'Not Interested',
           backgroundColor: colors.orange.secondary,
@@ -165,24 +165,24 @@ export class DashboardComponent implements OnInit {
           borderColor: colors.purple.primary,
           data: this.wrongNumber
         },
-        {
-          label: 'None',
-          backgroundColor: colors.silver.secondary,
-          borderColor: colors.silver.primary,
-          data: this.none
-        },
-        {
-          label: 'Dropped',
-          backgroundColor: colors.khaki.secondary,
-          borderColor: colors.khaki.primary,
-          data: this.droppedT
-        },
-        {
-          label: 'Interested',
-          backgroundColor: colors.darkGreen.secondary,
-          borderColor: colors.darkGreen.primary,
-          data: this.interested
-        },
+        //{
+        //  label: 'None',
+        //  backgroundColor: colors.silver.secondary,
+        //  borderColor: colors.silver.primary,
+        //  data: this.none
+        //},
+        //{
+        //  label: 'Dropped',
+        //  backgroundColor: colors.khaki.secondary,
+        //  borderColor: colors.khaki.primary,
+        //  data: this.droppedT
+        //},
+        //{
+        //  label: 'Interested',
+        //  backgroundColor: colors.darkGreen.secondary,
+        //  borderColor: colors.darkGreen.primary,
+        //  data: this.interested
+        //},
       ]
     };
 
@@ -317,14 +317,14 @@ export class DashboardComponent implements OnInit {
 
   onDateChange() {
     this.teleCallers = [];
-    this.noResponse = [];
+    //this.noResponse = [];
     this.notInterested = [];
     this.appoinmentTaken = [];
     this.callLater = [];
     this.wrongNumber = [];
-    this.none = [];
-    this.droppedT = [];
-    this.interested = [];
+    //this.none = [];
+    //this.droppedT = [];
+    //this.interested = [];
     this.telechart.destroy();
 
     this.managers = [];
