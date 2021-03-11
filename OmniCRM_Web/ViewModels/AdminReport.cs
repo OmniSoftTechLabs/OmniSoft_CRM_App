@@ -30,6 +30,8 @@ namespace OmniCRM_Web.ViewModels
             public int Dropped { get; set; }
             public int Interested { get; set; }
             public int Total { get; set; }
+            public int Target { get; set; }
+            public int Performance { get; set; }
 
         }
     }
