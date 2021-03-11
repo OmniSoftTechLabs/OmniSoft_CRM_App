@@ -55,13 +55,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tcStatusReport.tcRowsData; let i = index;
-                  let last = last"
-                    [ngClass]="{last: last }">
-                  <td *ngFor="let column of tcStatusReport.header; let i = index;
-                  let first = first;
-                  let last = last"
-                      [ngClass]="{ first: first, last: last }" style="text-align: center; border: 1px solid">
+                <tr *ngFor="let row of tcStatusReport.tcRowsData; let i = index; let last = last" [ngClass]="{last: last }">
+                  <td *ngFor="let column of tcStatusReport.header; let i = index; let first = first; let last = last" [ngClass]="{ first: first, last: last}" style="text-align: center; border: 1px solid">
                     {{row[column]}}
                   </td>
                 </tr>
