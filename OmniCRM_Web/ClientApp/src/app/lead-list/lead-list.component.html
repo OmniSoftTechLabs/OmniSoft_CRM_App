@@ -119,7 +119,7 @@
               <th scope="col" sortable="firstName" (sort)="onSort($event)">Client Name</th>
               <!--<th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>-->
               <th scope="col" sortable="mobileNumber" (sort)="onSort($event)">Mobile No.</th>
-              <th scope="col" sortable="emailId" (sort)="onSort($event)">Email Id</th>
+              <!--<th scope="col" sortable="emailId" (sort)="onSort($event)">Email Id</th>-->
               <!--<th scope="col" sortable="address" (sort)="onSort($event)">Address</th>-->
               <th scope="col" sortable="cityName" (sort)="onSort($event)">City</th>
               <!--<th scope="col" sortable="stateName" (sort)="onSort($event)">State</th>-->
@@ -150,7 +150,7 @@
               <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight>&nbsp;<ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>
               <!--<td> <ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>-->
               <td> <ngb-highlight [result]="lead.mobileNumber" [term]="service.searchTerm"></ngb-highlight></td>
-              <td><a href="mailto:{{lead.emailId}}"><ngb-highlight [result]="lead.emailId" [term]="service.searchTerm"></ngb-highlight> </a></td>
+              <!--<td><a href="mailto:{{lead.emailId}}"><ngb-highlight [result]="lead.emailId" [term]="service.searchTerm"></ngb-highlight> </a></td>-->
               <!--<td> <ngb-highlight [result]="lead.address" [term]="service.searchTerm"></ngb-highlight></td>-->
               <td> <ngb-highlight [result]="lead.cityName" [term]="service.searchTerm"></ngb-highlight></td>
               <!--<td> <ngb-highlight [result]="lead.stateName" [term]="service.searchTerm"></ngb-highlight></td>-->
