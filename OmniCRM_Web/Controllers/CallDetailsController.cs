@@ -1250,6 +1250,7 @@ namespace OmniCRM_Web.Controllers
 				//    });
 				//}
 				//Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+
 				Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
 				//var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
