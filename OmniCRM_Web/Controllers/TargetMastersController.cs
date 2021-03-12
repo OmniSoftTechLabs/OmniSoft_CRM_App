@@ -10,6 +10,7 @@ using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 using OmniCRM_Web.ViewModels;
 using static OmniCRM_Web.GenericClasses.Enums;
+using static OmniCRM_Web.ViewModels.TargetMatrix;
 
 namespace OmniCRM_Web.Controllers
 {
@@ -55,6 +56,66 @@ namespace OmniCRM_Web.Controllers
                 }
 
                 return await Task.FromResult(targetViewList.OrderBy(p => p.TelecallerName).ToList());
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTargetByMonth: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetTargetMatrix/{month}")]
+        public async Task<ActionResult<TargetMatrix>> GetTargetMatrix(string month)
+        {
+            try
+            {
+
+                DateTime selectedMonth = Convert.ToDateTime(month);
+                selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+                int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
+
+                TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowData = new List<RowsData>() };
+                targetMatrix.Header.Add("Tele Caller");
+                for (int i = 1; i <= noOfWeek; i++)
+                    targetMatrix.Header.Add("Week " + i);
+
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
+
+                foreach (var userMaster in telecallerList)
+                {
+                    targetMatrix.RowData.Add(new RowsData()
+                    {
+                        TCName = userMaster.FirstName,
+                        Week1 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 1).Target,
+                        Week2 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 2).Target,
+                        Week3 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 3).Target,
+                        Week4 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 4).Target,
+                        Week5 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 5).Target,
+                    });
+                }
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetMatrix: -get tele caller target matrix in admin");
+                return await Task.FromResult(targetMatrix);
+                //===================================================================================================
+                //DateTime selectedMonth = Convert.ToDateTime(month);
+                //selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+
+                //Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+
+                //var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
+
+                //List<TargetMasterViewModel> targetViewList = new List<TargetMasterViewModel>();
+                //foreach (var item in telecallerList)
+                //{
+                //    var objTarget = item.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
+                //    if (objTarget == null)
+                //        objTarget = new TargetMaster();
+                //    targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, Target = objTarget.Target, MonthYear = objTarget.MonthYear });
+                //}
+
+                //return await Task.FromResult(targetViewList.OrderBy(p => p.TelecallerName).ToList());
             }
             catch (Exception ex)
             {
@@ -192,6 +253,19 @@ namespace OmniCRM_Web.Controllers
         private bool TargetMasterExists(int id)
         {
             return _context.TargetMaster.Any(e => e.TagetId == id);
+        }
+
+        private int GetWeekNumberOfMonth(DateTime date)
+        {
+            date = date.Date;
+            DateTime firstMonthDay = new DateTime(date.Year, date.Month, 1);
+            DateTime firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
+            if (firstMonthMonday > date)
+            {
+                firstMonthDay = firstMonthDay.AddMonths(-1);
+                firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
+            }
+            return (date - firstMonthMonday).Days / 7 + 1;
         }
     }
 }

@@ -57,6 +57,7 @@
               <tbody>
                 <tr *ngFor="let row of tcStatusReport.tcRowsData; let i = index; let last = last" [ngClass]="{last: last }">
                   <td *ngFor="let column of tcStatusReport.header; let i = index; let first = first; let last = last" [ngClass]="{ first: first, last: last}" style="text-align: center; border: 1px solid">
+                    <!--'text-success': row[column] == 0 && column == 'Performance'-->
                     {{row[column]}}
                   </td>
                 </tr>
