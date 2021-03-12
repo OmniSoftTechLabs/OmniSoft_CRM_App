@@ -40,7 +40,10 @@ namespace OmniCRM_Web.Controllers
             {
                 DateTime selectedMonth = Convert.ToDateTime(month);
                 selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
-                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true).AsEnumerable();
+
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+
+                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
 
                 List<TargetMasterViewModel> targetViewList = new List<TargetMasterViewModel>();
                 foreach (var item in telecallerList)
