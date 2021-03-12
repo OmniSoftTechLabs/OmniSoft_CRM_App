@@ -1238,80 +1238,95 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
 
-				TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<RowsData>() };
-				TCStatusReport.Header.Add("Tele Caller");
-				foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
-				{
-					TCStatusReport.Header.Add(item.OutCome);
-				}
-				TCStatusReport.Header.Add("Total");
+                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<RowsData>() };
+                TCStatusReport.Header.Add("Tele Caller");
+                foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
+                {
 
-				//foreach (var user in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync())
-				//{
-				//    TCStatusReport.TCRowsData.Add(new TeleCallerStatusReport.RowsData()
-				//    {
-				//        TCName = user.FirstName + " " + user.LastName,
-				//        AppoinmentTaken = 
-				//    });
-				//}
-				//Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+                    if (!(item.OutComeId == (int)Enums.CallOutcome.NotInterested || item.OutComeId == (int)Enums.CallOutcome.None || item.OutComeId == (int)Enums.CallOutcome.Dropped))
+                        TCStatusReport.Header.Add(item.OutCome);
+                }
+                TCStatusReport.Header.Add("Total");
+                TCStatusReport.Header.Add("Target");
+                TCStatusReport.Header.Add("Performance");
 
-				Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+
+                //foreach (var user in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync())
+                //{
+                //    TCStatusReport.TCRowsData.Add(new TeleCallerStatusReport.RowsData()
+                //    {
+                //        TCName = user.FirstName + " " + user.LastName,
+                //        AppoinmentTaken = 
+                //    });
+                //}
+                //Guid? currentCompanyId = new Guid(HttpContext.Session.GetString("#COMPANY_ID"));
+
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
 
                 //var TeleCallerLeads = from Teleuser in await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync()
                 //                      join TeleLeads in _context.CallDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList() on Teleuser.UserId equals TeleLeads.CreatedBy into UserLead
                 //                      from TeleLeads in UserLead.DefaultIfEmpty()
                 //                      select new { Teleuser.FirstName, UserLead, TeleLeads };
 
-				var TeleTargetMaster = from Teleuser in _context.UserMaster
-									   .Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
-									   join targetmaster in _context.TargetMaster.AsEnumerable()
-									   .Where(t =>
-														(Convert.ToDateTime(t.MonthYear).Month >= filterOption.FromDate.Date.Month &&
-														  Convert.ToDateTime(t.MonthYear).Year >= filterOption.FromDate.Date.Year)
-														  &&
-														  (Convert.ToDateTime(t.MonthYear).Month <= filterOption.Todate.Date.Month &&
-														  Convert.ToDateTime(t.MonthYear).Year <= filterOption.Todate.Date.Year))
-									  .GroupBy(x => x.TelecallerId)
-									  .Select(g => new { g.Key, Target = g.Sum(i => i.Target) }).ToList()
-									  on Teleuser.UserId equals targetmaster.Key into TTM
-									  from targmast in TTM.DefaultIfEmpty()
-									  select new { Teleuser.UserId, targmast.Target };
+                var TeleTargetMaster = from Teleuser in _context.UserMaster
+                                       .Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
+                                       join targetmaster in _context.TargetMaster.AsEnumerable()
+                                       .Where(t =>
+                                                        (Convert.ToDateTime(t.MonthYear).Month >= filterOption.FromDate.Date.Month &&
+                                                          Convert.ToDateTime(t.MonthYear).Year >= filterOption.FromDate.Date.Year)
+                                                          &&
+                                                          (Convert.ToDateTime(t.MonthYear).Month <= filterOption.Todate.Date.Month &&
+                                                          Convert.ToDateTime(t.MonthYear).Year <= filterOption.Todate.Date.Year))
+                                      .GroupBy(x => x.TelecallerId)
+                                      .Select(g => new { g.Key, Target = g.Sum(i => i.Target) }).ToList()
+                                      on Teleuser.UserId equals targetmaster.Key into TTM
+                                       from targmast in TTM.DefaultIfEmpty()
+                                       select new { Teleuser.UserId, targmast.Target };
 
-				var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
-									  join Leads in _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date).ToList()
-									  .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
-									  from TeleLeads in UserLead.DefaultIfEmpty()
-									  select new { Teleuser.FirstName, UserLead, TeleLeads };
+                var TeleCallerLeads = from Teleuser in _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller && p.CompanyId == currentCompanyId).ToList()
+                                      join Leads in _context.CallTransactionDetail.AsEnumerable().
+                                                            Where(q => Convert.ToDateTime(q.CreatedDate).Date >= filterOption.FromDate.Date &&
+                                                                 Convert.ToDateTime(q.CreatedDate).Date <= filterOption.Todate.Date &&
+                                                                 q.OutComeId != (int)Enums.CallOutcome.NotInterested &&
+                                                                 q.OutComeId != (int)Enums.CallOutcome.None &&
+                                                                 q.OutComeId != (int)Enums.CallOutcome.Dropped).ToList()
 
-				TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsData()
-				{
-					TCName = r.Key.createdBy,
-					NoResponse = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
-					NotInterested = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
-					AppoinmentTaken = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
-					CallLater = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
-					WrongNumber = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
-					None = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
-					Dropped = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Dropped),
-					Interested = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Interested),
-					Total = r.Count(q => q.TeleLeads != null)
-				}).ToList();
+                                      .GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault()).ToList() on Teleuser.UserId equals Leads.CreatedBy into UserLead
+                                      from TeleLeads in UserLead.DefaultIfEmpty()
+                                      join TTM in TeleTargetMaster on Teleuser.UserId equals TTM.UserId
+                                      select new { Teleuser.FirstName, UserLead, TeleLeads, TTM.Target };
 
-				var totalRow = new RowsData()
-				{
-					TCName = "Total",
-					NoResponse = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
-					NotInterested = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
-					AppoinmentTaken = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
-					CallLater = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
-					WrongNumber = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
-					None = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
-					Dropped = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Dropped),
-					Total = TeleCallerLeads.Count(q => q.TeleLeads != null),
-					Target = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Sum(i => i.FirstOrDefault().Target),
-					Performance = TeleCallerLeads.Count(q => q.TeleLeads != null) - TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Sum(i => i.FirstOrDefault().Target)
-				};
+                TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsData()
+                {
+                    TCName = r.Key.createdBy,
+                    NoResponse = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    //	NotInterested = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
+                    AppoinmentTaken = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    CallLater = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
+                    WrongNumber = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
+                    //	None = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
+                    //	Dropped = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Dropped),
+                    Interested = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Interested),
+                    Total = r.Count(q => q.TeleLeads != null),
+                    Target = r.FirstOrDefault().Target,
+                    Performance = r.Count(q => q.TeleLeads != null) - r.FirstOrDefault().Target
+
+                }).ToList();
+
+                var totalRow = new RowsData()
+                {
+                    TCName = "Total",
+                    NoResponse = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
+                    NotInterested = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NotInterested),
+                    AppoinmentTaken = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken),
+                    CallLater = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.CallLater),
+                    WrongNumber = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.WrongNumber),
+                    None = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.None),
+                    Dropped = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.Dropped),
+                    Total = TeleCallerLeads.Count(q => q.TeleLeads != null),
+                    Target = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Sum(i => i.FirstOrDefault().Target),
+                    Performance = TeleCallerLeads.Count(q => q.TeleLeads != null) - TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Sum(i => i.FirstOrDefault().Target)
+                };
 
                 TCStatusReport.TCRowsData.Add(totalRow);
 
