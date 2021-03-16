@@ -7,7 +7,7 @@ import { ChangePwd } from '../models/change-pwd';
 import { AdminSetting } from '../models/admin-setting';
 import { ProductMaster } from '../models/product-master';
 import { CompanyMaster } from '../models/company-master';
-import { TargetMaster } from '../models/target-master';
+import { TargetMaster, TargetMatrix } from '../models/target-master';
 
 @Injectable({
   providedIn: 'root'
@@ -87,7 +87,15 @@ export class GeneralRepositoryService {
     return this.http.get<TargetMaster[]>(this.baseUrl + 'api/TargetMasters/GetTargetByMonth/' + month).pipe();
   }
 
+  GetTargetMatrix(month: string) {
+    return this.http.get<TargetMatrix>(this.baseUrl + 'api/TargetMasters/GetTargetMatrix/' + month).pipe();
+  }
+
   postTargetEntry(month: string, collTarget: TargetMaster[]) {
     return this.http.post(this.baseUrl + 'api/TargetMasters/PostTargetEntry/' + month, collTarget, { responseType: 'text' }).pipe();
+  }
+
+  postTargetMatrix(month: string, objTarget: TargetMatrix) {
+    return this.http.post(this.baseUrl + 'api/TargetMasters/PostTargetMatrix/' + month, objTarget, { responseType: 'text' }).pipe();
   }
 }

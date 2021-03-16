@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbDate, NgbDatepickerNavigateEvent, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Data } from 'popper.js';
-import { TargetMaster } from '../models/target-master';
+import { TargetMaster, TargetMatrix } from '../models/target-master';
 import { GeneralRepositoryService } from '../services/general-repository.service';
 
 declare var $: any;
@@ -26,10 +26,11 @@ export class TargetEntryComponent implements OnInit {
   successMsg: string;
   saveBtnTxt: string = "Save";
   targetEntryList: TargetMaster[] = [];
+  targetMatrix: TargetMatrix = new TargetMatrix();
   selectedDate: NgbDateStruct;
   isEdit: boolean = false;
   editTargetId: number = 0;
-
+  isWeek5visible: boolean = false;
   minDate: NgbDateStruct;
   maxDate: NgbDateStruct;
   isBackDate: boolean = false;
@@ -47,8 +48,20 @@ export class TargetEntryComponent implements OnInit {
     let date = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
     let strDate = this.datePipe.transform(date, "yyyy-MM-dd");
 
-    this.generalRepository.getTargetEntry(strDate).subscribe({
-      next: data => (this.targetEntryList = data, this.is_progress = false),
+    //this.generalRepository.getTargetEntry(strDate).subscribe({
+    //  next: data => (this.targetEntryList = data, this.is_progress = false),
+    //  error: error => (console.error = error.error, this.IsError = true, this.is_progress = false)
+    //});
+
+    this.generalRepository.GetTargetMatrix(strDate).subscribe({
+      next: data => {
+        this.targetMatrix = data;
+        this.is_progress = false;
+        if (data.header.length == 6)
+          this.isWeek5visible = true;
+        else
+          this.isWeek5visible = false;
+      },
       error: error => (console.error = error.error, this.IsError = true, this.is_progress = false)
     });
   }
@@ -66,10 +79,15 @@ export class TargetEntryComponent implements OnInit {
     let date = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
     let strDate = this.datePipe.transform(date, "yyyy-MM-dd");
 
-    this.generalRepository.postTargetEntry(strDate, this.targetEntryList).subscribe({
+    this.generalRepository.postTargetMatrix(strDate, this.targetMatrix).subscribe({
       next: data => (console.log('Success!', data), this.onLoadTarget()),
       error: error => (console.error('Error!', error), this.onLoadTarget())
     });
+
+    //this.generalRepository.postTargetEntry(strDate, this.targetEntryList).subscribe({
+    //  next: data => (console.log('Success!', data), this.onLoadTarget()),
+    //  error: error => (console.error('Error!', error), this.onLoadTarget())
+    //});
 
   }
 
@@ -90,6 +108,11 @@ export class TargetEntryComponent implements OnInit {
       this.isBackDate = false;
     }
     this.onLoadTarget();
+  }
+
+  renameKey(obj, oldKey, newKey) {
+    obj[newKey] = obj[oldKey];
+    delete obj[oldKey];
   }
 
   closeAlert() {

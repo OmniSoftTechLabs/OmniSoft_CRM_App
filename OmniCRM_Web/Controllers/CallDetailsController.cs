@@ -929,7 +929,8 @@ namespace OmniCRM_Web.Controllers
                 var LastMonthFirstDate = month.AddMonths(-1);
                 var LastMonthLastDate = month.AddDays(-1);
 
-                int target = _context.TargetMaster.FirstOrDefault(p => p.TelecallerId == id && p.MonthYear == firstDateofMonth).Target;
+                var objTarget = _context.TargetMaster.FirstOrDefault(p => p.TelecallerId == id && p.MonthYear == firstDateofMonth);
+                int target = objTarget.TargetWeek1 + objTarget.TargetWeek2 + objTarget.TargetWeek3 + objTarget.TargetWeek4 + objTarget.TargetWeek5;
                 int appoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken);
                 int notInterested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NotInterested);
                 int interested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.Interested);
@@ -1238,7 +1239,7 @@ namespace OmniCRM_Web.Controllers
                 filterOption.FromDate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.FromDate, GenericMethods.Indian_Zone);
                 filterOption.Todate = TimeZoneInfo.ConvertTimeFromUtc(filterOption.Todate, GenericMethods.Indian_Zone);
 
-                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<RowsData>() };
+                TeleCallerStatusReport TCStatusReport = new TeleCallerStatusReport() { Header = new List<string>(), TCRowsData = new List<TeleCallerStatusReport.RowsData>() };
                 TCStatusReport.Header.Add("Tele Caller");
                 foreach (var item in await _context.CallOutcomeMaster.ToListAsync())
                 {
@@ -1276,7 +1277,7 @@ namespace OmniCRM_Web.Controllers
                                                 (Convert.ToDateTime(t.MonthYear).Month <= filterOption.Todate.Date.Month &&
                                                 Convert.ToDateTime(t.MonthYear).Year <= filterOption.Todate.Date.Year))
                                       .GroupBy(x => x.TelecallerId)
-                                      .Select(g => new { g.Key, Target = g.Sum(i => i.Target) }).ToList()
+                                      .Select(g => new { g.Key, Target = g.Sum(i => i.TargetWeek1) }).ToList()
                                       on Teleuser.UserId equals targetmaster.Key into TTM
                                        from targetmaster in TTM.DefaultIfEmpty()
                                        select new { Teleuser.UserId, Targets = targetmaster?.Target ?? 0 };
@@ -1294,7 +1295,7 @@ namespace OmniCRM_Web.Controllers
                                       join TTM in TeleTargetMaster on Teleuser.UserId equals TTM.UserId
                                       select new { Teleuser.FirstName, UserLead, TeleLeads, TTM.Targets };
 
-                TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new RowsData()
+                TCStatusReport.TCRowsData = TeleCallerLeads.GroupBy(p => new { createdBy = p.FirstName }).Select(r => new TeleCallerStatusReport.RowsData()
                 {
                     TCName = r.Key.createdBy,
                     NoResponse = r.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),
@@ -1311,7 +1312,7 @@ namespace OmniCRM_Web.Controllers
 
                 }).ToList();
 
-                var totalRow = new RowsData()
+                var totalRow = new TeleCallerStatusReport.RowsData()
                 {
                     TCName = "Total",
                     NoResponse = TeleCallerLeads.Count(q => q.TeleLeads != null && q.TeleLeads.OutComeId == (int)Enums.CallOutcome.NoResponse),

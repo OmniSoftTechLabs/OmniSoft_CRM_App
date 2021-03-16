@@ -52,7 +52,7 @@ namespace OmniCRM_Web.Controllers
                     var objTarget = item.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
                     if (objTarget == null)
                         objTarget = new TargetMaster();
-                    targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, Target = objTarget.Target, MonthYear = objTarget.MonthYear });
+                    targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, TargetWeek1 = objTarget.TargetWeek1, MonthYear = objTarget.MonthYear });
                 }
 
                 return await Task.FromResult(targetViewList.OrderBy(p => p.TelecallerName).ToList());
@@ -75,7 +75,7 @@ namespace OmniCRM_Web.Controllers
                 selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
                 int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
 
-                TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowData = new List<RowsData>() };
+                TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
                 targetMatrix.Header.Add("Tele Caller");
                 for (int i = 1; i <= noOfWeek; i++)
                     targetMatrix.Header.Add("Week " + i);
@@ -85,14 +85,20 @@ namespace OmniCRM_Web.Controllers
 
                 foreach (var userMaster in telecallerList)
                 {
-                    targetMatrix.RowData.Add(new RowsData()
+                    var objTarget = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
+                    if (objTarget == null)
+                        objTarget = new TargetMaster();
+
+                    targetMatrix.RowDataTargetMaster.Add(new TargetMasterViewModel()
                     {
-                        TCName = userMaster.FirstName,
-                        Week1 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 1).Target,
-                        Week2 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 2).Target,
-                        Week3 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 3).Target,
-                        Week4 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 4).Target,
-                        Week5 = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth && p.WeekNumber == 5).Target,
+                        TagetId = objTarget.TagetId,
+                        TelecallerName = userMaster.FirstName,
+                        TelecallerId = userMaster.UserId,
+                        TargetWeek1 = objTarget.TargetWeek1,
+                        TargetWeek2 = objTarget.TargetWeek2,
+                        TargetWeek3 = objTarget.TargetWeek3,
+                        TargetWeek4 = objTarget.TargetWeek4,
+                        TargetWeek5 = objTarget.TargetWeek5,
                     });
                 }
 
@@ -122,6 +128,54 @@ namespace OmniCRM_Web.Controllers
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTargetByMonth: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
+        }
+
+        [HttpPost("PostTargetMatrix/{month}")]
+        public async Task<IActionResult> PostTargetMatrix(string month, TargetMatrix targetMatrix)
+        {
+            try
+            {
+                if (targetMatrix.RowDataTargetMaster.Count > 0)
+                {
+                    DateTime selectedMonth = Convert.ToDateTime(month);
+                    selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+                    int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
+
+                    List<TargetMaster> collTargetEntry = new List<TargetMaster>();
+                    foreach (var item in targetMatrix.RowDataTargetMaster)
+                    {
+                        TargetMaster objTarget = new TargetMaster()
+                        {
+                            TagetId = item.TagetId,
+                            TelecallerId = item.TelecallerId,
+                            MonthYear = selectedMonth,
+                            TargetWeek1 = item.TargetWeek1,
+                            TargetWeek2 = item.TargetWeek2,
+                            TargetWeek3 = item.TargetWeek3,
+                            TargetWeek4 = item.TargetWeek4,
+                            TargetWeek5 = item.TargetWeek5,
+                        };
+                        collTargetEntry.Add(objTarget);
+                    }
+
+                    _context.TargetMaster.UpdateRange(collTargetEntry);
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Target Created successfully!");
+                }
+                else
+                {
+                    GenericMethods.Log(LogType.ErrorLog.ToString(), "PostTargetEntry: -target not exist");
+                    return NotFound("Target not found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "PostTargetEntry: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+
         }
 
         // GET: api/TargetMasters/5
@@ -257,15 +311,41 @@ namespace OmniCRM_Web.Controllers
 
         private int GetWeekNumberOfMonth(DateTime date)
         {
-            date = date.Date;
-            DateTime firstMonthDay = new DateTime(date.Year, date.Month, 1);
-            DateTime firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
-            if (firstMonthMonday > date)
-            {
-                firstMonthDay = firstMonthDay.AddMonths(-1);
-                firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
-            }
-            return (date - firstMonthMonday).Days / 7 + 1;
+            //date = date.Date;
+            //DateTime firstMonthDay = new DateTime(date.Year, date.Month, 1);
+            //DateTime firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
+            //if (firstMonthMonday > date)
+            //{
+            //    firstMonthDay = firstMonthDay.AddMonths(-1);
+            //    firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
+            //}
+            //return (date - firstMonthMonday).Days / 7 + 1;
+
+
+            //extract the month
+            //int daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
+            //DateTime firstOfMonth = new DateTime(date.Year, date.Month, 1);
+            ////days of week starts by default as Sunday = 0
+            //int firstDayOfMonth = (int)firstOfMonth.DayOfWeek;
+            //int weeksInMonth = (int)Math.Ceiling(daysInMonth / 7.0);
+            ////int weeksInMonth = (int)Math.Ceiling((firstDayOfMonth + daysInMonth) / 7.0);
+            //return weeksInMonth;
+
+            int countDays = DateTime.DaysInMonth(date.Year, date.Month);
+            int numOfWeeks = 0;
+            for (int i = 1; i <= countDays; i = i + 7)
+                numOfWeeks++;
+            return numOfWeeks;
+            //zero-based array
+
+            //DateTime first = new DateTime(date.Year, date.Month, 1);
+
+            //int firstwkday = (int)first.DayOfWeek;
+            ////int otherwkday = (int)wkstart;
+
+            //int offset = (8 - firstwkday) % 7;
+            //double weeks = (double)(DateTime.DaysInMonth(date.Year, date.Month) - offset) / 7d;
+            //return (int)Math.Ceiling(weeks);
         }
     }
 }

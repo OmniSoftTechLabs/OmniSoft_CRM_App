@@ -12,8 +12,11 @@ namespace OmniCRM_Web.Models
         public int TagetId { get; set; }
         public Guid TelecallerId { get; set; }
         public DateTime MonthYear { get; set; }
-        public int WeekNumber { get; set; }
-        public int Target { get; set; }
+        public int TargetWeek1 { get; set; }
+        public int TargetWeek2 { get; set; }
+        public int TargetWeek3 { get; set; }
+        public int TargetWeek4 { get; set; }
+        public int TargetWeek5 { get; set; }
 
         public virtual UserMaster Telecaller { get; set; }
     }

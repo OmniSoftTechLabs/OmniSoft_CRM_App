@@ -37,31 +37,88 @@
               <table class='table table-striped table-sm' aria-labelledby="tableLabel">
                 <thead>
                   <tr>
-                    <th scope="col" style="width:15px">#</th>
-                    <th scope="col" style="width:300px">Telecaller Name</th>
-                    <th scope="col" style="width:150px">Target</th>
-                    <!--<th scope="col">Action</th>-->
+                    <th scope="col" *ngFor="let column of targetMatrix.header" style="text-align: center; width:120px">
+                      {{column}}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let objTarget of targetEntryList; index as i">
-                    <th scope="row">{{i + 1}}</th>
-                    <td>{{objTarget.telecallerName}}</td>
-                    <td>
-                      <div *ngIf="!isEdit">{{objTarget.target}}</div>
+                  <tr *ngFor="let row of targetMatrix.rowDataTargetMaster">
+                    <!--<td *ngFor="let column of targetMatrix.header" style="text-align: center">-->
+                    <!--'text-success': row[column] == 0 && column == 'Performance'-->
+                    <!--{{row[column]}}
+                    </td>-->
+                    <td style="text-align: center">{{row.telecallerName}}</td>
+
+                    <td style="text-align: center; width:120px;">
+                      <div *ngIf="!isEdit">{{row.targetWeek1}}</div>
                       <div *ngIf="isEdit">
-                        <input type="text" required #target="ngModel" name="target" pattern="^[0-9]*$" [class.is-invalid]="target.invalid && target.touched || target.errors?.pattern"
-                               class="form-control" [(ngModel)]="objTarget.target" maxlength="4" style="width:150px"/>
+                        <input type="text" required #targetWeek1="ngModel" name="targetWeek1" pattern="^[0-9]*$" [class.is-invalid]="targetWeek1.invalid && targetWeek1.touched || targetWeek1.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek1" maxlength="4" style="width:100px; margin:auto" />
                       </div>
                     </td>
-                    <!--<td>
-                      <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-warning rounded-circle" *ngIf="!isEdit" (click)="onEdit(objTarget.tagetId)"><i class="fas fa-edit"></i></button>
-                      <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-success rounded-circle" *ngIf="isEdit && editTargetId == objTarget.tagetId" (click)="onSave(objTarget.tagetId)"><i class="fas fa-save"></i></button>
-                    </td>-->
-                  </tr>
+                    <td style="text-align: center;width:120px">
+                      <div *ngIf="!isEdit">{{row.targetWeek2}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #targetWeek2="ngModel" name="targetWeek2" pattern="^[0-9]*$" [class.is-invalid]="targetWeek2.invalid && targetWeek2.touched || targetWeek2.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek2" maxlength="4" style="width:100px; margin:auto"/>
+                      </div>
+                    </td>
+                    <td style="text-align: center; width:120px">
+                      <div *ngIf="!isEdit">{{row.targetWeek3}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #targetWeek3="ngModel" name="targetWeek3" pattern="^[0-9]*$" [class.is-invalid]="targetWeek3.invalid && targetWeek3.touched || targetWeek3.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek3" maxlength="4" style="width:100px; margin:auto" />
+                      </div>
+                    </td>
+                    <td style="text-align: center; width:120px">
+                      <div *ngIf="!isEdit">{{row.targetWeek4}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #targetWeek4="ngModel" name="targetWeek4" pattern="^[0-9]*$" [class.is-invalid]="targetWeek4.invalid && targetWeek4.touched || targetWeek4.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek4" maxlength="4" style="width:100px; margin:auto" />
+                      </div>
+                    </td>
+                    <td style="text-align: center; width:120px" *ngIf="isWeek5visible">
+                      <div *ngIf="!isEdit">{{row.targetWeek5}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #targetWeek5="ngModel" name="targetWeek5" pattern="^[0-9]*$" [class.is-invalid]="targetWeek5.invalid && targetWeek5.touched || targetWeek5.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek5" maxlength="4" style="width:100px; margin:auto" />
+                      </div>
+                    </td>
 
+                  </tr>
                 </tbody>
               </table>
+
+
+              <!--<table class='table table-striped table-sm' aria-labelledby="tableLabel">
+              <thead>
+                <tr>
+                  <th scope="col" style="width:15px">#</th>
+                  <th scope="col" style="width:300px">Telecaller Name</th>
+                  <th scope="col" style="width:150px">Target</th>-->
+              <!--<th scope="col">Action</th>-->
+              <!--</tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let objTarget of targetEntryList; index as i">
+                  <th scope="row">{{i + 1}}</th>
+                  <td>{{objTarget.telecallerName}}</td>
+                  <td>
+                    <div *ngIf="!isEdit">{{objTarget.target}}</div>
+                    <div *ngIf="isEdit">
+                      <input type="text" required #target="ngModel" name="target" pattern="^[0-9]*$" [class.is-invalid]="target.invalid && target.touched || target.errors?.pattern"
+                             class="form-control" [(ngModel)]="objTarget.target" maxlength="4" style="width:150px"/>
+                    </div>
+                  </td>-->
+              <!--<td>
+                <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-warning rounded-circle" *ngIf="!isEdit" (click)="onEdit(objTarget.tagetId)"><i class="fas fa-edit"></i></button>
+                <button type="button" placement="top" ngbTooltip="Edit Target" class="btn btn-sm btn-outline-success rounded-circle" *ngIf="isEdit && editTargetId == objTarget.tagetId" (click)="onSave(objTarget.tagetId)"><i class="fas fa-save"></i></button>
+              </td>-->
+              <!--</tr>
+
+                </tbody>
+              </table>-->
 
             </div>
 
