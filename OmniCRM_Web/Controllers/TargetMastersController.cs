@@ -114,24 +114,6 @@ namespace OmniCRM_Web.Controllers
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetMatrix: -get tele caller target matrix in admin");
                 return await Task.FromResult(targetMatrix);
-                //===================================================================================================
-                //DateTime selectedMonth = Convert.ToDateTime(month);
-                //selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
-
-                //Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
-
-                //var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
-
-                //List<TargetMasterViewModel> targetViewList = new List<TargetMasterViewModel>();
-                //foreach (var item in telecallerList)
-                //{
-                //    var objTarget = item.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
-                //    if (objTarget == null)
-                //        objTarget = new TargetMaster();
-                //    targetViewList.Add(new TargetMasterViewModel() { TagetId = objTarget.TagetId, TelecallerId = item.UserId, TelecallerName = item.FirstName, Target = objTarget.Target, MonthYear = objTarget.MonthYear });
-                //}
-
-                //return await Task.FromResult(targetViewList.OrderBy(p => p.TelecallerName).ToList());
             }
             catch (Exception ex)
             {
@@ -309,12 +291,16 @@ namespace OmniCRM_Web.Controllers
 
                 DateTime selectedMonth = Convert.ToDateTime(month);
                 selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
-                int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
 
+                var ListofWeeks = GetWeekRange.GetListofWeeks(selectedMonth.Year, selectedMonth.Month);
                 TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
                 targetMatrix.Header.Add("Tele Caller");
-                for (int i = 1; i <= noOfWeek; i++)
-                    targetMatrix.Header.Add("Week " + i);
+                foreach (dynamic item in ListofWeeks)
+                {
+                    DateTime FromDate = Convert.ToDateTime(item.DateFrom);
+                    DateTime ToDate = Convert.ToDateTime(item.To);
+                    targetMatrix.Header.Add(FromDate.Day.ToString() + " - " + ToDate.Day.ToString());
+                }
 
                 Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
                 var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
@@ -336,6 +322,30 @@ namespace OmniCRM_Web.Controllers
                         TargetWeek4 = objTarget.TargetWeek4,
                         TargetWeek5 = objTarget.TargetWeek5,
                     });
+
+                    foreach (dynamic item in ListofWeeks)
+                    {
+                        DateTime FromDate = Convert.ToDateTime(item.DateFrom);
+                        DateTime ToDate = Convert.ToDateTime(item.To);
+
+                        //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
+                        //                      && q.OutComeId != (int)Enums.CallOutcome.NoResponse
+                        //                      && q.OutComeId != (int)Enums.CallOutcome.None
+                        //                      && q.OutComeId != (int)Enums.CallOutcome.Dropped
+                        //                      && q.OutComeId != (int)Enums.CallOutcome.Interested
+                        //                      && q.CreatedBy == userMaster.UserId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
+
+                        var TeleCallerLeads = _context.CallTransactionDetail.Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
+                                              && q.OutComeId != (int)Enums.CallOutcome.NoResponse
+                                              && q.OutComeId != (int)Enums.CallOutcome.None
+                                              && q.OutComeId != (int)Enums.CallOutcome.Dropped
+                                              && q.OutComeId != (int)Enums.CallOutcome.Interested
+                                              && q.CreatedBy == userMaster.UserId).AsEnumerable();
+
+                        int count = TeleCallerLeads.AsEnumerable().Count();
+                    }
+
+
                 }
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetMatrix: -get tele caller target matrix in admin");

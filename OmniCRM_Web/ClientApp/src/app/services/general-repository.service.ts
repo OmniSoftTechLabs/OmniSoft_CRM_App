@@ -98,4 +98,8 @@ export class GeneralRepositoryService {
   postTargetMatrix(month: string, objTarget: TargetMatrix) {
     return this.http.post(this.baseUrl + 'api/TargetMasters/PostTargetMatrix/' + month, objTarget, { responseType: 'text' }).pipe();
   }
+
+  GetTargetAchieveTelecaller(month: string) {
+    return this.http.get<TargetMatrix>(this.baseUrl + 'api/TargetMasters/GetTargetVsAchieve/' + month).pipe();
+  }
 }
