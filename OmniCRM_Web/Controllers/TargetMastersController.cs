@@ -73,12 +73,21 @@ namespace OmniCRM_Web.Controllers
 
                 DateTime selectedMonth = Convert.ToDateTime(month);
                 selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
-                int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
+
+                var ListofWeeks = GetWeekRange.GetListofWeeks(selectedMonth.Year, selectedMonth.Month);
+
+                //int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
 
                 TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
                 targetMatrix.Header.Add("Tele Caller");
-                for (int i = 1; i <= noOfWeek; i++)
-                    targetMatrix.Header.Add("Week " + i);
+                foreach (dynamic item in ListofWeeks)
+                {
+                    DateTime FromDate = Convert.ToDateTime(item.DateFrom);
+                    DateTime ToDate = Convert.ToDateTime(item.To);
+                    targetMatrix.Header.Add(FromDate.Day.ToString() + " - " + ToDate.Day.ToString());
+                }
+                //for (int i = 1; i <= ListofWeeks.Count(); i++)
+                //    targetMatrix.Header.Add("Week " + i);
 
                 Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
                 var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
@@ -99,6 +108,7 @@ namespace OmniCRM_Web.Controllers
                         TargetWeek3 = objTarget.TargetWeek3,
                         TargetWeek4 = objTarget.TargetWeek4,
                         TargetWeek5 = objTarget.TargetWeek5,
+                        TargetWeek6 = objTarget.TargetWeek6,
                     });
                 }
 
@@ -154,6 +164,7 @@ namespace OmniCRM_Web.Controllers
                             TargetWeek3 = item.TargetWeek3,
                             TargetWeek4 = item.TargetWeek4,
                             TargetWeek5 = item.TargetWeek5,
+                            TargetWeek6 = item.TargetWeek6,
                         };
                         collTargetEntry.Add(objTarget);
                     }
@@ -286,6 +297,55 @@ namespace OmniCRM_Web.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
+        }
+
+
+        [HttpGet]
+        [Route("GetTargetVsAchieve/{month}")]
+        public async Task<ActionResult<TargetMatrix>> GetTargetVsAchieve(string month)
+        {
+            try
+            {
+
+                DateTime selectedMonth = Convert.ToDateTime(month);
+                selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
+                int noOfWeek = GetWeekNumberOfMonth(selectedMonth);
+
+                TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
+                targetMatrix.Header.Add("Tele Caller");
+                for (int i = 1; i <= noOfWeek; i++)
+                    targetMatrix.Header.Add("Week " + i);
+
+                Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
+                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
+
+                foreach (var userMaster in telecallerList)
+                {
+                    var objTarget = userMaster.TargetMaster.FirstOrDefault(p => p.MonthYear == selectedMonth);
+                    if (objTarget == null)
+                        objTarget = new TargetMaster();
+
+                    targetMatrix.RowDataTargetMaster.Add(new TargetMasterViewModel()
+                    {
+                        TagetId = objTarget.TagetId,
+                        TelecallerName = userMaster.FirstName,
+                        TelecallerId = userMaster.UserId,
+                        TargetWeek1 = objTarget.TargetWeek1,
+                        TargetWeek2 = objTarget.TargetWeek2,
+                        TargetWeek3 = objTarget.TargetWeek3,
+                        TargetWeek4 = objTarget.TargetWeek4,
+                        TargetWeek5 = objTarget.TargetWeek5,
+                    });
+                }
+
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetMatrix: -get tele caller target matrix in admin");
+                return await Task.FromResult(targetMatrix);
+            }
+            catch (Exception ex)
+            {
+                GenericMethods.Log(LogType.ErrorLog.ToString(), "GetTargetByMonth: " + ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // DELETE: api/TargetMasters/5

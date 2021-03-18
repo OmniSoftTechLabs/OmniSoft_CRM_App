@@ -17,6 +17,8 @@
 
 
                 <span class="spinner-border text-primary ml-4" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+
+                <div style="margin:auto">Weekly target <strong> From - To </strong> date of <strong>{{i18n.getMonthFullName(selectedDate.month)}} {{selectedDate.year}}</strong></div>
               </div>
               <div class="card-tools">
 
@@ -53,7 +55,7 @@
                     <td style="text-align: center; width:120px;">
                       <div *ngIf="!isEdit">{{row.targetWeek1}}</div>
                       <div *ngIf="isEdit">
-                        <input type="text" required #targetWeek1="ngModel" name="targetWeek1" pattern="^[0-9]*$" [class.is-invalid]="targetWeek1.invalid && targetWeek1.touched || targetWeek1.errors?.pattern"
+                        <input type="text" required #targetWeek1="ngModel" name="targetWeek1" pattern="^[0-9]*$" (change)="onTextChange($event, row.telecallerId)" [class.is-invalid]="targetWeek1.invalid && targetWeek1.touched || targetWeek1.errors?.pattern"
                                class="form-control" [(ngModel)]="row.targetWeek1" maxlength="4" style="width:100px; margin:auto" />
                       </div>
                     </td>
@@ -61,7 +63,7 @@
                       <div *ngIf="!isEdit">{{row.targetWeek2}}</div>
                       <div *ngIf="isEdit">
                         <input type="text" required #targetWeek2="ngModel" name="targetWeek2" pattern="^[0-9]*$" [class.is-invalid]="targetWeek2.invalid && targetWeek2.touched || targetWeek2.errors?.pattern"
-                               class="form-control" [(ngModel)]="row.targetWeek2" maxlength="4" style="width:100px; margin:auto"/>
+                               class="form-control" [(ngModel)]="row.targetWeek2" maxlength="4" style="width:100px; margin:auto" />
                       </div>
                     </td>
                     <td style="text-align: center; width:120px">
@@ -85,7 +87,13 @@
                                class="form-control" [(ngModel)]="row.targetWeek5" maxlength="4" style="width:100px; margin:auto" />
                       </div>
                     </td>
-
+                    <td style="text-align: center; width:120px" *ngIf="isWeek6visible">
+                      <div *ngIf="!isEdit">{{row.targetWeek6}}</div>
+                      <div *ngIf="isEdit">
+                        <input type="text" required #targetWeek6="ngModel" name="targetWeek6" pattern="^[0-9]*$" [class.is-invalid]="targetWeek6.invalid && targetWeek6.touched || targetWeek6.errors?.pattern"
+                               class="form-control" [(ngModel)]="row.targetWeek6" maxlength="4" style="width:100px; margin:auto" />
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>

@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbDatepickerNavigateEvent, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbDatepickerI18n, NgbDatepickerNavigateEvent, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Data } from 'popper.js';
 import { TargetMaster, TargetMatrix } from '../models/target-master';
 import { GeneralRepositoryService } from '../services/general-repository.service';
@@ -31,10 +31,11 @@ export class TargetEntryComponent implements OnInit {
   isEdit: boolean = false;
   editTargetId: number = 0;
   isWeek5visible: boolean = false;
+  isWeek6visible: boolean = false;
   minDate: NgbDateStruct;
   maxDate: NgbDateStruct;
   isBackDate: boolean = false;
-  constructor(private router: Router, private generalRepository: GeneralRepositoryService, private datePipe: DatePipe) {
+  constructor(private router: Router, private generalRepository: GeneralRepositoryService, private datePipe: DatePipe, public i18n: NgbDatepickerI18n) {
     this.selectedDate = { day: 1, month: new Date().getMonth() + 1, year: new Date().getFullYear() };
     //this.firstDateofMonths.push();
   }
@@ -57,10 +58,18 @@ export class TargetEntryComponent implements OnInit {
       next: data => {
         this.targetMatrix = data;
         this.is_progress = false;
-        if (data.header.length == 6)
+        if (data.header.length == 7) {
           this.isWeek5visible = true;
-        else
+          this.isWeek6visible = true;
+        }
+        else if (data.header.length == 6) {
+          this.isWeek5visible = true;
+          this.isWeek6visible = false;
+        }
+        else {
           this.isWeek5visible = false;
+          this.isWeek6visible = false;
+        }
       },
       error: error => (console.error = error.error, this.IsError = true, this.is_progress = false)
     });
@@ -101,13 +110,31 @@ export class TargetEntryComponent implements OnInit {
 
     let seleDate = new Date(this.selectedDate.year, this.selectedDate.month - 1, this.selectedDate.day, 0, 0, 0, 0);
     let currDate = new Date();
-    if (seleDate.getMonth() < currDate.getMonth()) {
+    if (seleDate.getMonth() < currDate.getMonth() || seleDate.getFullYear() < currDate.getFullYear()) {
       this.isBackDate = true;
     }
     else {
       this.isBackDate = false;
     }
     this.onLoadTarget();
+  }
+
+  onTextChange(event: any, tcId: any) {
+    let target = event.target.value;
+    this.targetMatrix.rowDataTargetMaster.forEach(obj => {
+      if (obj.telecallerId == tcId) {
+        if (obj.targetWeek2 == 0)
+          obj.targetWeek2 = target;
+        if (obj.targetWeek3 == 0)
+          obj.targetWeek3 = target;
+        if (obj.targetWeek4 == 0)
+          obj.targetWeek4 = target;
+        if (obj.targetWeek5 == 0 && this.isWeek5visible == true)
+          obj.targetWeek5 = target;
+        if (obj.targetWeek6 == 0 && this.isWeek6visible == true)
+          obj.targetWeek6 = target;
+      }
+    });
   }
 
   renameKey(obj, oldKey, newKey) {

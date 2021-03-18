@@ -15,6 +15,8 @@ namespace OmniCRM_Web.ViewModels
         public int TargetWeek3 { get; set; }
         public int TargetWeek4 { get; set; }
         public int TargetWeek5 { get; set; }
+        public int TargetWeek6 { get; set; }
+
         public string TelecallerName { get; set; }
     }
 

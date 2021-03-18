@@ -9,6 +9,7 @@ export class TargetMaster {
   targetWeek3: number;
   targetWeek4: number;
   targetWeek5: number;
+  targetWeek6: number;
   telecallerName: string;
 }
 
