@@ -281,7 +281,6 @@ namespace OmniCRM_Web.Controllers
 
         }
 
-
         [HttpGet]
         [Route("GetTargetVsAchieve/{month}")]
         public async Task<ActionResult<TargetMatrix>> GetTargetVsAchieve(string month)
@@ -293,17 +292,18 @@ namespace OmniCRM_Web.Controllers
                 selectedMonth = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
 
                 var ListofWeeks = GetWeekRange.GetListofWeeks(selectedMonth.Year, selectedMonth.Month);
-                TargetMatrix targetMatrix = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
-                targetMatrix.Header.Add("Tele Caller");
+                TargetMatrix targetVsAchieve = new TargetMatrix() { Header = new List<string>(), RowDataTargetMaster = new List<TargetMasterViewModel>() };
+                targetVsAchieve.Header.Add("Tele Caller");
                 foreach (dynamic item in ListofWeeks)
                 {
                     DateTime FromDate = Convert.ToDateTime(item.DateFrom);
                     DateTime ToDate = Convert.ToDateTime(item.To);
-                    targetMatrix.Header.Add(FromDate.Day.ToString() + " - " + ToDate.Day.ToString());
+                    targetVsAchieve.Header.Add(FromDate.Day.ToString() + " - " + ToDate.Day.ToString());
                 }
+                targetVsAchieve.Header.Add("Total");
 
                 Guid currentCompanyId = new Guid(User.Claims.FirstOrDefault(p => p.Type == "CompanyId").Value);
-                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsEnumerable();
+                var telecallerList = _context.UserMaster.Include(p => p.TargetMaster).Where(r => r.RoleId == (int)Roles.TeleCaller && r.Status == true && r.CompanyId == currentCompanyId).AsNoTracking().AsEnumerable();
 
                 foreach (var userMaster in telecallerList)
                 {
@@ -311,7 +311,7 @@ namespace OmniCRM_Web.Controllers
                     if (objTarget == null)
                         objTarget = new TargetMaster();
 
-                    targetMatrix.RowDataTargetMaster.Add(new TargetMasterViewModel()
+                    targetVsAchieve.RowDataTargetMaster.Add(new TargetMasterViewModel()
                     {
                         TagetId = objTarget.TagetId,
                         TelecallerName = userMaster.FirstName,
@@ -321,35 +321,53 @@ namespace OmniCRM_Web.Controllers
                         TargetWeek3 = objTarget.TargetWeek3,
                         TargetWeek4 = objTarget.TargetWeek4,
                         TargetWeek5 = objTarget.TargetWeek5,
+                        TargetWeek6 = objTarget.TargetWeek6,
                     });
 
+                    int cntWeek = 0;
                     foreach (dynamic item in ListofWeeks)
                     {
+                        cntWeek++;
                         DateTime FromDate = Convert.ToDateTime(item.DateFrom);
                         DateTime ToDate = Convert.ToDateTime(item.To);
 
-                        //var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
-                        //                      && q.OutComeId != (int)Enums.CallOutcome.NoResponse
-                        //                      && q.OutComeId != (int)Enums.CallOutcome.None
-                        //                      && q.OutComeId != (int)Enums.CallOutcome.Dropped
-                        //                      && q.OutComeId != (int)Enums.CallOutcome.Interested
-                        //                      && q.CreatedBy == userMaster.UserId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
+                        OmniCRMContext con_text = new OmniCRMContext();
+                        var TeleCallerLeads = con_text.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
+                                             && q.OutComeId != (int)Enums.CallOutcome.NoResponse
+                                             && q.OutComeId != (int)Enums.CallOutcome.None
+                                             && q.OutComeId != (int)Enums.CallOutcome.Dropped
+                                             && q.OutComeId != (int)Enums.CallOutcome.Interested
+                                             && q.CreatedBy == userMaster.UserId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
 
-                        var TeleCallerLeads = _context.CallTransactionDetail.Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
-                                              && q.OutComeId != (int)Enums.CallOutcome.NoResponse
-                                              && q.OutComeId != (int)Enums.CallOutcome.None
-                                              && q.OutComeId != (int)Enums.CallOutcome.Dropped
-                                              && q.OutComeId != (int)Enums.CallOutcome.Interested
-                                              && q.CreatedBy == userMaster.UserId).AsEnumerable();
-
-                        int count = TeleCallerLeads.AsEnumerable().Count();
+                        var objAchive = targetVsAchieve.RowDataTargetMaster.FirstOrDefault(p => p.TelecallerId == userMaster.UserId);
+                        switch (cntWeek)
+                        {
+                            case 1:
+                                objAchive.AchieveWeek1 = TeleCallerLeads.Count();
+                                break;
+                            case 2:
+                                objAchive.AchieveWeek2 = TeleCallerLeads.Count();
+                                break;
+                            case 3:
+                                objAchive.AchieveWeek3 = TeleCallerLeads.Count();
+                                break;
+                            case 4:
+                                objAchive.AchieveWeek4 = TeleCallerLeads.Count();
+                                break;
+                            case 5:
+                                objAchive.AchieveWeek5 = TeleCallerLeads.Count();
+                                break;
+                            case 6:
+                                objAchive.AchieveWeek6 = TeleCallerLeads.Count();
+                                break;
+                            default:
+                                break;
+                        }
                     }
-
-
                 }
 
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetMatrix: -get tele caller target matrix in admin");
-                return await Task.FromResult(targetMatrix);
+                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetTargetVsAchieve: -get tele caller target vs achievement in admin");
+                return await Task.FromResult(targetVsAchieve);
             }
             catch (Exception ex)
             {

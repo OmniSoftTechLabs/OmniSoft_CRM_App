@@ -930,7 +930,7 @@ namespace OmniCRM_Web.Controllers
                 var LastMonthLastDate = month.AddDays(-1);
 
                 var objTarget = _context.TargetMaster.FirstOrDefault(p => p.TelecallerId == id && p.MonthYear == firstDateofMonth);
-                int target = objTarget.TargetWeek1 + objTarget.TargetWeek2 + objTarget.TargetWeek3 + objTarget.TargetWeek4 + objTarget.TargetWeek5;
+                int target = objTarget.TargetWeek1 + objTarget.TargetWeek2 + objTarget.TargetWeek3 + objTarget.TargetWeek4 + objTarget.TargetWeek5 + objTarget.TargetWeek6;
                 int appoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken);
                 int notInterested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NotInterested);
                 int interested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.Interested);
@@ -952,7 +952,7 @@ namespace OmniCRM_Web.Controllers
                     NotInterested = TeleCallerLeads.Count(r => r.OutComeId == (int)Enums.CallOutcome.NotInterested),
 
                     Target = target,
-                    Achievement = appoinmentTaken + notInterested + interested + wrongNumber + callLater,
+                    Achievement = appoinmentTaken + notInterested + wrongNumber + callLater,
 
                     MonthlyTotalLeads = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear),
                     MonthlyNoResponse = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NoResponse),

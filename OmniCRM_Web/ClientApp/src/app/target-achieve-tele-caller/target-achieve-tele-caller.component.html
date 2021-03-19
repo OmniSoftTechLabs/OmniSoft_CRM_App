@@ -1,1 +1,87 @@
-<p>target-achieve-tele-caller works!</p>
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header no-print">
+
+            <div class="form-row">
+              <div class="col-md-11 form-inline">
+
+                Select Month: &nbsp;&nbsp;
+                <div class="input-group">
+                  <input ngbDatepicker class="form-control" #fDate="ngbDatepicker" [(ngModel)]="selectedDate" name="fDate" placeholder="Select Month" (ngModelChange)="onMonthChange()" style="width:180px" />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="fDate.toggle()" type="button"></button>
+                  </div>
+                </div>
+
+                <span class="spinner-border text-primary ml-4" role="status" aria-hidden="true" *ngIf="is_progress"></span>
+
+                <!--<div style="margin:auto">Weekly Achievement/Target <strong> From - To </strong> date of <strong>{{i18n.getMonthFullName(selectedDate.month)}} {{selectedDate.year}}</strong></div>-->
+
+              </div>
+
+              <div class="col-md">
+                <div class="card-tools float-right">
+                  <button class="btn btn-outline-primary" (click)="onPrint()"><i class="fas fa-print"></i> Print</button>
+                  <!--<button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>-->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-body">
+            <div>
+              <h4 class="d-flex justify-content-center"><b>Telecaller wise weekly Achievement/Target report</b></h4>
+              <h5 class="d-flex justify-content-center">{{i18n.getMonthFullName(selectedDate.month)}} {{selectedDate.year}}</h5>
+              <p class="d-flex justify-content-end">Date : {{strPrintDate | date}}</p>
+            </div>
+            <br />
+            <table class='table table-sm' aria-labelledby="tableLabel" style="border:1px solid">
+              <thead>
+                <tr>
+                  <th scope="col" *ngFor="let column of targetMatrix.header" style="text-align: center; width: 120px; border: 1px solid; background-color: lightgray">
+                    {{column}}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of targetMatrix.rowDataTargetMaster">
+                  <!--<td *ngFor="let column of tcStatusReport.header; let i = index; let first = first; let last = last" [ngClass]="{ first: first, last: last}" style="text-align: center; border: 1px solid">-->
+                  <!--'text-success': row[column] == 0 && column == 'Performance'-->
+                  <!--{{row[column]}}
+                  </td>-->
+
+                  <td style="text-align: center;border: 1px solid" class="first">{{row.telecallerName}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid">{{row.achieveWeek1}}/{{row.targetWeek1}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid">{{row.achieveWeek2}}/{{row.targetWeek2}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid">{{row.achieveWeek3}}/{{row.targetWeek3}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid">{{row.achieveWeek4}}/{{row.targetWeek4}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid" *ngIf="isWeek5visible">{{row.achieveWeek5}}/{{row.targetWeek5}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid" *ngIf="isWeek6visible">{{row.achieveWeek5}}/{{row.targetWeek6}}</td>
+
+                  <td style="text-align: center; width: 100px; border: 1px solid;" class="last">
+                    {{row.achieveWeek1 + row.achieveWeek2 + row.achieveWeek3 + row.achieveWeek4 + row.achieveWeek5 + row.achieveWeek6}}/{{row.targetWeek1 + row.targetWeek2 + row.targetWeek3 + row.targetWeek4 + row.targetWeek5 + row.targetWeek6}}
+                  </td>
+
+
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -10,7 +10,16 @@ export class TargetMaster {
   targetWeek4: number;
   targetWeek5: number;
   targetWeek6: number;
+
   telecallerName: string;
+
+  achieveWeek1: number;
+  achieveWeek2: number;
+  achieveWeek3: number;
+  achieveWeek4: number;
+  achieveWeek5: number;
+  achieveWeek6: number;
+
 }
 
 export class TargetMatrix {
@@ -18,12 +27,3 @@ export class TargetMatrix {
   rowDataTargetMaster: TargetMaster[] = [];
 }
 
-//export class RowsData {
-//  tCName: string;
-//  tCid: any;
-//  week1: string;
-//  week2: string;
-//  week3: string;
-//  week4: string;
-//  week5: string;
-//}
