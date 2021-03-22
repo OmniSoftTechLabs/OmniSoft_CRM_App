@@ -930,6 +930,9 @@ namespace OmniCRM_Web.Controllers
                 var LastMonthLastDate = month.AddDays(-1);
 
                 var objTarget = _context.TargetMaster.FirstOrDefault(p => p.TelecallerId == id && p.MonthYear == firstDateofMonth);
+                if (objTarget == null)
+                    objTarget = new TargetMaster();
+
                 int target = objTarget.TargetWeek1 + objTarget.TargetWeek2 + objTarget.TargetWeek3 + objTarget.TargetWeek4 + objTarget.TargetWeek5 + objTarget.TargetWeek6;
                 int appoinmentTaken = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.AppoinmentTaken);
                 int notInterested = callDetail.Count(p => p.CreatedDate.Month == currentMonth && p.CreatedDate.Year == currentYear && p.OutComeId == (int)Enums.CallOutcome.NotInterested);
