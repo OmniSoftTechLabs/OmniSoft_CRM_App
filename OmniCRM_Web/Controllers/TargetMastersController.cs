@@ -331,8 +331,8 @@ namespace OmniCRM_Web.Controllers
                         DateTime FromDate = Convert.ToDateTime(item.DateFrom);
                         DateTime ToDate = Convert.ToDateTime(item.To);
 
-                        OmniCRMContext con_text = new OmniCRMContext();
-                        var TeleCallerLeads = con_text.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
+                        //OmniCRMContext con_text = new OmniCRMContext();
+                        var TeleCallerLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
                                              && q.OutComeId != (int)Enums.CallOutcome.NoResponse
                                              && q.OutComeId != (int)Enums.CallOutcome.None
                                              && q.OutComeId != (int)Enums.CallOutcome.Dropped

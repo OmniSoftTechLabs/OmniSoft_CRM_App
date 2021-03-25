@@ -9,6 +9,8 @@ namespace OmniCRM_Web.ViewModels
     {
         public List<TeleCallerChartData> CollTeleChartData { get; set; }
         public List<ManagerChartData> CollMangerChartData { get; set; }
+        public List<TargetChartData> CollTargetChartData { get; set; }
+
     }
 
     public class TeleCallerChartData
@@ -35,5 +37,12 @@ namespace OmniCRM_Web.ViewModels
         public int NotInterested { get; set; }
         public int Pending { get; set; }
         public int Interested { get; set; }
+    }
+
+    public class TargetChartData
+    {
+        public string Week { get; set; }
+        public int Achievement { get; set; }
+        public int Target { get; set; }
     }
 }

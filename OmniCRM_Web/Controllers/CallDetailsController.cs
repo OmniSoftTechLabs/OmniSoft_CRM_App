@@ -1143,13 +1143,50 @@ namespace OmniCRM_Web.Controllers
                 }).ToList();
 
 
-                //var teleUserLeads = await _context.UserMaster.Include(p => p.CallDetail).Where(p => p.Status == true && p.RoleId == (int)Roles.TeleCaller).ToListAsync();
-                //var managerUsers = await _context.UserMaster.Where(p => p.Status == true && p.RoleId == (int)Roles.RelationshipManager).ToListAsync();
+                DateTime FirstDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var ListofWeeks = GetWeekRange.GetListofWeeks(DateTime.Now.Year, DateTime.Now.Month);
+                objAdminDash.CollTargetChartData = new List<TargetChartData>();
+                int cntWeek = 0;
+                var CollTarget = _context.TargetMaster.Include(p => p.Telecaller).Where(r => r.MonthYear.Date == FirstDate.Date && r.Telecaller.CompanyId == currentCompanyId);
 
-                //var managerLeads = from user in managerUsers
-                //                   join leads in _context.AppointmentDetail.Include(p => p.Call) on user.UserId equals leads.RelationshipManagerId into usrled
-                //                   from mngrld in usrled.DefaultIfEmpty()
-                //                   select new { user.FirstName, usrled, mngrld };
+                foreach (dynamic item in ListofWeeks)
+                {
+                    cntWeek++;
+                    DateTime FromDate = Convert.ToDateTime(item.DateFrom);
+                    DateTime ToDate = Convert.ToDateTime(item.To);
+
+                    //OmniCRMContext con_text = new OmniCRMContext();
+                    var AchievedLeads = _context.CallTransactionDetail.AsEnumerable().Where(q => Convert.ToDateTime(q.CreatedDate).Date >= FromDate.Date && Convert.ToDateTime(q.CreatedDate).Date <= ToDate.Date
+                                         && q.OutComeId != (int)Enums.CallOutcome.NoResponse
+                                         && q.OutComeId != (int)Enums.CallOutcome.None
+                                         && q.OutComeId != (int)Enums.CallOutcome.Dropped
+                                         && q.OutComeId != (int)Enums.CallOutcome.Interested
+                                         && q.CreatedByNavigation.CompanyId == currentCompanyId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
+
+                    switch (cntWeek)
+                    {
+                        case 1:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek1) });
+                            break;
+                        case 2:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek2) });
+                            break;
+                        case 3:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek3) });
+                            break;
+                        case 4:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek4) });
+                            break;
+                        case 5:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek5) });
+                            break;
+                        case 6:
+                            objAdminDash.CollTargetChartData.Add(new TargetChartData() { Week = "Week " + cntWeek, Achievement = AchievedLeads.Count(), Target = CollTarget.Sum(p => p.TargetWeek6) });
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
                 GenericMethods.Log(LogType.ActivityLog.ToString(), "GetAdminDashboard: -get admin dashboard");
                 return await Task.FromResult(objAdminDash);
