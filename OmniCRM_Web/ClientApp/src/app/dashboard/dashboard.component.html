@@ -91,5 +91,35 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+
+            <div class="form-row">
+              <div class="col-md form-inline">
+                <h5 class="card-title mb-0">Goal of the Month : {{currentMonth}}</h5>
+              </div>
+
+              <div class="col-md">
+                <div class="card-tools float-right">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-body">
+
+            <div class="chart">
+              <canvas #canvasTarget style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;">{{targetChart}}</canvas>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

@@ -4,6 +4,7 @@ import { LeadRepositoryService } from '../services/lead-repository.service';
 import { AdminDash } from '../models/admin-dash';
 import { FilterOptions } from '../models/filter-options';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { DatePipe } from '@angular/common';
 
 const colors: any = {
   green: {
@@ -49,8 +50,10 @@ export class DashboardComponent implements OnInit {
 
   @ViewChild('canvasTele') canvasTele: ElementRef;
   @ViewChild('canvasManger') canvasManger: ElementRef;
+  @ViewChild('canvasTarget') canvasTarget: ElementRef;
   telechart: any;
   managerchart: any;
+  targetChart: any;
   adminDashboard: AdminDash = new AdminDash();
   teleCallers: string[] = [];
   //noResponse: number[] = [];
@@ -61,6 +64,7 @@ export class DashboardComponent implements OnInit {
   //none: number[] = [];
   //droppedT: number[] = [];
   //interested: number[] = [];
+  currentMonth: string;
 
   managers: string[] = [];
   firstMeeting: number[] = [];
@@ -72,14 +76,18 @@ export class DashboardComponent implements OnInit {
   pending: number[] = [];
   interestedM: number[] = [];
 
+  weeks: string[] = [];
+  achievements: number[] = [];
+  targets: number[] = [];
+
   filterOption: FilterOptions = new FilterOptions();
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
 
-
-  constructor(private leadRepo: LeadRepositoryService) {
+  constructor(private leadRepo: LeadRepositoryService, private datePipe: DatePipe) {
     this.fromDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
     this.toDate = { day: new Date().getDate(), month: new Date().getMonth() + 1, year: new Date().getFullYear() };
+    this.currentMonth = datePipe.transform(new Date(), "MMM yyyy");
   }
 
   ngOnInit(): void {
@@ -118,8 +126,15 @@ export class DashboardComponent implements OnInit {
           this.interestedM.push(item.interested);
         });
 
+        this.adminDashboard.collTargetChartData.forEach((item) => {
+          this.weeks.push(item.week);
+          this.achievements.push(item.achievement);
+          this.targets.push(item.target);
+        });
+
         this.loadTeleChart();
         this.loadManagerChart();
+        this.loadTargetChart();
       },
       error => console.error(error)
     );
@@ -315,6 +330,64 @@ export class DashboardComponent implements OnInit {
     }, 1000);
   }
 
+  loadTargetChart() {
+    var lineChartCanvas = this.canvasTarget.nativeElement.getContext('2d');
+
+    var lineChartData = {
+      labels: this.weeks,
+      datasets: [
+        {
+          label: 'Achievements',
+          backgroundColor: colors.green.secondary,
+          borderColor: colors.green.primary,
+          fill: false,
+          data: this.achievements,
+        },
+        {
+          label: 'Target',
+          backgroundColor: colors.blue.secondary,
+          borderColor: colors.blue.primary,
+          fill: false,
+          data: this.targets
+        },
+      ]
+    };
+
+    var lineChartOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+      tooltips: {
+        intersect: false,
+        mode: 'index',
+      },
+      //showLine: true,
+      //legend: {
+      //  display: false
+      //},
+      //scales: {
+      //  xAxes: [{
+      //    gridLines: {
+      //      display: false,
+      //    }
+      //  }],
+      //  yAxes: [{
+      //    gridLines: {
+      //      display: false,
+      //    }
+      //  }]
+      //}
+    };
+
+
+    setTimeout(() => {
+      this.targetChart = new Chart(lineChartCanvas, {
+        type: 'line',
+        data: lineChartData,
+        options: lineChartOptions
+      });
+    }, 1000);
+  }
+
   onDateChange() {
     this.teleCallers = [];
     //this.noResponse = [];
@@ -341,6 +414,6 @@ export class DashboardComponent implements OnInit {
     this.loadData();
     this.loadTeleChart();
     this.loadManagerChart();
-
+    //this.loadTargetChart();
   }
 }

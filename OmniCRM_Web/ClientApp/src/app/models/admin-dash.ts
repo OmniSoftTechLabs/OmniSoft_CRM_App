@@ -1,6 +1,7 @@
 export class AdminDash {
   collTeleChartData: TeleCallerChartData[] = [];
   collMangerChartData: ManagerChartData[] = [];
+  collTargetChartData: TargetChartData[] = [];
 }
 
 export class TeleCallerChartData {
@@ -25,4 +26,10 @@ export class ManagerChartData {
   notInterested: number;
   pending: number;
   interested: number;
+}
+
+export class TargetChartData {
+  week: string;
+  achievement: number;
+  target: number;
 }
