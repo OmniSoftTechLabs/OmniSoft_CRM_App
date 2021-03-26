@@ -1161,7 +1161,7 @@ namespace OmniCRM_Web.Controllers
                                          && q.OutComeId != (int)Enums.CallOutcome.None
                                          && q.OutComeId != (int)Enums.CallOutcome.Dropped
                                          && q.OutComeId != (int)Enums.CallOutcome.Interested
-                                         && q.CreatedByNavigation.CompanyId == currentCompanyId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
+                                         && q.CreatedByNavigation?.CompanyId == currentCompanyId).GroupBy(x => x.CallId).Select(r => r.OrderBy(a => a.CallTransactionId).LastOrDefault());
 
                     switch (cntWeek)
                     {
