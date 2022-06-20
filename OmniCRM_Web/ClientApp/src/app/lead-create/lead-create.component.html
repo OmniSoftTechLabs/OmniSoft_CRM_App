@@ -32,8 +32,9 @@
       <div class="row">
         <div class="form-group col-sm-6">
           Mobile Number<strong class="text-danger"> *</strong>
-          <input type="text" required #mobileNumber="ngModel" name="mobileNumber" pattern="^[6-9]\d{9}$" [class.is-invalid]="mobileNumber.invalid && mobileNumber.touched || mobileNumber.errors?.pattern"
-                 class="form-control" [(ngModel)]="leadModel.mobileNumber" placeholder="i.e 9876543210" maxlength="10" />
+          <input type="text" required #mobileNumber="ngModel" name="mobileNumber" [class.is-invalid]="mobileNumber.invalid && mobileNumber.touched || mobileNumber.errors?.pattern"
+                 class="form-control" [(ngModel)]="leadModel.mobileNumber" placeholder="i.e 9876543210" maxlength="12" />
+          <!--pattern="^[6-9]\d{9}$"-->
           <small class="text-danger" *ngIf="mobileNumber.errors?.pattern">* Mobile Number is invalid</small>
           <small class="text-danger" *ngIf="mobileNumber.errors?.required && mobileNumber.touched">* Mobile Number is required</small>
 

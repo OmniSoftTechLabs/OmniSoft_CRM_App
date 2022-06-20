@@ -32,18 +32,20 @@ namespace OmniCRM_Web.GenericClasses
                 //    File.Create(logPath + "\\log_" + DateTime.Now.ToShortDateString() + ".txt");
                 //}
 
+                string addtext = String.Empty;
+                FileStream fs = new FileStream(logPath + "\\log_" + DateTime.Now.ToString("dd-MM-yyyy") + ".txt", FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                using (StreamWriter str = new StreamWriter(fs))
+                {
+                    str.BaseStream.Seek(0, SeekOrigin.End);
+                    str.Write("\r\n=============== Log Entry : " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + " ===============\r\n");
+                    //str.WriteLine(DateTime.Now.ToLongTimeString() + " " +
+                    //              DateTime.Now.ToLongDateString());
+                    addtext = logMessage + Environment.NewLine;
+                    str.Flush();
+                    str.Close();
+                }
 
-                FileStream fs = new FileStream(logPath + "\\log_" + DateTime.Now.ToString("dd-MM-yyyy") + ".txt", FileMode.OpenOrCreate);
-                StreamWriter str = new StreamWriter(fs);
-                str.BaseStream.Seek(0, SeekOrigin.End);
-                str.Write("\r\n=============== Log Entry : " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + " ===============\r\n");
-                //str.WriteLine(DateTime.Now.ToLongTimeString() + " " +
-                //              DateTime.Now.ToLongDateString());
-                string addtext = logMessage + Environment.NewLine;
-                str.Flush();
-                str.Close();
                 fs.Close();
-
 
                 File.AppendAllText(logPath + "\\log_" + DateTime.Now.ToString("dd-MM-yyyy") + ".txt", addtext);
 

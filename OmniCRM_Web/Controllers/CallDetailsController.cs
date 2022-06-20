@@ -712,7 +712,7 @@ namespace OmniCRM_Web.Controllers
                 listManager = (from user in await _context.UserMaster.Where(p => p.RoleId == (int)Roles.RelationshipManager && p.CompanyId == currentCompanyId && p.Status == true).ToListAsync()
                                select user).Select(p => new RMangerViewModel() { UserId = p.UserId, FirstName = p.FirstName, LastName = p.LastName }).ToList();
 
-                GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRelationshipManagerList: " + "-get all relationship manager user");
+                //GenericMethods.Log(LogType.ActivityLog.ToString(), "GetRelationshipManagerList: " + "-get all relationship manager user");
 
                 return listManager;
             }
