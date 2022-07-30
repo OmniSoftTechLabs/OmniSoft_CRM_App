@@ -81,7 +81,7 @@
 
         <div class="col-md-3 form-group has-search">
           <span class="fas fa-search form-control-feedback"></span>
-          <input class="form-control" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" ngbTooltip="Search by First Name, Last Name or Mobile Number" [openDelay]="700" placeholder="Search" style="width:100%"/>
+          <input class="form-control" type="text" name="searchTerm" [(ngModel)]="service.searchTerm" ngbTooltip="Search by Firm Name, First Name, Last Name or Mobile Number" [openDelay]="700" placeholder="Search" style="width:100%"/>
         </div>
 
         <div class="col-md-1 form-inline form-group">
@@ -106,6 +106,7 @@
                 </div>
               </th>
               <!--<th scope="col" *ngIf="isTeleCaller">#</th>-->
+              <th scope="col" sortable="firmName" (sort)="onSort($event)">Firm Name</th>
               <th scope="col" sortable="firstName" (sort)="onSort($event)">Client Name</th>
               <!--<th scope="col" sortable="lastName" (sort)="onSort($event)">Last Name</th>-->
               <th scope="col" sortable="mobileNumber" (sort)="onSort($event)">Mobile No.</th>
@@ -133,6 +134,7 @@
                 </div>
               </th>
               <!--<th scope="row" *ngIf="isTeleCaller">{{service.pageSize * (service.page - 1) + i + 1  }}</th>-->
+              <td> <ngb-highlight [result]="lead.firmName" [term]="service.searchTerm"></ngb-highlight></td>
               <td> <ngb-highlight [result]="lead.firstName" [term]="service.searchTerm"></ngb-highlight>&nbsp;<ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>
               <!--<td> <ngb-highlight [result]="lead.lastName" [term]="service.searchTerm"></ngb-highlight></td>-->
               <td> <ngb-highlight [result]="lead.mobileNumber" [term]="service.searchTerm"></ngb-highlight></td>
@@ -148,7 +150,7 @@
               <td style="max-width:200px" class="ellipsis"> <ngb-highlight [result]="lead.remark" [term]="service.searchTerm" ngbTooltip="{{lead.remark}}" [openDelay]="700"></ngb-highlight></td>
               <!--<td> <ngb-highlight [class]="user.status ? 'badge badge-success' : 'badge badge-danger' " [result]="user.status ? 'Active' : 'Inactive'" [term]="service.searchTerm"></ngb-highlight></td>-->
               <!--<td *ngIf="isTeleCaller"> <a placement="top" ngbTooltip="Edit Lead" class="btn btn-sm" (click)="editLead(lead.callId)"><i class="fas fa-edit"></i></a></td>
-              <td> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
+  <td> <a placement="top" ngbTooltip="Follow up" class="btn btn-sm" (click)="followUp(lead.callId)"><i class="fas fa-phone-square-alt"></i></a></td>-->
               <td class="d-flex flex-row">
                 <button type="button" placement="top" ngbTooltip="Follow up" class="btn btn-sm btn-outline-warning rounded-circle" (click)="onOpenFollowupModal(lead.callId)"><i class="fas fa-phone-square-alt"></i></button>
                 &nbsp;

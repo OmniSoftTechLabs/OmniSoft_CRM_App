@@ -49,6 +49,8 @@ function matches(objData: any, xType: UserMaster | LeadMaster, term: string, pip
     return objlead.firstName.toLowerCase().includes(term)
       || (objlead.lastName != null && objlead.lastName.toLowerCase().includes(term))
       || objlead.mobileNumber.toLowerCase().includes(term)
+      || (objlead.firmName != null && objlead.firmName.toLowerCase().includes(term))
+
   }
 
   //|| pipe.transform(objData.lastName).includes(term)
