@@ -105,12 +105,14 @@ namespace OmniCRM_Web.GenericClasses
 
         public static void SendEmailNotification(string toEmailId, string subject, string messageBody)
         {
-            SmtpClient smtpClient = new SmtpClient("mail.ostechlabs.com", 587);
-
-            smtpClient.Credentials = new System.Net.NetworkCredential("admin@ostechlabs.com", "admin@123");
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.UseDefaultCredentials = false;
+            //smtpClient.Credentials = new System.Net.NetworkCredential("ugampackaging@gmail.com", "seeurdream@ugaam");
+            smtpClient.Credentials = new System.Net.NetworkCredential("ugampackaging@gmail.com", "zejvepbxykshptha");
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.EnableSsl = true;
 
-            MailMessage mailMessage = new MailMessage("admin@ostechlabs.com", toEmailId);
+            MailMessage mailMessage = new MailMessage("ugampackaging@gmail.com", toEmailId);
             mailMessage.Subject = subject;
             mailMessage.Body = messageBody;
             mailMessage.BodyEncoding = Encoding.ASCII;

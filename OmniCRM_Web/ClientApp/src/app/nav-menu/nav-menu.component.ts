@@ -16,7 +16,7 @@ export class NavMenuComponent {
   logoSrc: string;
   constructor(private router: Router, private auth: AuthenticationService) {
     this.auth.currentUser.subscribe(x => this.currentUser = x);
-    this.logoSrc = "../../assets/OmniCRM-Logo.png";
+    this.logoSrc = "../../assets/LogoUgam.png";
   }
 
   get isLoggedIn(): boolean {

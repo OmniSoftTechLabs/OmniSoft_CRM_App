@@ -187,7 +187,7 @@ namespace OmniCRM_Web.Controllers
                         #endregion
 
 
-                        GenericMethods.SendEmailNotification(userMaster.Email, "OmniCRM User activation link", MailText);
+                        GenericMethods.SendEmailNotification(userMaster.Email, "Ugam CRM User activation link", MailText);
                         return Ok(StatusCodes.Status200OK);
 
                     }
