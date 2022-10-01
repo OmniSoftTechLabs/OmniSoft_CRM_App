@@ -817,9 +817,13 @@ namespace OmniCRM_Web.Controllers
 
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                     Stream stream = file.OpenReadStream();
+                    MemoryStream mStream = new MemoryStream();
                     using (ExcelPackage package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet workSheet = package.Workbook.Worksheets[0];
+
+                        workSheet.InsertColumn(1, 1);
+                        workSheet.SetValue("A1", "UploadStatus");
 
                         int firstName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "First Name").Start.Column;
                         int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
@@ -894,13 +898,26 @@ namespace OmniCRM_Web.Controllers
                                         }
                                     }
                                 });
+                                workSheet.SetValue("A" + i, "Success");
                             }
+                            else
+                                workSheet.SetValue("A" + i, "Duplicate");
                         }
-
+                        //package.Save();
+                        package.SaveAs(mStream);
                         await _context.CallDetail.AddRangeAsync(callDetail);
                         await _context.SaveChangesAsync();
                     }
-                    return Ok("Data uploaded successfully!");
+                    //stream.Position = 0;
+                    mStream.Position = 0;
+                    return File(mStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.FileName);
+                    //return File(stream, "application/octet-stream", file.FileName);
+
+                    //return new FileContentResult(ReadFully(stream), "application/octet-stream")
+                    //{
+                    //    FileDownloadName = file.FileName,
+                    //};
+                    //return Ok("Data uploaded successfully!");
                 }
                 return NotFound("File not found!");
 
@@ -909,6 +926,15 @@ namespace OmniCRM_Web.Controllers
             {
                 GenericMethods.Log(LogType.ErrorLog.ToString(), "UploadExcelData: " + ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        public static byte[] ReadFully(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                return ms.ToArray();
             }
         }
 

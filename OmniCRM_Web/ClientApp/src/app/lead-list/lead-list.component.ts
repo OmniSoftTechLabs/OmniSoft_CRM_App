@@ -16,6 +16,8 @@ import { NgbDateStruct, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootst
 import { FilterOptions } from '../models/filter-options';
 import { concat, delay } from 'rxjs/operators';
 import { LeadCreateComponent } from '../lead-create/lead-create.component';
+import { HttpResponse } from '@angular/common/http';
+import { error } from '@angular/compiler/src/util';
 
 declare var $: any;
 
@@ -221,15 +223,52 @@ export class LeadListComponent implements OnInit {
     this.labelImport.nativeElement.innerText = files[0].name;
   }
 
+  //onUploadFile() {
+  //  let formData = new FormData();
+  //  this.isUploading = true;
+  //  formData.append('upload', this.fileInput.nativeElement.files[0]);
+  //  this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe({
+  //    next: data => (console.log(data), this.downloadFile(data), this.uploadMsg = "Download Status", this.isUploadSucc = true, this.isUploading = false, this.fillLeadListCreatedBy()),
+  //    error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false, this.isUploading = false)
+  //  });
+  //}
+
+
   onUploadFile() {
     let formData = new FormData();
     this.isUploading = true;
     formData.append('upload', this.fileInput.nativeElement.files[0]);
-    this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe({
-      next: data => (this.uploadMsg = data, this.isUploadSucc = true, this.isUploading = false, this.fillLeadListCreatedBy()),
-      error: error => (console.error(error), this.uploadMsg = error.error, this.isUploadSucc = false, this.isUploading = false)
-    });
+    this.leadRepo.uploadExcelData(this.currentUser.userId, formData).subscribe((res) => {
+      console.log(res);
+      this.uploadMsg = "Data uploaded successfully!";
+      this.isUploadSucc = true;
+      this.isUploading = false;
+      this.fillLeadListCreatedBy();
+
+      const a = document.createElement('a');
+      let url = window.URL.createObjectURL(res);
+      a.setAttribute('style', 'display:none;');
+      document.body.appendChild(a);
+      a.download = "uploadstatus.xlsx";
+      a.href = url;
+      a.target = '_blank';
+      a.click();
+      document.body.removeChild(a);
+
+    }, error => { console.error(error); this.uploadMsg = error.error; this.isUploadSucc = false; this.isUploading = false });
   }
+
+  //private downloadFile = (data: HttpResponse<Blob>) => {
+  //  const downloadedFile = new Blob([data.body], { type: data.body.type });
+  //  const a = document.createElement('a');
+  //  a.setAttribute('style', 'display:none;');
+  //  document.body.appendChild(a);
+  //  a.download = "uploadstatus.xlsx";
+  //  a.href = URL.createObjectURL(downloadedFile);
+  //  a.target = '_blank';
+  //  a.click();
+  //  document.body.removeChild(a);
+  //}
 
   onSelectAllLeads(isChecked: boolean) {
     this.isCheckedBox = isChecked;

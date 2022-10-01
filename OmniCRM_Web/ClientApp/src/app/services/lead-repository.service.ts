@@ -113,7 +113,7 @@ export class LeadRepositoryService {
     //headers.append('Accept', 'application/json');
 
     //const httpOptions = { headers: headers };
-    return this.http.post(this.baseUrl + 'api/CallDetails/UploadExcelData/' + id, formData, { responseType: 'text' }).pipe();
+    return this.http.post(this.baseUrl + 'api/CallDetails/UploadExcelData/' + id, formData, { responseType: 'blob' });
   }
 
   async loadTeleDash(id) {
