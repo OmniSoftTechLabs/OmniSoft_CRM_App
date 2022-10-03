@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using OmniCRM_Web.GenericClasses;
 using OmniCRM_Web.Models;
 using OmniCRM_Web.ViewModels;
@@ -824,6 +826,7 @@ namespace OmniCRM_Web.Controllers
 
                         workSheet.InsertColumn(1, 1);
                         workSheet.SetValue("A1", "UploadStatus");
+                        workSheet.Cells["A1"].Style.Font.Bold = true;
 
                         int firstName = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "First Name").Start.Column;
                         int mobileNumber = workSheet.Cells["1:1"].First(c => c.Value.ToString() == "Mobile Number").Start.Column;
@@ -899,19 +902,26 @@ namespace OmniCRM_Web.Controllers
                                     }
                                 });
                                 workSheet.SetValue("A" + i, "Success");
+                                workSheet.Cells["A" + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells["A" + i].Style.Fill.BackgroundColor.SetColor(1, 220, 255, 218);
+                                workSheet.Cells["A" + i].Style.Font.Color.SetColor(Color.DarkGreen);
                             }
                             else
+                            {
                                 workSheet.SetValue("A" + i, "Duplicate");
+                                workSheet.Cells["A" + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells["A" + i].Style.Fill.BackgroundColor.SetColor(1, 255, 220, 218);
+                                workSheet.Cells["A" + i].Style.Font.Color.SetColor(Color.DarkRed);
+                            }
+                            workSheet.Column(1).AutoFit();
                         }
-                        //package.Save();
                         package.SaveAs(mStream);
                         await _context.CallDetail.AddRangeAsync(callDetail);
                         await _context.SaveChangesAsync();
                     }
-                    //stream.Position = 0;
                     mStream.Position = 0;
-                    return File(mStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.FileName);
-                    //return File(stream, "application/octet-stream", file.FileName);
+                    //return File(mStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.FileName);
+                    return File(mStream, "application/octet-stream", file.FileName);
 
                     //return new FileContentResult(ReadFully(stream), "application/octet-stream")
                     //{
@@ -920,7 +930,6 @@ namespace OmniCRM_Web.Controllers
                     //return Ok("Data uploaded successfully!");
                 }
                 return NotFound("File not found!");
-
             }
             catch (Exception ex)
             {

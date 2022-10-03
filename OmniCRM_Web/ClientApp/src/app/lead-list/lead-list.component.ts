@@ -249,7 +249,7 @@ export class LeadListComponent implements OnInit {
       let url = window.URL.createObjectURL(res);
       a.setAttribute('style', 'display:none;');
       document.body.appendChild(a);
-      a.download = "uploadstatus.xlsx";
+      a.download = "LeadUploadStatus.xlsx";
       a.href = url;
       a.target = '_blank';
       a.click();
